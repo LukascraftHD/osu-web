@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,23 +20,48 @@
 
 return [
     'index' => [
-        'header' => [
-            'subtitle' => 'En liste over alle aktive officielle turneringer',
-            'title' => 'Fællesskabsturnerninger',
-        ],
         'none_running' => 'Der er ingen turneringer, som kører i øjeblikket. Kig forbi senere!',
         'registration_period' => 'Tilmelding: :start til :end',
-    ],
-    'show' => [
-        'button' => [
-            'register' => 'Tilmeld mig!',
-            'cancel' => 'Annullér tilmelding',
+
+        'header' => [
+            'title' => 'Fællesskabsturnerninger',
         ],
+
+        'item' => [
+            'registered' => 'Registrerede spillere',
+        ],
+
+        'state' => [
+            'current' => 'Aktive Turneringer',
+            'previous' => 'Tidligere Turneringer',
+        ],
+    ],
+
+    'show' => [
+        'banner' => 'Support dit hold',
         'entered' => 'Du er nu tilmeldt turneringen.<br><br>Vær opmærksom på, at dette ikke betyder, at du skal være tilmeldt et hold..<br><br>Mere info vil blive sendt til dig på din email-adresse, så vær venligst sikker på, at din kontos email-adresse er gyldig!',
+        'info_page' => 'Informationsside',
         'login_to_register' => 'Vær venlig at :login for at se tilmeldingsinformation!',
         'not_yet_entered' => 'Du er ikke tilmeldt denne turnering.',
-        'rank_too_low' => 'Beklager, du opfylder ikke kravene for rang til denne turnering!',
+        'rank_too_low' => 'Beklager, du opfylder ikke rang kravene til denne turnering!',
         'registration_ends' => 'Tilmelding lukker på :date',
+
+        'button' => [
+            'cancel' => 'Annullér tilmelding',
+            'register' => 'Tilmeld mig!',
+        ],
+
+        'period' => [
+            'end' => '',
+            'start' => '',
+        ],
+
+        'state' => [
+            'before_registration' => 'Registrering til denne turnering er ikke åbnet endnu.',
+            'ended' => 'Denne turnering er konkluderet. Tjek informationssiden for resultater.',
+            'registration_closed' => 'Registrering til denne turnering er lukket. Tjek informationssiden for seneste opdateringer.',
+            'running' => 'Denne turnering er i øjeblikket i gang. Tjek informationssiden for flere detaljer.',
+        ],
     ],
     'tournament_period' => ':start til :end',
 ];

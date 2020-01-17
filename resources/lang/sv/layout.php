@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -23,38 +23,141 @@ return [
         'page_description' => 'osu! - Rytmen är bara ett *klick* bort!  Med Ouendan/EBA, Taiko och originala spel lägen, och en full funktionell nivå redigerare.',
     ],
 
+    'header' => [
+        'admin' => [
+            '_' => '',
+            'beatmapset' => '',
+            'beatmapset_covers' => '',
+            'contest' => '',
+            'contests' => '',
+            'root' => '',
+            'store_orders' => '',
+        ],
+
+        'artists' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'beatmapsets' => [
+            '_' => '',
+            'discussions' => '',
+            'index' => '',
+            'show' => '',
+            'packs' => '',
+        ],
+
+        'changelog' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'community' => [
+            '_' => '',
+            'comments' => '',
+            'forum' => '',
+            'livestream' => '',
+        ],
+
+        'contests' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'error' => [
+            '_' => '',
+        ],
+
+        'help' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'home' => [
+            '_' => '',
+            'password_reset' => '',
+        ],
+
+        'matches' => [
+            '_' => '',
+        ],
+
+        'notice' => [
+            '_' => '',
+        ],
+
+        'rankings' => [
+            '_' => '',
+        ],
+
+        'tournaments' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'users' => [
+            '_' => '',
+            'forum_posts' => '',
+            'modding' => '',
+            'show' => '',
+        ],
+    ],
+
+    'gallery' => [
+        'close' => '',
+        'fullscreen' => '',
+        'zoom' => '',
+        'previous' => '',
+        'next' => '',
+    ],
+
     'menu' => [
         'home' => [
             '_' => 'hem',
             'account-edit' => 'inställningar',
-            'friends-index' => 'vänner',
+            'account-verifyLink' => '',
+            'beatmapset-watches-index' => '',
+            'changelog-build' => 'bygget',
             'changelog-index' => 'ändringslogg',
-            'changelog-show' => 'build',
+            'forum-topic-watches-index' => '',
+            'friends-index' => 'vänner',
             'getDownload' => 'ladda ner',
             'getIcons' => 'ikoner',
             'groups-show' => 'grupper',
+            'index' => 'kontrollpanel',
             'legal-show' => 'information',
+            'messages-index' => '',
             'news-index' => 'nyheter',
             'news-show' => 'nyheter',
             'password-reset-index' => 'återställ lösenord',
             'search' => 'sök',
             'supportTheGame' => 'stötta spelet',
+            'team' => 'lag',
+            'testflight' => '',
+        ],
+        'profile' => [
+            '_' => '',
+            'friends' => '',
+            'settings' => '',
         ],
         'help' => [
             '_' => 'hjälp',
             'getFaq' => 'faq',
-            'getSupport' => 'support', //obsolete
+            'getRules' => 'regler',
+            'getSupport' => 'support',
             'getWiki' => 'wiki',
             'wiki-show' => 'wiki',
         ],
         'beatmaps' => [
             '_' => 'beatmaps',
-            'show' => 'info',
+            'artists' => 'utvalda artister',
+            'beatmap_discussion_posts-index' => 'beatmapdiskussionsinlägg',
+            'beatmap_discussions-index' => 'beatmapdiskussioner',
+            'beatmapset_discussion_votes-index' => 'beatmapdiskussionsröster',
+            'beatmapset_events-index' => 'beatmapset händelser',
             'index' => 'listning',
-            'artists' => 'framhävda artister',
             'packs' => 'samling',
-            'beatmapset-watches-index' => 'modding övervakningslista',
-            // 'getCharts' => 'charts',
+            'show' => 'info',
         ],
         'beatmapsets' => [
             '_' => 'beatmaps',
@@ -71,20 +174,22 @@ return [
         ],
         'community' => [
             '_' => 'gemenskap',
-            'dev' => 'osu!dev',
-            'getForum' => 'forum', // Base text changed to plural, please check.
-            'getChat' => 'chatt',
+            'chat' => '',
+            'chat-index' => '',
+            'dev' => 'utveckling',
+            'getForum' => 'forum',
             'getLive' => 'live',
+            'comments-index' => '',
+            'comments-show' => '',
             'contests' => 'tävlingar',
             'profile' => 'profil',
             'tournaments' => 'turneringar',
             'tournaments-index' => 'turneringar',
             'tournaments-show' => 'turnering info',
-            'forum-topic-watches-index' => 'prenumerationer',
-            'forum-topics-create' => 'forum', // Base text changed to plural, please check.
-            'forum-topics-show' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-index' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-show' => 'forum', // Base text changed to plural, please check.
+            'forum-topics-create' => 'forum',
+            'forum-topics-show' => 'forum',
+            'forum-forums-index' => 'forum',
+            'forum-forums-show' => 'forum',
         ],
         'multiplayer' => [
             '_' => 'multiplayer',
@@ -108,10 +213,18 @@ return [
             'reset' => 'återhämta',
             'new' => 'ny',
 
-            'messages' => 'Meddelanden',
-            'settings' => 'Inställningar',
-            'logout' => 'Logga Ut', // Base text changed from "Log Out" to "Sign Out", please check.
             'help' => 'Hjälp',
+            'logout' => 'Logga Ut',
+            'messages' => 'Meddelanden',
+            'modding-history-discussions' => 'användarmoddingsdiskussioner',
+            'modding-history-events' => 'användarmoddningsinlägg',
+            'modding-history-index' => 'användarmoddingshistorik',
+            'modding-history-posts' => 'användarmoddingsinlägg',
+            'modding-history-votesGiven' => 'användarmoddingsröster givna',
+            'modding-history-votesReceived' => 'användarmoddningsröster givna',
+            'oauth_login' => '',
+            'oauth_request' => '',
+            'settings' => 'Inställningar',
         ],
         'store' => [
             '_' => 'butik',
@@ -121,6 +234,7 @@ return [
 
             'getCheckout' => 'checka ut',
             'getInvoice' => 'faktura',
+            'orders-index' => '',
             'products-show' => 'produkt',
 
             'new' => 'ny',
@@ -139,11 +253,12 @@ return [
         ],
         'admin' => [
             '_' => 'admin',
-            'root' => 'index',
+            'beatmapsets-covers' => '',
             'logs-index' => 'logg',
+            'root' => 'index',
+
             'beatmapsets' => [
                 '_' => 'beatmap samlingar',
-                'covers' => 'omslag',
                 'show' => 'detaljer',
             ],
         ],
@@ -165,16 +280,12 @@ return [
             'livestreams' => 'Live Strömmar',
             'report' => 'Rapportera ett Problem',
         ],
-        'support' => [
-            '_' => 'Stötta osu!',
-            'tags' => 'Supporter Taggar',
-            'merchandise' => 'Handelsvaror',
-        ],
         'legal' => [
             '_' => 'Juridik & Status',
             'copyright' => 'Copyright (DMCA)',
-            'osu_status' => '@osustatus',
+            'privacy' => 'Sekretess',
             'server_status' => 'Server Status',
+            'source_code' => 'Källkod',
             'terms' => 'Användarvillkor',
         ],
     ],
@@ -182,62 +293,57 @@ return [
     'errors' => [
         '404' => [
             'error' => 'Sida saknas',
-            'description' => 'Förlåt, men sidan du frågade efter finns inte här!',
-            'link' => false,
+            'description' => "Förlåt, men sidan du frågade efter finns inte här!",
         ],
         '403' => [
-            'error' => 'Du bör inte vara här',
+            'error' => "Du bör inte vara här",
             'description' => 'Du kan däremot försöka gå tillbaka.',
-            'link' => false,
         ],
         '401' => [
-            'error' => 'Du bör inte vara här',
+            'error' => "Du bör inte vara här",
             'description' => 'Du kan däremot försöka gå tillbaka. Eller kanske logga in.',
-            'link' => false,
         ],
         '405' => [
             'error' => 'Sida saknas',
-            'description' => 'Förlåt, men sidan du frågade efter finns inte här!',
-            'link' => false,
+            'description' => "Förlåt, men sidan du frågade efter finns inte här!",
         ],
         '500' => [
             'error' => 'Oh nej! Något gick isönder! ;_;',
-            'description' => 'Vi blir automatiskt notifierade av varje fel',
-            'link' => false,
+            'description' => "Vi blir automatiskt notifierade av varje fel",
         ],
         'fatal' => [
             'error' => 'Oh nej! Något gick verkligen isönder! ;_;',
-            'description' => 'Vi blir automatiskt notifierade av varje fel',
-            'link' => false,
+            'description' => "Vi blir automatiskt notifierade av varje fel",
         ],
         '503' => [
             'error' => 'Nere för underhåll!',
-            'description' => 'Underhåll brukar oftast ta från 5 sekunder till 10 minuter. Om vi är nere längre, se :link för mer information.',
+            'description' => "Underhåll brukar oftast ta från 5 sekunder till 10 minuter. Om vi är nere längre, se :link för mer information.",
             'link' => [
                 'text' => '@osustatus',
                 'href' => 'https://twitter.com/osustatus',
             ],
         ],
         // used by sentry if it returns an error
-        'reference' => 'Bara ifall att, här är en kod du kan ge till support!',
+        'reference' => "Bara ifall att, här är en kod du kan ge till support!",
     ],
 
     'popup_login' => [
         'login' => [
-            'email' => 'email adress',
-            'forgot' => 'Jag har glömt mina detaljer',
+            'forgot' => "Jag har glömt mina detaljer",
             'password' => 'lösenord',
             'title' => 'Logga In För Att Fortsätta',
+            'username' => '',
 
             'error' => [
-                'email' => 'Användarnamn eller email adress finns inte',
+                'email' => "Användarnamn eller email adress finns inte",
                 'password' => 'Inkorrekt lösenord',
             ],
         ],
 
         'register' => [
+            'download' => '',
             'info' => 'Herrn, du behöver ett konto. Varför har du inte ett redan?',
-            'title' => 'Har du inte ett konto?',
+            'title' => "Har du inte ett konto?",
         ],
     ],
 
@@ -245,7 +351,7 @@ return [
         'links' => [
             'account-edit' => 'Inställningar',
             'friends' => 'Vänner',
-            'logout' => 'Logga Ut', // Base text changed from "Log Out" to "Sign Out", please check.
+            'logout' => 'Logga Ut',
             'profile' => 'Min Profil',
         ],
     ],

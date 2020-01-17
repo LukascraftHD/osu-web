@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,11 +19,11 @@
  */
 
 return [
-    'page_description' => 'Udvalgte artister på osu!',
-    'title' => 'Udvalgte artister',
+    'page_description' => 'Udvalgte kunstnere på osu!',
+    'title' => 'Udvalgte kunstnere',
 
     'admin' => [
-        'hidden' => 'ARTISTEN ER I ØJEBLIKKET SKJULT',
+        'hidden' => 'KUNSTNEREN ER I ØJEBLIKKET SKJULT',
     ],
 
     'beatmaps' => [
@@ -33,16 +33,24 @@ return [
     ],
 
     'index' => [
-        'description' => 'Udvalgte artister er artister, som vi samarbejder med for at skabe nyt og originalt musik til osu!. Disse artiser og et udvalg af deres spor er blevet specielt udvalgt af osu! teamet for at være gode til at blive mappet. Nogle af de udvalgte artister har også skabt eksklusive nye sange bare for at kunne blive brugt i osu!.<br><br>Alle spor i denne sektion er fremskaffede som "pre-timed" .osz filer og er blevet officielt licenseret til brug i osu! og osu!-relateret indhold.',
+        'description' => 'Udvalgte kunstnere er kunstnere, som vi samarbejder med for at bringe nyt og originalt musik til osu!. Disse kunstnere og et udvalg af deres sange er blevet valgt af osu! teamet for at være specielt gode og egnede til at blive mappet. Nogle af de udvalgte kunstnere har også skabt nye eksklusive sange til brug i osu!.<br><br>Alle sange i denne sektion er leveret som "pre-timed" .osz filer og er blevet officielt licenseret til brug i osu! og osu!-relateret indhold.',
     ],
 
     'links' => [
+        'osu' => 'osu! profil',
         'site' => 'Officiel Hjemmeside',
     ],
 
     'songs' => [
         '_' => 'Sange',
-        'count' => '1 sang|:tæl sange',
-        'exclusive' => 'osu! exklusive',
+        'count' => ':count_delimited sang|:count_delimited sange',
+        'exclusive' => 'osu! eksklusiv',
+    ],
+
+    'tracklist' => [
+        'title' => 'titel',
+        'length' => 'længde',
+        'bpm' => 'bpm',
+        'genre' => 'genre',
     ],
 ];

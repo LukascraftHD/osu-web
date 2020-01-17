@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -30,10 +30,6 @@ class ProductsController extends Controller
 
     public function show($id)
     {
-        if ($this->hasPendingCheckout()) {
-            return ujs_redirect(route('store.checkout.show'));
-        }
-
         $product = $this->getProduct($id);
         $cart = $this->userCart();
 
@@ -46,7 +42,7 @@ class ProductsController extends Controller
 
     private function getProduct($id)
     {
-        $product = Product::with('masterProduct')->where('enabled', true);
+        $product = Product::with('masterProduct')->available();
 
         return is_numeric($id)
             ? $product->findOrFail($id)

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,10 +21,14 @@
 namespace App\Models\Forum;
 
 use App\Exceptions\ModelNotSavedException;
+use App\Jobs\EsIndexDocument;
+use App\Jobs\UpdateUserForumCache;
 use App\Libraries\BBCodeForDB;
+use App\Libraries\Transactions\AfterCommit;
 use App\Models\Beatmapset;
 use App\Models\Elasticsearch;
 use App\Models\Log;
+use App\Models\Notification;
 use App\Models\User;
 use App\Traits\Validatable;
 use Carbon\Carbon;
@@ -32,11 +36,62 @@ use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 
-class Topic extends Model
+/**
+ * @property Beatmapset $beatmapset
+ * @property TopicCover $cover
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property \Illuminate\Database\Eloquent\Collection $featureVotes FeatureVote
+ * @property Forum $forum
+ * @property int $forum_id
+ * @property int $icon_id
+ * @property \Illuminate\Database\Eloquent\Collection $logs Log
+ * @property mixed $osu_lastreplytype
+ * @property int $osu_starpriority
+ * @property \Illuminate\Database\Eloquent\Collection $pollOptions PollOption
+ * @property \Illuminate\Database\Eloquent\Collection $pollVotes PollVote
+ * @property bool $poll_hide_results
+ * @property int $poll_last_vote
+ * @property int $poll_length
+ * @property mixed $poll_length_days
+ * @property int $poll_max_options
+ * @property int $poll_start
+ * @property string $poll_title
+ * @property bool $poll_vote_change
+ * @property \Illuminate\Database\Eloquent\Collection $posts Post
+ * @property bool $topic_approved
+ * @property int $topic_attachment
+ * @property int $topic_bumped
+ * @property int $topic_bumper
+ * @property int $topic_first_post_id
+ * @property string $topic_first_poster_colour
+ * @property string $topic_first_poster_name
+ * @property int $topic_id
+ * @property int $topic_last_post_id
+ * @property string $topic_last_post_subject
+ * @property int $topic_last_post_time
+ * @property string $topic_last_poster_colour
+ * @property int $topic_last_poster_id
+ * @property string $topic_last_poster_name
+ * @property int $topic_last_view_time
+ * @property int $topic_moved_id
+ * @property int $topic_poster
+ * @property int $topic_replies
+ * @property int $topic_replies_real
+ * @property int $topic_reported
+ * @property int $topic_status
+ * @property int $topic_time
+ * @property int $topic_time_limit
+ * @property string $topic_title
+ * @property int $topic_type
+ * @property int $topic_views
+ * @property \Illuminate\Database\Eloquent\Collection $userTracks TopicTrack
+ * @property \Illuminate\Database\Eloquent\Collection $watches TopicWatch
+ */
+class Topic extends Model implements AfterCommit
 {
     use Elasticsearch\TopicTrait, SoftDeletes, Validatable;
 
-    const DEFAULT_ORDER_COLUMN = 'topic_last_post_time';
+    const DEFAULT_SORT = 'new';
 
     const STATUS_LOCKED = 1;
     const STATUS_UNLOCKED = 0;
@@ -62,7 +117,6 @@ class Topic extends Model
 
     protected $table = 'phpbb_topics';
     protected $primaryKey = 'topic_id';
-    protected $guarded = [];
 
     public $timestamps = false;
 
@@ -73,6 +127,7 @@ class Topic extends Model
     private $_issueTags;
 
     protected $casts = [
+        'poll_hide_results' => 'boolean',
         'poll_vote_change' => 'boolean',
         'topic_approved' => 'boolean',
     ];
@@ -80,17 +135,17 @@ class Topic extends Model
     public static function createNew($forum, $params, $poll = null)
     {
         $topic = new static([
-            'forum_id' => $forum->forum_id,
             'topic_time' => Carbon::now(),
             'topic_title' => $params['title'] ?? null,
             'topic_poster' => $params['user']->user_id,
             'topic_first_poster_name' => $params['user']->username,
             'topic_first_poster_colour' => $params['user']->user_colour,
         ]);
+        $topic->forum()->associate($forum);
 
-        DB::transaction(function () use ($forum, $topic, $params, $poll) {
+        $topic->getConnection()->transaction(function () use ($forum, $topic, $params, $poll) {
             $topic->saveOrExplode();
-            $topic->addPostOrExplode($params['user'], $params['body']);
+            $topic->addPostOrExplode($params['user'], $params['body'], false);
 
             if ($poll !== null) {
                 $topic->poll($poll)->save();
@@ -105,7 +160,7 @@ class Topic extends Model
         return $topic->fresh();
     }
 
-    public function addPostOrExplode($poster, $body)
+    public function addPostOrExplode($poster, $body, $isReply = true)
     {
         $post = new Post([
             'post_text' => $body,
@@ -116,17 +171,15 @@ class Topic extends Model
             'post_time' => Carbon::now(),
         ]);
 
-        DB::transaction(function () use ($post) {
+        $this->getConnection()->transaction(function () use ($post, $isReply) {
             $post->saveOrExplode();
 
-            $this->refreshCache();
-
-            if ($this->forum !== null) {
-                $this->forum->refreshCache();
-            }
+            $this->postsAdded($isReply ? 1 : 0);
+            optional($this->forum)->postsAdded(1);
 
             if ($post->user !== null) {
                 $post->user->refreshForumCache($this->forum, 1);
+                $post->user->refresh();
             }
         });
 
@@ -137,7 +190,7 @@ class Topic extends Model
     {
         $this->validationErrors()->reset();
 
-        return DB::transaction(function () use ($post) {
+        return $this->getConnection()->transaction(function () use ($post) {
             if ($post->delete() === false) {
                 $message = $post->validationErrors()->toSentence();
                 $this->validationErrors()->addTranslated('post', $message);
@@ -146,17 +199,17 @@ class Topic extends Model
             }
 
             if ($this->posts()->exists() === true) {
-                $this->refreshCache();
+                $this->postsAdded(-1);
             } else {
                 $this->delete();
+                optional($this->forum)->topicsAdded(-1);
             }
 
-            if ($this->forum !== null) {
-                $this->forum->refreshCache();
-            }
+            optional($this->forum)->postsAdded(-1);
 
             if ($post->user !== null) {
                 $post->user->refreshForumCache($this->forum, -1);
+                $post->user->refresh();
             }
 
             return true;
@@ -165,21 +218,19 @@ class Topic extends Model
 
     public function restorePost($post)
     {
-        DB::transaction(function () use ($post) {
+        $this->getConnection()->transaction(function () use ($post) {
             $post->restore();
+
+            $this->postsAdded(1);
+            optional($this->forum)->postsAdded(1);
 
             if ($this->trashed()) {
                 $this->restore();
             }
 
-            $this->refreshCache();
-
-            if ($this->forum !== null) {
-                $this->forum->refreshCache();
-            }
-
             if ($post->user !== null) {
                 $post->user->refreshForumCache($this->forum, 1);
+                $post->user->refresh();
             }
         });
 
@@ -196,28 +247,31 @@ class Topic extends Model
             return false;
         }
 
-        return DB::transaction(function () use ($destinationForum) {
+        return $this->getConnection()->transaction(function () use ($destinationForum) {
             $originForum = $this->forum;
             $this->forum()->associate($destinationForum);
             $this->save();
 
-            $this->posts()->update(['forum_id' => $destinationForum->forum_id]);
+            $this->posts()->withTrashed()->update(['forum_id' => $this->forum_id]);
+
             $this->logs()->update(['forum_id' => $destinationForum->forum_id]);
             $this->userTracks()->update(['forum_id' => $destinationForum->forum_id]);
 
-            if ($originForum !== null) {
-                $originForum->refreshCache();
-            }
+            $visiblePostsCount = $this->posts()->count();
+            optional($originForum)->topicsAdded(-1);
+            optional($originForum)->postsAdded($visiblePostsCount * -1);
+            optional($this->forum)->topicsAdded(1);
+            optional($this->forum)->postsAdded($visiblePostsCount);
 
-            if ($this->forum !== null) {
-                $this->forum->refreshCache();
-            }
-
-            $users = User::whereIn('user_id', model_pluck($this->posts(), 'poster_id'))->get();
-
-            foreach ($users as $user) {
-                $user->refreshForumCache();
-            }
+            $this
+                ->posts()
+                ->withTrashed()
+                // this relies on dispatcher always reloading the model
+                ->select(['poster_id', 'post_id'])
+                ->each(function ($post) {
+                    dispatch(new UpdateUserForumCache($post->poster_id));
+                    dispatch(new EsIndexDocument($post));
+                });
 
             return true;
         });
@@ -251,7 +305,7 @@ class Topic extends Model
 
     public function posts()
     {
-        return $this->hasMany(Post::class, 'topic_id');
+        return $this->hasMany(Post::class);
     }
 
     public function forum()
@@ -261,32 +315,42 @@ class Topic extends Model
 
     public function cover()
     {
-        return $this->hasOne(TopicCover::class, 'topic_id');
+        return $this->hasOne(TopicCover::class);
     }
 
     public function userTracks()
     {
-        return $this->hasMany(TopicTrack::class, 'topic_id');
+        return $this->hasMany(TopicTrack::class);
     }
 
     public function logs()
     {
-        return $this->hasMany(Log::class, 'topic_id');
+        return $this->hasMany(Log::class);
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 
     public function featureVotes()
     {
-        return $this->hasMany(FeatureVote::class, 'topic_id');
+        return $this->hasMany(FeatureVote::class);
     }
 
     public function pollOptions()
     {
-        return $this->hasMany(PollOption::class, 'topic_id');
+        return $this->hasMany(PollOption::class);
     }
 
     public function pollVotes()
     {
-        return $this->hasMany(PollVote::class, 'topic_id');
+        return $this->hasMany(PollVote::class);
+    }
+
+    public function watches()
+    {
+        return $this->hasMany(TopicWatch::class);
     }
 
     public function getPollLastVoteAttribute($value)
@@ -297,6 +361,11 @@ class Topic extends Model
     public function setPollLastVoteAttribute($value)
     {
         $this->attributes['poll_last_vote'] = get_timestamp_or_zero($value);
+    }
+
+    public function getPollLengthDaysAttribute()
+    {
+        return $this->attributes['poll_length'] / 86400;
     }
 
     public function getPollStartAttribute($value)
@@ -371,12 +440,28 @@ class Topic extends Model
             return false;
         }
 
-        return parent::save($options);
+        return $this->getConnection()->transaction(function () use ($options) {
+            // creating new topic
+            if (!$this->exists && $this->forum !== null) {
+                $this->forum->topicsAdded(1);
+            }
+
+            // restoring topic
+            if ($this->isDirty('deleted_at') && $this->deleted_at === null) {
+                $this->forum->topicsAdded(1);
+            }
+
+            return parent::save($options);
+        });
     }
 
     public function isValid()
     {
         $this->validationErrors()->reset();
+
+        if ($this->isDirty('topic_title') && !present($this->topic_title)) {
+            $this->validationErrors()->add('topic_title', 'required');
+        }
 
         foreach (static::MAX_FIELD_LENGTHS as $field => $limit) {
             if ($this->isDirty($field)) {
@@ -469,27 +554,15 @@ class Topic extends Model
 
     public function scopePresetSort($query, $sort)
     {
-        switch ($sort[0] ?? null) {
+        $tieBreakerOrder = 'desc';
+
+        switch ($sort) {
             case 'feature-votes':
-                $sortField = 'osu_starpriority';
+                $query->orderBy('osu_starpriority', 'desc');
                 break;
         }
 
-        $sortField ?? ($sortField = static::DEFAULT_ORDER_COLUMN);
-
-        switch ($sort[1] ?? null) {
-            case 'asc':
-                $sortOrder = $sort[1];
-                break;
-        }
-
-        $sortOrder ?? ($sortOrder = 'desc');
-
-        $query->orderBy($sortField, $sortOrder);
-
-        if ($sortField !== static::DEFAULT_ORDER_COLUMN) {
-            $query->orderBy(static::DEFAULT_ORDER_COLUMN, 'desc');
-        }
+        $query->orderBy('topic_last_post_time', $tieBreakerOrder);
     }
 
     public function scopeRecent($query, $params = null)
@@ -516,9 +589,14 @@ class Topic extends Model
         $this->attributes['poll_title'] = (new BBCodeForDB($value))->generate();
     }
 
+    public function pollTitleRaw()
+    {
+        return bbcode_for_editor($this->poll_title);
+    }
+
     public function pollTitleHTML()
     {
-        return bbcode($this->poll_title, $this->posts->first()->bbcode_uid);
+        return bbcode($this->poll_title, $this->posts()->withTrashed()->first()->bbcode_uid);
     }
 
     public function pollEnd()
@@ -553,6 +631,11 @@ class Topic extends Model
         return $this->topic_status !== static::STATUS_UNLOCKED;
     }
 
+    public function isActive()
+    {
+        return $this->topic_last_post_time > Carbon::now()->subMonths(config('osu.forum.necropost_months'));
+    }
+
     public function markRead($user, $markTime)
     {
         if ($user === null) {
@@ -561,8 +644,12 @@ class Topic extends Model
 
         DB::beginTransaction();
 
-        $statusQuery = TopicTrack::where(['user_id' => $user->user_id, 'topic_id' => $this->topic_id]);
-        $status = $statusQuery->first();
+        $status = TopicTrack
+            ::where([
+                'user_id' => $user->user_id,
+                'topic_id' => $this->topic_id,
+            ])
+            ->first();
 
         if ($status === null) {
             // first time seeing the topic, create tracking entry
@@ -588,9 +675,7 @@ class Topic extends Model
 
             $this->increment('topic_views');
         } elseif ($status->mark_time < $markTime) {
-            // laravel doesn't like composite key ;_;
-            // and the setMarkTimeAttribute doesn't work here
-            $statusQuery->update(['mark_time' => $markTime->getTimeStamp()]);
+            $status->update(['mark_time' => $markTime]);
         }
 
         if ($this->topic_last_view_time < $markTime) {
@@ -603,12 +688,26 @@ class Topic extends Model
 
     public function isIssue()
     {
-        return in_array($this->forum_id, config('osu.forum.help_forum_ids'), true);
+        return in_array($this->forum_id, config('osu.forum.issue_forum_ids'), true);
+    }
+
+    public function postsAdded($count)
+    {
+        $this->getConnection()->transaction(function () use ($count) {
+            $this->fill([
+                'topic_replies' => db_unsigned_increment('topic_replies', $count),
+                'topic_replies_real' => db_unsigned_increment('topic_replies_real', $count),
+            ]);
+            $this->setFirstPostCache();
+            $this->setLastPostCache();
+
+            $this->save();
+        });
     }
 
     public function refreshCache()
     {
-        DB::transaction(function () {
+        $this->getConnection()->transaction(function () {
             $this->setPostsCountCache();
             $this->setFirstPostCache();
             $this->setLastPostCache();
@@ -649,7 +748,7 @@ class Topic extends Model
 
     public function setLastPostCache()
     {
-        $lastPost = $this->posts()->last()->first();
+        $lastPost = $this->posts()->last();
 
         if ($lastPost === null) {
             $this->topic_last_post_id = 0;
@@ -672,19 +771,6 @@ class Topic extends Model
                 $this->topic_last_poster_colour = $lastPost->user->user_colour;
             }
         }
-    }
-
-    public function setCover($path, $user)
-    {
-        if ($this->cover === null) {
-            TopicCover::upload($path, $user, $this);
-        } else {
-            $this->cover->storeFile($path);
-            $this->cover->user()->associate($user);
-            $this->cover->save();
-        }
-
-        return $this->fresh();
     }
 
     public function lock($lock = true)
@@ -717,6 +803,11 @@ class Topic extends Model
         $this->delete();
     }
 
+    public function allowsDoublePosting(): bool
+    {
+        return in_array($this->forum_id, config('osu.forum.double_post_allowed_forum_ids'), true);
+    }
+
     public function isDoublePostBy(User $user)
     {
         if ($user === null) {
@@ -731,16 +822,12 @@ class Topic extends Model
             $minHours = config('osu.forum.double_post_time.normal');
         }
 
-        return $this
-            ->topic_last_post_time
-            ->copy()
-            ->addHours($minHours)
-            ->isFuture();
+        return $this->topic_last_post_time > Carbon::now()->subHours($minHours);
     }
 
     public function isFeatureTopic()
     {
-        return $this->forum->isFeatureForum();
+        return $this->topic_type === static::TYPES['normal'] && $this->forum->isFeatureForum();
     }
 
     public function poll($poll = null)
@@ -796,5 +883,10 @@ class Topic extends Model
     public function toMetaDescription()
     {
         return "{$this->forum->toMetaDescription()} » {$this->topic_title}";
+    }
+
+    public function afterCommit()
+    {
+        dispatch(new EsIndexDocument($this));
     }
 }

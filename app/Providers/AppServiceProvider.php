@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,9 +20,15 @@
 
 namespace App\Providers;
 
+use App\Hashing\OsuHashManager;
+use App\Http\Middleware\RequireScopes;
 use App\Http\Middleware\StartSession;
+use App\Libraries\MorphMap;
 use App\Libraries\OsuAuthorize;
+use App\Libraries\OsuCookieJar;
+use App\Libraries\OsuMessageSelector;
 use Datadog;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\ServiceProvider;
 use Queue;
@@ -37,16 +43,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap(array_flip(MorphMap::MAP));
+
         Validator::extend('mixture', function ($attribute, $value, $parameters, $validator) {
             return preg_match('/[\d]/', $value) === 1 && preg_match('/[^\d\s]/', $value) === 1;
         });
 
         Queue::after(function (JobProcessed $event) {
             if (config('datadog-helper.enabled')) {
-                Datadog::increment(config('datadog-helper.prefix_web').'.queue.run', 1, ['queue' => $event->job->getQueue()]);
+                Datadog::increment(
+                    config('datadog-helper.prefix_web').'.queue.run',
+                    1,
+                    [
+                        'job' => $event->job->resolveName(),
+                        'queue' => $event->job->getQueue(),
+                    ]
+                );
             }
         });
+
+        $this->app->make('translator')->setSelector(new OsuMessageSelector);
     }
 
     /**
@@ -65,10 +81,28 @@ class AppServiceProvider extends ServiceProvider
             'App\Services\Registrar'
         );
 
-        $this->app->bind('hash', 'App\Hashing\OsuHasher');
+        $this->app->singleton('hash', function ($app) {
+            return new OsuHashManager($app);
+        });
+
+        $this->app->singleton('hash.driver', function ($app) {
+            return $app['hash']->driver();
+        });
 
         $this->app->singleton('OsuAuthorize', function () {
             return new OsuAuthorize();
+        });
+
+        $this->app->singleton(RequireScopes::class, function () {
+            return new RequireScopes;
+        });
+
+        $this->app->singleton('cookie', function ($app) {
+            $config = $app->make('config')->get('session');
+
+            return (new OsuCookieJar)->setDefaultPathAndDomain(
+                $config['path'], $config['domain'], $config['secure'], $config['same_site'] ?? null
+            );
         });
 
         // The middleware breaks without this. Not sure why.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,18 +19,12 @@
  */
 
 return [
+    'title_compact' => 'venner',
+    'too_many' => 'Det maksimale antal venner er nået',
+
     'buttons' => [
       'add' => 'tilføj ven',
+      'disabled' => 'følgere',
       'remove' => 'fjern ven',
     ],
-
-    'state' => [
-      'friends' => 'venner',
-      'mutual' => 'fælles',
-    ],
-
-    'title' => 'Venner',
-    'title_compact' => 'venner',
-
-    'too_many' => 'Maksimale antal venner nået.',
 ];

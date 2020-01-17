@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -30,7 +30,7 @@
 
     <div class="account-edit__input-groups">
         <div class="account-edit__input-group">
-            <label class="account-edit-entry" data-user-email-field="current_password">
+            <div class="account-edit-entry js-form-error--field">
                 <input
                     class="account-edit-entry__input"
                     name="user[current_password]"
@@ -43,11 +43,11 @@
                 </div>
 
                 <div class="account-edit-entry__error js-form-error--error"></div>
-            </label>
+            </div>
         </div>
 
         <div class="account-edit__input-group">
-            <label class="account-edit-entry" data-user-email-field="email">
+            <div class="account-edit-entry js-form-error--field">
                 <input
                     class="account-edit-entry__input js-form-confirmation"
                     name="user[user_email]"
@@ -59,12 +59,9 @@
                 </div>
 
                 <div class="account-edit-entry__error js-form-error--error"></div>
-            </label>
+            </div>
 
-            <label
-                class="account-edit-entry"
-                data-user-email-field="email_confirmation"
-            >
+            <div class="account-edit-entry js-form-error--field">
                 <input
                     class="account-edit-entry__input js-form-confirmation"
                     name="user[user_email_confirmation]"
@@ -76,7 +73,7 @@
                 </div>
 
                 <div class="account-edit-entry__error js-form-error--error"></div>
-            </label>
+            </div>
         </div>
 
         <div class="account-edit__input-group">
@@ -88,7 +85,7 @@
                         </div>
 
                         <div class="btn-osu-big__icon">
-                            <i class="fa fa-check"></i>
+                            <i class="fas fa-check"></i>
                         </div>
                     </div>
                 </button>

@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -22,11 +22,11 @@ preventUsernameSubmission = ->
 
 checkUsernameValidity = ->
   $status = $('#username-check-status')
-  requestedUsername = $('#username.form-control').val()
+  requestedUsername = $('.js-username-change-input').val()
 
   $.post laroute.route('users.check-username-availability'), username: requestedUsername
   .done (data) ->
-    return unless data.username == $('#username.form-control').val()
+    return unless data.username == $('.js-username-change-input').val()
 
     if data.available
       $('.js-store-add-to-cart').attr 'disabled', false
@@ -36,7 +36,7 @@ checkUsernameValidity = ->
     else
       preventUsernameSubmission()
 
-    $status.text data.message
+    $status.html data.message
     $status.toggleClass 'green-dark', data.available
     $status.toggleClass 'pink-dark', !data.available
   .fail (xhr) ->
@@ -45,20 +45,21 @@ checkUsernameValidity = ->
 
 debouncedCheckUsernameValidity = _.debounce checkUsernameValidity, 300
 
-$(document).on 'input', '.js-username-change #username.form-control', ->
+$(document).on 'input', '.js-username-change-input', (e) ->
+  input = e.currentTarget
   $status = $('#username-check-status')
-  requestedUsername = $('#username.form-control').val()
+  requestedUsername = input.value
 
   $status.removeClass 'green-dark'
   $status.removeClass 'pink-dark'
   preventUsernameSubmission()
 
   if requestedUsername.length == 0
-    $status.text Lang.get('store.username_change.check')
+    $status.text osu.trans('store.username_change.check')
   else
-    $status.text Lang.get('store.username_change.checking', username: requestedUsername)
+    $status.text osu.trans('store.username_change.checking', username: requestedUsername)
     debouncedCheckUsernameValidity()
 
 $(document).on 'turbolinks:load', ->
-  return if $('.js-username-change #username.form-control').length == 0
+  return if $('.js-username-change-input').length == 0
   preventUsernameSubmission()

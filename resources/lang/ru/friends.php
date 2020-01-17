@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,18 +19,12 @@
  */
 
 return [
+    'title_compact' => 'друзья',
+    'too_many' => 'Достигнут лимит количества друзей.',
+
     'buttons' => [
       'add' => 'добавить в друзья',
+      'disabled' => 'друзья',
       'remove' => 'удалить из друзей',
     ],
-
-    'state' => [
-      'friends' => 'друзья',
-      'mutual' => 'взаимные',
-    ],
-
-    'title' => 'Друзья',
-    'title_compact' => 'друзья',
-
-    'too_many' => 'Достигнут лимит количества друзей.',
 ];

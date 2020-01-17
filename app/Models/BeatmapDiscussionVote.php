@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -22,41 +22,52 @@ namespace App\Models;
 
 use Carbon\Carbon;
 
+/**
+ * @property BeatmapDiscussion $beatmapDiscussion
+ * @property int $beatmap_discussion_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property int $id
+ * @property int $score
+ * @property \Carbon\Carbon|null $updated_at
+ * @property User $user
+ * @property int|null $user_id
+ */
 class BeatmapDiscussionVote extends Model
 {
-    protected $guarded = [];
+    protected $touches = ['beatmapDiscussion'];
 
     public static function recentlyReceivedByUser($userId, $timeframeMonths = 3)
     {
-        $query = static::with('user')->where('created_at', '>', Carbon::now()->subMonth($timeframeMonths));
-        $query->whereIn('beatmap_discussion_id', BeatmapDiscussion::where('user_id', '=', $userId)->select('id'))
+        return static::where('beatmap_discussion_votes.created_at', '>', Carbon::now()->subMonth($timeframeMonths))
+            ->join('beatmap_discussions', 'beatmap_discussion_votes.beatmap_discussion_id', 'beatmap_discussions.id')
+            ->select('beatmap_discussion_votes.user_id')
+            ->selectRaw('sum(beatmap_discussion_votes.score) as score')
+            ->selectRaw('count(beatmap_discussion_votes.score) as count')
+            ->where('beatmap_discussions.user_id', $userId)
+            ->where('beatmap_discussions.updated_at', '>', Carbon::now()->subMonth($timeframeMonths))
             ->whereHas('user', function ($userQuery) {
                 $userQuery->default();
-            });
-
-        $result = $query->get()
-            ->groupBy('user_id')
-            ->sortByDesc(function ($obj, $key) {
-                return $obj->sum('score');
-            });
-
-        return $result;
+            })
+            ->groupBy('beatmap_discussion_votes.user_id')
+            ->orderByDesc('count')
+            ->get();
     }
 
     public static function recentlyGivenByUser($userId, $timeframeMonths = 3)
     {
-        $query = static::with(['beatmapDiscussion', 'beatmapDiscussion.user'])->where('created_at', '>', Carbon::now()->subMonth($timeframeMonths));
-        $query->where('user_id', $userId)->whereHas('user', function ($userQuery) {
-            $userQuery->default();
-        });
-
-        $result = $query->get()
-            ->groupBy('beatmapDiscussion.user_id')
-            ->sortByDesc(function ($obj, $key) {
-                return $obj->sum('score');
-            });
-
-        return $result;
+        return static::where('beatmap_discussion_votes.created_at', '>', Carbon::now()->subMonth($timeframeMonths))
+            ->join('beatmap_discussions', 'beatmap_discussion_votes.beatmap_discussion_id', 'beatmap_discussions.id')
+            ->select('beatmap_discussions.user_id')
+            ->selectRaw('sum(beatmap_discussion_votes.score) as score')
+            ->selectRaw('count(beatmap_discussion_votes.score) as count')
+            ->where('beatmap_discussion_votes.user_id', $userId)
+            ->where('beatmap_discussions.updated_at', '>', Carbon::now()->subMonth($timeframeMonths))
+            ->whereHas('beatmapDiscussion.user', function ($userQuery) {
+                $userQuery->default();
+            })
+            ->groupBy('beatmap_discussions.user_id')
+            ->orderByDesc('count')
+            ->get();
     }
 
     public static function search($rawParams = [])
@@ -115,10 +126,11 @@ class BeatmapDiscussionVote extends Model
             }
         }
 
-        // TODO: readd this when content becomes public
-        // $query->whereHas('user', function ($userQuery) {
-        //     $userQuery->default();
-        // });
+        if (!($rawParams['is_moderator'] ?? false)) {
+            $query->whereHas('user', function ($userQuery) {
+                $userQuery->default();
+            });
+        }
 
         return ['query' => $query, 'params' => $params];
     }

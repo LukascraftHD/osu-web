@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,11 +20,12 @@
 
 return [
     'show' => [
-        'fallback_translation' => '請求的頁面還沒有沒有被翻譯為選中語言 (:language). 正在顯示英文版本.',
-        'languages' => '語言',
+        'fallback_translation' => '請求的頁面還未被翻譯為選中語言 (:language)，現在正顯示英文版本。',
+        'incomplete_or_outdated' => '此頁面上的內容不完整或過時。 如果您能夠提供幫助，請考慮更新文章！',
         'missing' => '請求的頁面未找到',
         'missing_title' => '未找到',
-        'missing_translation' => '請求的頁面沒有當前語言的版本',
+        'missing_translation' => '請求的頁面沒有當前語言的版本。',
+        'needs_cleanup_or_rewrite' => '',
         'search' => '在 wiki 中搜索 :link 。',
         'toc' => '目錄',
 
@@ -33,9 +34,15 @@ return [
             'refresh' => '刷新',
         ],
 
-        'outdated' => [
-            '_' => '本文的內容與原文不同步，請查閱 :default 以獲得最準確最新的信息！',
+        'translation' => [
+            'legal' => '此翻譯僅為方便起見而提供。原本 :default 應是本文的唯一具有法律約束力的版本。',
+            'outdated' => '此頁面包含原始內容的過時翻譯。請檢查 :default 獲取最準確的資訊（及如果您能夠提供幫助，請考慮更新翻譯）！',
+
             'default' => '英文版本',
         ],
+    ],
+    'main' => [
+        'title' => '知識庫',
+        'subtitle' => '',
     ],
 ];

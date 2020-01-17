@@ -4,11 +4,24 @@ namespace App\Models;
 
 use DB;
 
+/**
+ * @property bool $foe
+ * @property bool $friend
+ * @property User $target
+ * @property User $user
+ * @property int $user_id
+ * @property int $zebra_id
+ */
 class UserRelation extends Model
 {
     protected $table = 'phpbb_zebra';
     public $timestamps = false;
-    protected $guarded = [];
+    protected $casts = [
+        'friend' => 'boolean',
+        'foe' => 'boolean',
+    ];
+
+    protected $primaryKeys = ['user_id', 'zebra_id'];
 
     public function user()
     {
@@ -20,9 +33,14 @@ class UserRelation extends Model
         return $this->belongsTo(User::class, 'zebra_id', 'user_id');
     }
 
+    public function scopeBlocks($query)
+    {
+        return $query->where('foe', true)->visible();
+    }
+
     public function scopeFriends($query)
     {
-        return $query->where('friend', true);
+        return $query->where('friend', true)->visible();
     }
 
     public function scopeOnline($query)
@@ -32,6 +50,13 @@ class UserRelation extends Model
                 ->from('phpbb_users')
                 ->whereRaw('phpbb_users.user_id = phpbb_zebra.zebra_id')
                 ->whereRaw('phpbb_users.user_lastvisit > UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL '.config('osu.user.online_window').' MINUTE))');
+        });
+    }
+
+    public function scopeVisible($query)
+    {
+        $query->whereHas('target', function ($q) {
+            $q->default();
         });
     }
 

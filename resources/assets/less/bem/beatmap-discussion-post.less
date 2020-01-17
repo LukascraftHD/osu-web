@@ -1,5 +1,5 @@
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -24,17 +24,12 @@
   @_discussion-text-size: @font-size--title-small-2;
   @_reply-text-size: @font-size--normal-2;
 
-  @_moderator-bg: @yellow-dark;
-  @_moderator-bg-hover: @yellow-darker;
-
-  @_owner-bg: @green-dark;
-  @_owner-bg-hover: @green-darker;
-
   @_content-gutter-base: 15px;
+
+  transition: background-color .1s ease-in-out;
 
   &--discussion {
     min-width: 0;
-    flex: none;
 
     @media @desktop {
       flex: 1;
@@ -42,7 +37,7 @@
   }
 
   &--new-reply {
-    background-color: #eee;
+    background-color: @osu-colour-b5;
     border-radius: 0 0 @border-radius-base @border-radius-base;
   }
 
@@ -50,6 +45,7 @@
     padding: 10px;
     display: flex;
     justify-content: flex-end;
+    background-color: transparent;
   }
 
   &--unread {
@@ -63,6 +59,7 @@
 
   &__action {
     margin: 0 5px;
+    text-transform: lowercase;
 
     &--button {
       .reset-input();
@@ -76,6 +73,7 @@
     &--cancel {
       .reset-input();
       position: absolute;
+      color: @osu-colour-f1;
       top: 0px;
       right: 0px;
       width: @beatmap-discussion--reply-padding;
@@ -106,26 +104,15 @@
   }
 
   &__avatar {
+    flex: none;
     width: @beatmap-discussion--avatar-size;
     height: @beatmap-discussion--avatar-size;
-    flex: none;
+    margin-bottom: 5px;
 
-    .@{_top}--new-reply & {
-      margin-bottom: 5px;
-
-      @media @desktop {
-        margin-right: 10px;
-        margin-bottom: 0;
-      }
+    @media @desktop {
+      margin-right: 10px;
+      margin-bottom: 0;
     }
-  }
-
-  &__avatar-container {
-    margin-right: 10px;
-    flex: none;
-    display: flex;
-    flex-direction: column;
-    width: @beatmap-discussion--avatar-size;
   }
 
   &__content {
@@ -141,6 +128,12 @@
     }
 
     .@{_top}--reply & {
+      // override padding for discussion previews
+      .beatmap-discussion--preview &,
+      .beatmap-discussion-review-post-embed & {
+        padding: 10px @_content-gutter-base;
+      }
+
       @media @desktop {
         padding-left: @beatmap-discussion--reply-padding;
         padding-right: @beatmap-discussion--reply-padding;
@@ -161,6 +154,7 @@
       display: flex;
       align-items: flex-end;
       font-size: @font-size--normal;
+      color: @osu-colour-f1;
     }
 
     .@{_top}--reply & {
@@ -177,9 +171,9 @@
   &__info {
     font-size: @_info-text-size;
     margin-right: 10px;
+    color: @osu-colour-f1;
 
     &--edited {
-      color: @gray-light;
       font-style: italic;
     }
   }
@@ -191,7 +185,6 @@
     .@{_top}--reply & {
       &::after {
         content: '';
-        background-color: #eee;
         height: 1px;
         align-self: center;
         flex: 1;
@@ -200,13 +193,17 @@
   }
 
   &__info-user {
+    .link-plain();
+    .link-default();
+    opacity: 0.5;
     font-weight: 600;
   }
 
   &__message {
     .content-font();
-    word-wrap: break-word;
+    word-break: break-word;
     margin-bottom: 10px;
+    color: white;
 
     .@{_top}--discussion & {
       font-size: @_discussion-text-size;
@@ -217,8 +214,12 @@
     }
 
     .@{_top}--deleted & {
-      opacity: 0.75;
+      opacity: 0.5;
       font-style: italic;
+    }
+
+    &::placeholder {
+      color: @osu-colour-f1;
     }
 
     &--editor {
@@ -246,128 +247,6 @@
 
     @media @desktop {
       flex: 1;
-    }
-  }
-
-  &__timestamp {
-    .link-plain();
-
-    border-radius: @border-radius-large;
-    padding: 1px 5px;
-    background-color: #eee;
-    font-weight: 600;
-    font-size: 85%;
-    color: #444;
-
-    .link-hover({
-      background-color: #ddd;
-      color: #444;
-    });
-  }
-
-  &__user {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    margin: 0 5px;
-    height: @beatmap-discussion--avatar-size;
-
-    @media @desktop {
-      flex: none;
-    }
-  }
-
-  &__user-badge {
-    border-radius: @border-radius-large;
-    font-size: @font-size--small;
-    color: #fff;
-    padding: 1px 5px;
-    flex: none;
-    margin-top: 5px;
-    text-transform: uppercase;
-
-    .@{_top}--admin & {
-      background-color: @_moderator-bg;
-    }
-
-    .@{_top}--bng & {
-      background-color: @_moderator-bg;
-    }
-
-    .@{_top}--owner & {
-      background-color: @_owner-bg;
-    }
-
-    .@{_top}--qat & {
-      background-color: @_moderator-bg;
-    }
-  }
-
-  &__user-container {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 5px;
-    flex: none;
-
-    @media @desktop {
-      margin-bottom: 0;
-      margin-right: 10px;
-    }
-
-    .link-plain();
-    color: @user-color-default;
-
-    .link-hover({
-      color: @user-color-default;
-    });
-  }
-
-  &__user-stripe {
-    align-self: stretch;
-    background-color: @user-color-default;
-    border-radius: 1px;
-    flex: none;
-    width: 2px;
-
-    .@{_top}--admin & {
-      background-color: @_moderator-bg;
-    }
-
-    .@{_top}--bng & {
-      background-color: @_moderator-bg;
-    }
-
-    .@{_top}--owner & {
-      background-color: @_owner-bg;
-    }
-
-    .@{_top}--qat & {
-      background-color: @_moderator-bg;
-    }
-  }
-
-  &__user-text {
-    font-size: @font-size--normal-2;
-    font-weight: bold;
-    font-style: italic;
-    max-width: 120px;
-
-    .@{_top}--admin & {
-      color: @_moderator-bg;
-    }
-
-    .@{_top}--bng & {
-      color: @_moderator-bg;
-    }
-
-    .@{_top}--owner & {
-      color: @_owner-bg;
-    }
-
-    .@{_top}--qat & {
-      color: @_moderator-bg;
     }
   }
 }

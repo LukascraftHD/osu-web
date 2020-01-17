@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -28,6 +28,22 @@ abstract class Controller extends BaseController
 {
     protected $section = 'store';
 
+    protected $pendingCheckout;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::check()) {
+                $pendingCheckouts = Order::where('user_id', Auth::user()->getKey())->processing();
+                view()->share('pendingCheckout', $pendingCheckouts->first());
+            }
+
+            return $next($request);
+        });
+
+        parent::__construct();
+    }
+
     /**
      * Gets the cart of the currently logged in user.
      *
@@ -38,17 +54,12 @@ abstract class Controller extends BaseController
     protected function userCart()
     {
         if (Auth::check()) {
-            return Order::cart(Auth::user());
+            return Order::cart(Auth::user()) ?? new Order(['user_id' => Auth::user()->user_id]);
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function hasPendingCheckout()
+    protected function isAllowRestrictedUsers()
     {
-        $cart = $this->userCart();
-
-        return $cart === null ? false : $cart->isProcessing();
+        return config('store.allow_restricted_users');
     }
 }

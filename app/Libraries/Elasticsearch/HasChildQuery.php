@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,15 +20,17 @@
 
 namespace App\Libraries\Elasticsearch;
 
-class HasChildQuery implements Queryable
-{
-    use HasSearch;
+use App\Libraries\Search\EmptySearchParams;
 
+class HasChildQuery extends HasSearch implements Queryable
+{
     protected $name;
     protected $scoreMode;
 
     public function __construct(string $type, string $name)
     {
+        parent::__construct(new EmptySearchParams);
+
         $this->name = $name;
         $this->type = $type;
     }
@@ -46,18 +48,17 @@ class HasChildQuery implements Queryable
     /**
      * {@inheritdoc}
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         // some of the parameters that normally go in body get moved into
         // inner_hits in join queries.
-
-        $pageParams = $this->getPaginationParams();
-
         $inner = [
             'name' => $this->name,
-            'from' => $pageParams['from'],
-            'size' => $pageParams['size'],
-            'sort' => $this->sort,
+            'from' => $this->params->from,
+            'size' => $this->getQuerySize(),
+            'sort' => array_map(function ($sort) {
+                return $sort->toArray();
+            }, $this->params->sorts),
         ];
 
         if (isset($this->highlight)) {

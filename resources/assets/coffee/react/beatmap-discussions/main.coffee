@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -16,15 +16,25 @@
 #    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-{a, div, h1, p} = ReactDOMFactories
+import { Discussions } from './discussions'
+import { Events } from './events'
+import { Header } from './header'
+import { ModeSwitcher } from './mode-switcher'
+import { NewDiscussion } from './new-discussion'
+import { BackToTop } from 'back-to-top'
+import * as React from 'react'
+import { div } from 'react-dom-factories'
+import { DiscussionsContext } from 'beatmap-discussions/discussions-context'
+import { BeatmapsContext } from 'beatmap-discussions/beatmaps-context'
+
 el = React.createElement
 
-modeSwitcher = document.getElementsByClassName('js-mode-switcher')
-newDiscussion = document.getElementsByClassName('js-new-discussion')
-
-class BeatmapDiscussions.Main extends React.PureComponent
+export class Main extends React.PureComponent
   constructor: (props) ->
     super props
+
+    @modeSwitcherRef = React.createRef()
+    @newDiscussionRef = React.createRef()
 
     @checkNewTimeoutDefault = 10000
     @checkNewTimeoutMax = 60000
@@ -33,23 +43,27 @@ class BeatmapDiscussions.Main extends React.PureComponent
     @xhr = {}
     @state = JSON.parse(props.container.dataset.beatmapsetDiscussionState ? null)
     @restoredState = @state?
+    # FIXME: update url handler to recognize this instead
+    @focusNewDiscussion = document.location.hash == '#new'
 
     if !@restoredState
       beatmapset = props.initial.beatmapset
-
+      reviewsEnabled = props.initial.reviews_enabled ? false
+      showDeleted = true
       readPostIds = []
 
       for discussion in beatmapset.discussions
         for post in discussion.posts ? []
           readPostIds.push post.id
 
-      @state = {beatmapset, currentUser, readPostIds}
+      @state = {beatmapset, currentUser, readPostIds, reviewsEnabled, showDeleted}
 
     # Current url takes priority over saved state.
     query = @queryFromLocation(@state.beatmapset.discussions)
     @state.currentMode = query.mode
     @state.currentFilter = query.filter
     @state.currentBeatmapId = query.beatmapId if query.beatmapId?
+    @state.selectedUserId = query.user
 
 
   componentDidMount: =>
@@ -58,6 +72,8 @@ class BeatmapDiscussions.Main extends React.PureComponent
     $.subscribe 'beatmapsetDiscussions:update.beatmapDiscussions', @update
     $.subscribe 'beatmapDiscussion:jump.beatmapDiscussions', @jumpTo
     $.subscribe 'beatmapDiscussionPost:markRead.beatmapDiscussions', @markPostRead
+    $.subscribe 'beatmapDiscussionPost:toggleShowDeleted.beatmapDiscussions', @toggleShowDeleted
+
     $(document).on 'ajax:success.beatmapDiscussions', '.js-beatmapset-discussion-update', @ujsDiscussionUpdate
     $(document).on 'click.beatmapDiscussions', '.js-beatmap-discussion--jump', @jumpToClick
     $(document).on 'turbolinks:before-cache.beatmapDiscussions', @saveStateToContainer
@@ -68,9 +84,16 @@ class BeatmapDiscussions.Main extends React.PureComponent
 
   componentWillUpdate: =>
     @cache = {}
+    @focusNewDiscussion = false
 
 
-  componentDidUpdate: =>
+  componentDidUpdate: (_prevProps, prevState) =>
+    return if prevState.currentBeatmapId == @state.currentBeatmapId &&
+      prevState.currentFilter == @state.currentFilter &&
+      prevState.currentMode == @state.currentMode &&
+      prevState.selectedUserId == @state.selectedUserId &&
+      prevState.showDeleted == @state.showDeleted
+
     Turbolinks.controller.advanceHistory @urlFromState()
 
 
@@ -84,7 +107,7 @@ class BeatmapDiscussions.Main extends React.PureComponent
 
   render: =>
     div className: 'osu-layout osu-layout--full',
-      el BeatmapDiscussions.Header,
+      el Header,
         beatmaps: @groupedBeatmaps()
         beatmapset: @state.beatmapset
         currentBeatmap: @currentBeatmap()
@@ -92,21 +115,25 @@ class BeatmapDiscussions.Main extends React.PureComponent
         currentFilter: @state.currentFilter
         currentUser: @state.currentUser
         discussions: @discussions()
+        discussionStarters: @discussionStarters()
         events: @state.beatmapset.events
         mode: @state.currentMode
+        selectedUserId: @state.selectedUserId
         users: @users()
 
-      el BeatmapDiscussions.ModeSwitcher,
+      el ModeSwitcher,
+        innerRef: @modeSwitcherRef
         mode: @state.currentMode
         beatmapset: @state.beatmapset
         currentBeatmap: @currentBeatmap()
         currentDiscussions: @currentDiscussions()
         currentFilter: @state.currentFilter
+        reviewsEnabled: @state.reviewsEnabled
 
       if @state.currentMode == 'events'
         div
           className: 'osu-layout__section osu-layout__section--extra'
-          el BeatmapDiscussions.Events,
+          el Events,
             events: @state.beatmapset.events
             users: @users()
             discussions: @discussions()
@@ -114,22 +141,36 @@ class BeatmapDiscussions.Main extends React.PureComponent
       else
         div
           className: 'osu-layout__section osu-layout__section--extra'
-          el BeatmapDiscussions.NewDiscussion,
-            beatmapset: @state.beatmapset
-            currentUser: @state.currentUser
-            currentBeatmap: @currentBeatmap()
-            currentDiscussions: @currentDiscussions()
-            mode: @state.currentMode
+          # TODO: toggle to the review editor instead (when it exists)
+          if @state.currentMode != 'reviews'
+            el NewDiscussion,
+              beatmapset: @state.beatmapset
+              currentUser: @state.currentUser
+              currentBeatmap: @currentBeatmap()
+              currentDiscussions: @currentDiscussions()
+              innerRef: @newDiscussionRef
+              mode: @state.currentMode
+              pinned: @state.pinnedNewDiscussion
+              setPinned: @setPinnedNewDiscussion
+              stickTo: @modeSwitcherRef
+              autoFocus: @focusNewDiscussion
 
-          el BeatmapDiscussions.Discussions,
-            beatmapset: @state.beatmapset
-            currentBeatmap: @currentBeatmap()
-            currentDiscussions: @currentDiscussions()
-            currentFilter: @state.currentFilter
-            currentUser: @state.currentUser
-            mode: @state.currentMode
-            readPostIds: @state.readPostIds
-            users: @users()
+          el DiscussionsContext.Provider,
+            value: @discussions()
+            el BeatmapsContext.Provider,
+              value: @beatmaps()
+              el Discussions,
+                beatmapset: @state.beatmapset
+                currentBeatmap: @currentBeatmap()
+                currentDiscussions: @currentDiscussions()
+                currentFilter: @state.currentFilter
+                currentUser: @state.currentUser
+                mode: @state.currentMode
+                readPostIds: @state.readPostIds
+                showDeleted: @state.showDeleted
+                users: @users()
+
+      el BackToTop
 
 
   beatmaps: =>
@@ -179,11 +220,13 @@ class BeatmapDiscussions.Main extends React.PureComponent
 
     countsByBeatmap = {}
     countsByPlaymode = {}
+    totalHype = 0
     unresolvedIssues = 0
     byMode =
       timeline: []
       general: []
       generalAll: []
+      reviews: []
     byFilter =
       deleted: {}
       hype: {}
@@ -193,45 +236,50 @@ class BeatmapDiscussions.Main extends React.PureComponent
       praises: {}
       resolved: {}
       total: {}
+    timelineAllUsers = []
 
     for own mode, _items of byMode
       for own _filter, modes of byFilter
         modes[mode] = {}
 
+    for own _id, d of @discussions()
+      if !d.deleted_at?
+        totalHype++ if d.message_type == 'hype'
 
-    for d in @state.beatmapset.discussions
-      # skipped discussion
-      # - not privileged (deleted discussion)
-      # - deleted beatmap
-      continue if _.isEmpty(d)
+        if d.can_be_resolved && !d.resolved
+          beatmap = @beatmaps()[d.beatmap_id]
 
-      if !d.deleted_at? && d.can_be_resolved && !d.resolved
-        beatmap = @beatmaps()[d.beatmap_id]
+          if !d.beatmap_id? || (beatmap? && !beatmap.deleted_at?)
+            unresolvedIssues++
 
-        if !d.beatmap_id? || (beatmap? && !beatmap.deleted_at?)
-          unresolvedIssues++
+          if beatmap?
+            countsByBeatmap[beatmap.id] ?= 0
+            countsByBeatmap[beatmap.id]++
 
-        if beatmap?
-          countsByBeatmap[beatmap.id] ?= 0
-          countsByBeatmap[beatmap.id]++
+            if !beatmap.deleted_at?
+              countsByPlaymode[beatmap.mode] ?= 0
+              countsByPlaymode[beatmap.mode]++
 
-          if !beatmap.deleted_at?
-            countsByPlaymode[beatmap.mode] ?= 0
-            countsByPlaymode[beatmap.mode]++
-
-
-      mode =
+      if d.message_type == 'review'
+        mode = 'reviews'
+      else
         if d.beatmap_id?
           if d.beatmap_id == @currentBeatmap().id
             if d.timestamp?
-              'timeline'
+              mode = 'timeline'
+              timelineAllUsers.push d
             else
-              'general'
+              mode = 'general'
+          else
+            mode = null
         else
-          'generalAll'
+          mode = 'generalAll'
 
       # belongs to different beatmap, excluded
       continue unless mode?
+
+      # skip if filtering users
+      continue if @state.selectedUserId? && d.user_id != @state.selectedUserId
 
       filters = ['total']
 
@@ -262,12 +310,28 @@ class BeatmapDiscussions.Main extends React.PureComponent
     timeline = byMode.timeline
     general = byMode.general
     generalAll = byMode.generalAll
+    reviews = byMode.reviews
 
-    @cache.currentDiscussions = {general, generalAll, timeline, byFilter, countsByBeatmap, countsByPlaymode, unresolvedIssues}
+    @cache.currentDiscussions = {general, generalAll, timeline, reviews, timelineAllUsers, byFilter, countsByBeatmap, countsByPlaymode, totalHype, unresolvedIssues}
 
 
   discussions: =>
-    @cache.discussions ?= _.keyBy @state.beatmapset.discussions, 'id'
+    # skipped discussions
+    # - not privileged (deleted discussion)
+    # - deleted beatmap
+    @cache.discussions ?= _ @state.beatmapset.discussions
+                            .filter (d) -> !_.isEmpty(d)
+                            .keyBy 'id'
+                            .value()
+
+
+  discussionStarters: =>
+    _ @discussions()
+      .map 'user_id'
+      .uniq()
+      .map (user_id) => @users()[user_id]
+      .orderBy (user) -> user.username.toLocaleLowerCase()
+      .value()
 
 
   groupedBeatmaps: (discussionSet) =>
@@ -293,15 +357,20 @@ class BeatmapDiscussions.Main extends React.PureComponent
       else
         BeatmapDiscussionHelper.DEFAULT_FILTER
 
+    if @state.selectedUserId? && @state.selectedUserId != discussion.user_id
+      newState.selectedUserId = null
+
     newState.callback = =>
       $.publish 'beatmapDiscussionEntry:highlight', id: discussion.id
 
       target = $(".js-beatmap-discussion-jump[data-id='#{id}']")
-      offset = 0
-      for header in [modeSwitcher, newDiscussion] when header[0]?
-        offset += header[0].getBoundingClientRect().height * -1
 
-      $(window).stop().scrollTo target, 500, offset: offset
+      return if target.length == 0
+
+      offsetTop = target.offset().top - @modeSwitcherRef.current.getBoundingClientRect().height
+      offsetTop -= @newDiscussionRef.current.getBoundingClientRect().height if @state.pinnedNewDiscussion
+
+      $(window).stop().scrollTo window.stickyHeader.scrollOffset(offsetTop), 500
 
     @update null, newState
 
@@ -344,7 +413,26 @@ class BeatmapDiscussions.Main extends React.PureComponent
     @update e, playmode: mode
 
 
-  update: (_e, {mode, callback, beatmapId, playmode, beatmapset, watching, filter}) =>
+  setPinnedNewDiscussion: (pinned) =>
+    @setState pinnedNewDiscussion: pinned
+
+
+  toggleShowDeleted: =>
+    @setState showDeleted: !@state.showDeleted
+
+
+  update: (_e, options) =>
+    {
+      callback
+      mode
+      modeIf
+      beatmapId
+      playmode
+      beatmapset
+      watching
+      filter
+      selectedUserId
+    } = options
     newState = {}
 
     if beatmapset?
@@ -369,7 +457,8 @@ class BeatmapDiscussions.Main extends React.PureComponent
         newState.currentFilter = filter
 
     if mode? && mode != @state.currentMode
-      newState.currentMode = mode
+      if !modeIf? || modeIf == @state.currentMode
+        newState.currentMode = mode
 
       # switching to events:
       # - record last filter, to be restored when setMode is called
@@ -384,6 +473,8 @@ class BeatmapDiscussions.Main extends React.PureComponent
       else if @state.currentMode == 'events'
         newState.currentFilter = @lastFilter ? 'total'
 
+    newState.selectedUserId = selectedUserId if selectedUserId != undefined # need to setState if null
+
     @setState newState, callback
 
 
@@ -392,6 +483,7 @@ class BeatmapDiscussions.Main extends React.PureComponent
       beatmap: @currentBeatmap()
       mode: @state.currentMode
       filter: @state.currentFilter
+      user: @state.selectedUserId
 
 
   users: =>

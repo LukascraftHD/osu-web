@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -28,7 +28,7 @@ return [
     ],
 
     'events' => [
-        'empty' => '还没有事件。。。',
+        'empty' => '目前还没有什么事件……呢。',
     ],
 
     'index' => [
@@ -36,9 +36,22 @@ return [
         'title' => '谱面讨论',
 
         'form' => [
+            '_' => '搜索',
             'deleted' => '包含已经删除的讨论',
+            'only_unresolved' => '只显示未解决的讨论',
+            'types' => '评论类型',
+            'username' => '用户名',
 
-            'user' => [ //上下文
+            'beatmapset_status' => [
+                '_' => '谱面状态',
+                'all' => '所有',
+                'disqualified' => '丧失 资格',
+                'never_qualified' => '从不合格',
+                'qualified' => '合格',
+                'ranked' => '排名',
+            ],
+
+            'user' => [
                 'label' => '用户',
                 'overview' => '活动总览',
             ],
@@ -49,7 +62,7 @@ return [
         'created_at' => '发帖时间',
         'deleted_at' => '删帖时间',
         'message_type' => '类型',
-        'permalink' => '静态链接',
+        'permalink' => '永久链接',
     ],
 
     'nearby_posts' => [
@@ -64,17 +77,25 @@ return [
         ],
     ],
 
+    'review' => [
+        'go_to_parent' => '',
+        'go_to_child' => '查看讨论',
+    ],
+
     'system' => [
         'resolved' => [
             'true' => '被 :user 标记为 “已解决”',
-            'false' => '被 :user 标记为 “未解决”',
+            'false' => '被 :user 重新打开',
         ],
     ],
 
-    'user' => [
-        'admin' => '管理员',
-        'bng' => '谱面管理团队',
-        'owner' => '谱面作者',
-        'qat' => '质量保证团队',
+    'timestamp_display' => [
+        'general' => '',
+        'general_all' => '',
+    ],
+
+    'user_filter' => [
+        'everyone' => '所有人',
+        'label' => '按用户筛选',
     ],
 ];

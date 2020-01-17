@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,47 +19,68 @@
  */
 
 return [
+    'require_login' => 'Log venligst ind for at fortsætte.',
+    'require_verification' => 'Verificer venligst for at fortsætte.',
+    'restricted' => "Det kan du ikke gøre, når du er tilbageholdt.",
+    'silenced' => "Det kan du ikke gøre, når du er mutet.",
+    'unauthorized' => 'Adgang nægtet.',
+
     'beatmap_discussion' => [
         'destroy' => [
-            'is_hype' => 'Kan ikke ophæve hyping.',
+            'is_hype' => 'Kan ikke fortryde hyping.',
             'has_reply' => 'Kan ikke slette en diskussion med svar',
         ],
         'nominate' => [
             'exhausted' => 'Du har nået dit maksimale antal nomineringer i dag, prøv igen i morgen!',
+            'full_bn_required' => 'Du skal være en fuld nominator for at kunne udføre denne kvalificerende nominering.',
+            'full_bn_required_hybrid' => 'Du skal være en fuld nominator for at kunne nominere beatmap sæt med mere end en spiltilstand.',
+            'incorrect_state' => 'Fejl i udføringen af handlingen, prøv at genindlæse siden.',
+            'owner' => "Kan ikke nominere din egen beatmap.",
         ],
         'resolve' => [
-            'not_owner' => 'Kun trådens person af oprindelse og beatmap ejer kan løse en diskussion.',
+            'not_owner' => 'Kun den oprindelige ejer af tråden og beatmap-ejeren kan løse en diskussion.',
+        ],
+
+        'store' => [
+            'mapper_note_wrong_user' => 'Kun ejeren af dette beatmap eller en nominator/NAT-medlem kan lave notes opslag.',
         ],
 
         'vote' => [
-            'limit_exceeded' => 'Vent venligst et stykke tid med at stemme igen.',
-            'owner' => 'Du kan ikke stemme på din egen diskussion!',
+            'limit_exceeded' => 'Vent venligst før du stemmer igen',
+            'owner' => "Du kan ikke stemme på din egen diskussion!",
+            'wrong_beatmapset_state' => 'Kan kun stemme på diskussioner fra afventende beatmaps.',
         ],
     ],
 
     'beatmap_discussion_post' => [
+        'destroy' => [
+            'not_owner' => 'Du kan kun slette dine egne opslag.',
+            'resolved' => 'Du kan ikke slette et opslag fra en løst diskussion.',
+            'system_generated' => 'Automatisk genererede oplsag kan ikke slettes.',
+        ],
+
         'edit' => [
-            'system_generated' => 'Automatisk genererede opslag kan ikke slettes.',
-            'not_owner' => 'Kun ejeren af dette opslag kan ændre det.',
+            'not_owner' => 'Kun ejeren af dette opslag kan redigere det.',
+            'resolved' => 'Du kan ikke redigere et opslag fra en løst diskussion.',
+            'system_generated' => 'Automatisk genererede opslag kan ikke redigeres.',
+        ],
+
+        'store' => [
+            'beatmapset_locked' => 'Dette beatmap er låst for diskussion.',
         ],
     ],
 
     'chat' => [
-        'channel' => [
-            'read' => [
-                'no_access' => 'Adgang til den anmodede kanal er nægtet.',
-            ],
-        ],
-        'message' => [
-            'send' => [
-                'channel' => [
-                    'no_access' => 'Adgang til den anmodede kanal er nødvendig.',
-                    'moderated' => 'Kanal er i øjeblikket modereret.',
-                    'not_lazer' => 'Du kan i øjeblikket kun tale i #lazer.',
-                ],
+        'blocked' => 'Du kan ikke sende denne besked, enten har brugeren blokeret dig eller du har blokeret brugeren.',
+        'friends_only' => 'Brugeren blokerer beskeder fra folk der ikke er på deres venneliste.',
+        'moderated' => 'Denne kanal er i øjeblikket modereret.',
+        'no_access' => 'Du har ikke adgang til denne kanal.',
+        'restricted' => 'Du kan ikke sende beskeder når du er enten muted, begrænset eller banned.',
+    ],
 
-                'not_allowed' => 'Kan ikke sende besked når bannet/begrænset/mutet.',
-            ],
+    'comment' => [
+        'update' => [
+            'deleted' => "Kan ikke redigere slettede opslag.",
         ],
     ],
 
@@ -68,34 +89,43 @@ return [
     ],
 
     'forum' => [
+        'moderate' => [
+            'no_permission' => 'Ingen tilladelse til at moderere dette forum.',
+        ],
+
         'post' => [
             'delete' => [
-                'only_last_post' => 'Kun sidste opslag kan blive slettet.',
+                'only_last_post' => 'Kun sidste opslag kan slettes.',
                 'locked' => 'Kan ikke slette opslag fra låste emner.',
-                'no_forum_access' => 'Adgang til det anmodede forum er nødvendig.',
-                'not_owner' => 'Kun ejeren af dette opslag kan slette opslaget.',
+                'no_forum_access' => 'Adgang til det anmodede forum er nødvendigt.',
+                'not_owner' => 'Kun ejeren af dette opslag kan slette det.',
             ],
 
             'edit' => [
-                'deleted' => 'Kan ikke ændre slettet opslag',
+                'deleted' => 'Kan ikke redigere slettede opslag.',
                 'locked' => 'Dette opslag er låst fra at blive redigeret.',
-                'no_forum_access' => 'Adgang til det anmodede forum er nødvendig.',
-                'not_owner' => 'Kun ejeren af dette opslag kan slette opslaget.',
-                'topic_locked' => 'Kan ikke slette opslag fra låste emner.',
+                'no_forum_access' => 'Adgang til det anmodede forum er nødvendigt.',
+                'not_owner' => 'Kun ejeren af dette opslag kan redigere det.',
+                'topic_locked' => 'Kan ikke redigere opslag fra låste emner.',
+            ],
+
+            'store' => [
+                'play_more' => 'Prøv at spille spillet før du skriver i forumet, tak! Hvis du har et problem med at få spillet op at køre, bedes du skrive i \'Hjælp og Support\' forumet.',
+                'too_many_help_posts' => "Du skal spille mere, før du kan lave flere indlæg. Hvis du stadig har problemer med at få spillet op at køre, skal du sende en email til support@ppy.sh", // FIXME: unhardcode email address.
             ],
         ],
 
         'topic' => [
             'reply' => [
-                'double_post' => 'Du har lige slået dette op! Vent et stykke tid, eller rediger dit seneste opslag.',
-                'locked' => 'Kan ikke svare til en låst tråd.',
+                'double_post' => 'Rediger din seneste besked i stedet for at lave en ny.',
+                'locked' => 'Kan ikke svare en låst tråd.',
                 'no_forum_access' => 'Adgang til det anmodede forum er nødvendig.',
                 'no_permission' => 'Du har ikke tilladelse til at svare.',
 
                 'user' => [
                     'require_login' => 'Log venligst ind for at svare.',
-                    'restricted' => 'Du kan ikke svare, når du er begrænset.',
-                    'silenced' => 'Du kan ikke svare, når dui er mutet.',
+                    'restricted' => "Du kan ikke svare, når du er begrænset.",
+                    'silenced' => "Du kan ikke svare, når du er mutet.",
                 ],
             ],
 
@@ -108,24 +138,28 @@ return [
             'vote' => [
                 'no_forum_access' => 'Adgang til det anmodede forum er nødvendig.',
                 'over' => 'Stemmeafgivningen er slut og kan ikke stemmes på længere.',
-                'voted' => 'Det er ikke tilladt at ændre stemme.',
+                'play_more' => 'Du skal spille mere før du kan stemme på forumet.',
+                'voted' => 'Det er ikke tilladt at ændre din stemme.',
 
                 'user' => [
                     'require_login' => 'Log venligst ind for at stemme.',
-                    'restricted' => 'Du kan ikke stemme, når du er begrænset.',
-                    'silenced' => 'Du kan ikke stemme, når du er mutet.',
+                    'restricted' => "Du kan ikke stemme, når du er begrænset.",
+                    'silenced' => "Du kan ikke stemme, når du er mutet.",
                 ],
             ],
 
             'watch' => [
-                'no_forum_access' => 'Adgang til det anmodede forum er nødvendig.',
+                'no_forum_access' => 'Adgang til det anmodede forum er nødvendigt.',
             ],
         ],
 
         'topic_cover' => [
             'edit' => [
-                'uneditable' => 'Ugyldigt cover valgt.',
-                'not_owner' => 'Kun ejeren kan redigere dette cover.',
+                'uneditable' => 'Ugyldigt cover-billede valgt.',
+                'not_owner' => 'Kun ejeren kan redigere dette cover-billede.',
+            ],
+            'store' => [
+                'forum_not_allowed' => 'Dette forum accepterer ikke emne-coverbilleder.',
             ],
         ],
 
@@ -134,20 +168,12 @@ return [
         ],
     ],
 
-    'require_login' => 'Log venligst ind for at fortsætte.',
-
-    'unauthorized' => 'Adgang nægtet.',
-
-    'silenced' => 'Det kan du ikke gøre, når du er mutet.',
-
-    'restricted' => 'Det kan du ikke gøre, når du er begrænset.',
-
     'user' => [
         'page' => [
             'edit' => [
                 'locked' => 'Brugerside er låst.',
-                'not_owner' => 'Du kan kun ændre din egen brugerside.',
-                'require_supporter_tag' => 'Supporter tag er nødvendigt.',
+                'not_owner' => 'Du kan kun redigere din egen brugerside.',
+                'require_supporter_tag' => 'osu!supporter tag er nødvendigt.',
             ],
         ],
     ],

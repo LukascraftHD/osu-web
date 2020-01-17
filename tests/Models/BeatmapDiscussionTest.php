@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -17,13 +17,28 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+namespace Tests\Models;
+
 use App\Models\Beatmap;
 use App\Models\BeatmapDiscussion;
 use App\Models\Beatmapset;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Tests\TestCase;
 
 class BeatmapDiscussionTest extends TestCase
 {
+    /**
+     * Valid beatmapset status always maps to a scope method sanity test.
+     *
+     * @dataProvider validBeatmapsetStatuses
+     */
+    public function testBeatmapsetScopesExist($scope)
+    {
+        $this->assertInstanceOf(Builder::class, Beatmapset::$scope());
+    }
+
     public function testMapperPost()
     {
         $mapper = factory(User::class)->create();
@@ -74,7 +89,7 @@ class BeatmapDiscussionTest extends TestCase
             'user_id' => $modder->getKey(),
         ]);
 
-        $this->assertFalse($discussion->isValid());
+        $this->assertTrue($discussion->isValid());
 
         $discussion->message_type = 'problem';
         $this->assertTrue($discussion->isValid());
@@ -184,6 +199,13 @@ class BeatmapDiscussionTest extends TestCase
         $discussion->restore($user);
         $discussion = $discussion->fresh();
         $this->assertFalse($discussion->trashed());
+    }
+
+    public function validBeatmapsetStatuses()
+    {
+        return array_map(function ($status) {
+            return [camel_case($status)];
+        }, BeatmapDiscussion::VALID_BEATMAPSET_STATUSES);
     }
 
     private function newDiscussion($beatmapset)

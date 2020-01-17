@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,62 +20,88 @@
 
 return [
     'support' => [
-        'header' => [
-            // size in font-size
-            'big_description' => '喜歡 osu! 嗎！？<br/>
-                                那就支持 osu! 開發者吧 (￣3￣)',
-            'small_description' => '',
-            'support_button' => '我想支持 osu!',
+        'convinced' => [
+            'title' => '可以可以，買買買！',
+            'support' => '支持 osu!',
+            'gift' => '或者以禮物方式贈送給其它玩家',
+            'instructions' => '點擊愛心前往 osu! 商店',
         ],
+        'why-support' => [
+            'title' => '我為什麼要支持osu!? 錢都花到哪兒了?',
 
-        'dev_quote' => 'osu! 是一款完全免費的遊戲，但是經營它卻不是免費的。在我們租用服務器和高速網絡、維護系統及社區、向比賽提供獎品、提供疑難解答以及讓玩家們開心的同時，osu! 已經消耗了大量的金錢！噢，別忘了我們是憑著愛好在做 osu! ，沒有任何的廣告合作！
-            <br/><br/>osu! 由我一個人運營著，
-            為了維護 osu! 我已經辭去了我的日常工作，
-            而我時常感受到使 osu! 維持我所期望的質量是一件很艱難的事情，
-            我以個人的名義感謝至今為止所有支持 osu! 的人，
-            也包括繼續支持 osu! 的所有人 :)。',
-
-        'why_support' => [
-            'title' => '為什麼要支持 osu! ？',
-            'blocks' => [
-                'dev' => 'osu! 最初是 ppy 個人開發和維護的',
-                'time' => '運營它的成本和投入的精力已經超出了“興趣”的範圍',
-                'ads' => '無廣告 <br/><br/>
-                        不像 99.95% 的網站，我們不推送廣告，也沒有從中獲利。',
-                'goodies' => '解鎖更多高級功能！',
+            'team' => [
+                'title' => '支持團隊',
+                'description' => 'Osu! 是由一小群團隊進行開發和營運。您的贊助可以幫助團隊活久一點。',
+            ],
+            'infra' => [
+                'title' => '伺服器基礎設施',
+                'description' => '捐款用於網站營運，多人連線服務，在線排行榜，等等。',
+            ],
+            'featured-artists' => [
+                'title' => '精選藝術家',
+                'description' => '在你的支持下，我們可以與更多優秀的藝術家合作，並為 osu! 帶來更多出色的音樂',
+                'link_text' => '查看當前列表 &raquo;',
+            ],
+            'ads' => [
+                'title' => '維持 osu! 自給自足',
+                'description' => '你的幫助可以讓遊戲保持獨立並遠離廣告，不受外部贊助商的控制。',
+            ],
+            'tournaments' => [
+                'title' => '官方錦標賽',
+                'description' => '為官方 osu! 世界杯籌備營運資金（及獎勵）。',
+                'link_text' => '探索比賽 &raquo;',
+            ],
+            'bounty-program' => [
+                'title' => '開源賞金計劃',
+                'description' => '',
+                'link_text' => '了解更多 &raquo;',
             ],
         ],
-
         'perks' => [
             'title' => '我能得到什麼？',
             'osu_direct' => [
-                'title' => 'osu!direct', //不翻譯
-                'description' => '在遊戲客戶端內搜索和下載譜面。',
+                'title' => 'osu!direct',
+                'description' => '在遊戲內提供圖譜快速下載與搜尋。',
+            ],
+
+            'friend_ranking' => [
+                'title' => '好友排行榜',
+                'description' => "",
+            ],
+
+            'country_ranking' => [
+                'title' => '國家排行榜',
+                'description' => '',
+            ],
+
+            'mod_filtering' => [
+                'title' => '按 Mods 篩選',
+                'description' => '',
             ],
 
             'auto_downloads' => [
                 'title' => '自動下載',
-                'description' => '本地沒有需要的譜面時，osu! 會自動下載！',
+                'description' => '當多人遊戲與觀看玩家無圖譜時，osu! 會自動下載！',
             ],
 
             'upload_more' => [
-                'title' => '上傳更多譜面',
-                'description' => '譜面集中 Pending 譜面上限增加到 10 張。',
+                'title' => '上傳更多圖譜',
+                'description' => '做圖者上傳待批准的圖譜上限增加到 10 張。',
             ],
 
             'early_access' => [
                 'title' => '搶先體驗',
-                'description' => '搶先體驗正在測試中的新特性！',
+                'description' => '搶先體驗正在測試中的新功能！',
             ],
 
             'customisation' => [
-                'title' => '個性化',
-                'description' => '自定義個人資料頁。',
+                'title' => '客製化',
+                'description' => "客製化您的頁面。",
             ],
 
             'beatmap_filters' => [
                 'title' => '譜面篩選器',
-                'description' => '更多角度的去篩選譜面。',
+                'description' => '更多方面的去篩選譜面。',
             ],
 
             'yellow_fellow' => [
@@ -95,7 +121,7 @@ return [
 
             'skinnables' => [
                 'title' => '更多的定製',
-                'description' => '自定義更多的遊戲界面元素，例如主菜單的背景。',
+                'description' => '自定義更多的遊戲界面元素，例如主畫面的背景。',
             ],
 
             'feature_votes' => [
@@ -108,22 +134,30 @@ return [
                 'description' => '查看排名時可按 國家/好友/所選MOD 進行排名。',
             ],
 
-            'feel_special' => [
-                'title' => '滿足感',
-                'description' => '對 “幫助 osu! 繼續運營” 感到滿足！',
-            ],
-
-            'more_to_come' => [
-                'title' => '更多特性即將到來',
+            'more_favourites' => [
+                'title' => '更多收藏',
                 'description' => '',
             ],
-        ],
+            'more_friends' => [
+                'title' => '更多好友',
+                'description' => '',
+            ],
+            'more_beatmaps' => [
+                'title' => '上載更多圖譜',
+                'description' => '',
+            ],
+            'friend_filtering' => [
+                'title' => '好友排行榜',
+                'description' => '',
+            ],
 
-        'convinced' => [
-            'title' => '可以可以，買買買！',
-            'support' => '支持 osu!',
-            'gift' => '或者以禮物方式贈送給其它玩家',
-            'instructions' => '點擊愛心前往 osu! 商店',
+        ],
+        'supporter_status' => [
+            'contribution' => '感謝您一直以來的支持！你已經捐贈了 :dollars 並購買了 :tags 次贊助者標籤！',
+            'gifted' => "您已經捐贈了 :giftedTags 次贊助者標籤（花費了 :giftedDollars ），真慷慨啊！",
+            'not_yet' => "您還沒有贊助者標籤 :(",
+            'valid_until' => '您的贊助者標籤將在 :date 到期',
+            'was_valid_until' => '您的贊助者標籤已於 :date 到期',
         ],
     ],
 ];

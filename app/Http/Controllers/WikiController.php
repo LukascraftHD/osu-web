@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,8 +20,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\GitHubNotFoundException;
-use App\Exceptions\GitHubTooLargeException;
+use App\Libraries\OsuWiki;
 use App\Libraries\WikiRedirect;
 use App\Models\Wiki;
 use Request;
@@ -37,19 +36,17 @@ class WikiController extends Controller
             return ujs_redirect(wiki_url());
         }
 
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-        $imageExtensions = ['gif', 'jpeg', 'jpg', 'png'];
-
-        if (in_array($extension, $imageExtensions, true)) {
+        if (OsuWiki::isImage($path)) {
             return $this->showImage($path);
         }
 
-        $page = new Wiki\Page($path, $this->locale());
+        $locale = $this->locale();
+        $page = Wiki\Page::lookupForController($path, $locale);
 
-        if ($page->page() === null) {
-            $redirectTarget = (new WikiRedirect())->resolve($path);
+        if (!$page->isVisible()) {
+            $redirectTarget = (new WikiRedirect)->sync()->resolve($path);
             if ($redirectTarget !== null && $redirectTarget !== $path) {
-                return ujs_redirect(wiki_url($redirectTarget));
+                return ujs_redirect(wiki_url('').'/'.ltrim($redirectTarget, '/'));
             }
 
             $correctPath = Wiki\Page::searchPath($path, $this->locale());
@@ -60,29 +57,31 @@ class WikiController extends Controller
             $status = 404;
         }
 
-        return response()->view('wiki.show', compact('page'), $status ?? 200);
+        return response()->view($page->template(), compact('page', 'locale'), $status ?? 200);
     }
 
     public function update($path)
     {
         priv_check('WikiPageRefresh')->ensureCan();
 
-        (new Wiki\Page($path, $this->locale()))->refresh();
+        (new Wiki\Page($path, $this->locale()))->sync(true);
 
         return ujs_redirect(Request::getUri());
     }
 
     private function showImage($path)
     {
-        try {
-            $image = (new Wiki\Image($path, Request::url(), Request::header('referer')))->data();
-        } catch (GitHubNotFoundException $e) {
-            abort(404);
-        } catch (GitHubTooLargeException $e) {
-            abort(403);
+        $image = Wiki\Image::lookupForController($path, Request::url(), Request::header('referer'));
+
+        request()->attributes->set('strip_cookies', true);
+
+        if (!$image->isVisible()) {
+            return response('Not found', 404);
         }
 
-        return response($image['data'], 200)
-            ->header('Content-Type', $image['type']);
+        return response($image->get()['content'], 200)
+            ->header('Content-Type', $image->get()['type'])
+            // 10 years max-age
+            ->header('Cache-Control', 'max-age=315360000, public');
     }
 }

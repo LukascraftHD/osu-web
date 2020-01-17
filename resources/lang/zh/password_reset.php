@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,17 +19,11 @@
  */
 
 return [
-    'title' => '重置密码',
-
     'button' => [
         'cancel' => '取消',
         'resend' => '重新发送确认邮件',
         'set' => '设置密码',
         'start' => '开始',
-    ],
-
-    'email' => [
-        'subject' => 'osu! 账户找回',
     ],
 
     'error' => [
@@ -55,5 +49,10 @@ return [
 
     'starting' => [
         'username' => '输入邮箱或用户名',
+
+        'support' => [
+            '_' => '需要进一步的帮助？通过我们的 :button 联系我们。',
+            'button' => '支持系统',
+        ],
     ],
 ];

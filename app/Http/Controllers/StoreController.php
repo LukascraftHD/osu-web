@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -38,17 +38,17 @@ class StoreController extends Controller
     {
         $this->middleware('auth', ['only' => [
             'getInvoice',
-            'postAddToCart',
             'postNewAddress',
             'postUpdateAddress',
         ]]);
 
-        $this->middleware('check-user-restricted', ['only' => [
-            'getInvoice',
-            'postAddToCart',
-            'postNewAddress',
-            'postUpdateAddress',
-        ]]);
+        if (!$this->isAllowRestrictedUsers()) {
+            $this->middleware('check-user-restricted', ['only' => [
+                'getInvoice',
+                'postNewAddress',
+                'postUpdateAddress',
+            ]]);
+        }
 
         $this->middleware('verify-user', ['only' => [
             'getInvoice',
@@ -58,27 +58,16 @@ class StoreController extends Controller
         return parent::__construct();
     }
 
-    // GET /store
-
-    public function getIndex()
-    {
-        return ujs_redirect('/store/listing');
-    }
-
     public function getListing()
     {
-        if ($this->hasPendingCheckout()) {
-            return ujs_redirect(route('store.checkout.show'));
-        }
-
         return view('store.index')
             ->with('cart', $this->userCart())
-            ->with('products', Store\Product::latest()->simplePaginate(30));
+            ->with('products', Store\Product::listing()->get());
     }
 
     public function getInvoice($id = null)
     {
-        $order = Store\Order::where('status', '<>', 'incart')
+        $order = Store\Order::whereHasInvoice()
             ->with('items.product')
             ->findOrFail($id);
 
@@ -140,7 +129,16 @@ class StoreController extends Controller
             'address' => Request::input('address'),
         ]));
 
-        $addressInput = Request::all()['address'];
+        $addressInput = get_params(request(), 'address', [
+            'first_name',
+            'last_name',
+            'street',
+            'city',
+            'state',
+            'zip',
+            'country_code',
+            'phone',
+        ]);
 
         $validator = Validator::make($addressInput, [
             'first_name' => ['required'],
@@ -168,16 +166,5 @@ class StoreController extends Controller
         $order->save();
 
         return js_view('layout.ujs-reload');
-    }
-
-    public function postAddToCart()
-    {
-        $result = $this->userCart()->updateItem(Request::input('item', []), true);
-
-        if ($result[0]) {
-            return ujs_redirect(route('store.cart.show'));
-        } else {
-            return error_popup($result[1]);
-        }
     }
 }

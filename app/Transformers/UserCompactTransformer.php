@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,7 +21,6 @@
 namespace App\Transformers;
 
 use App\Models\User;
-use App\Models\UserGroup;
 use League\Fractal;
 
 class UserCompactTransformer extends Fractal\TransformerAbstract
@@ -29,7 +28,9 @@ class UserCompactTransformer extends Fractal\TransformerAbstract
     protected $availableIncludes = [
         'country',
         'cover',
-        'groups',
+        'current_mode_rank',
+        'group_badge',
+        'support_level',
     ];
 
     public function transform(User $user)
@@ -40,15 +41,21 @@ class UserCompactTransformer extends Fractal\TransformerAbstract
             'profile_colour' => $user->user_colour,
             'avatar_url' => $user->user_avatar,
             'country_code' => $user->country_acronym,
+            'default_group' => $user->defaultGroup(),
             'is_active' => $user->isActive(),
-            'is_supporter' => $user->isSupporter(),
+            'is_bot' => $user->isBot(),
             'is_online' => $user->isOnline(),
+            'is_supporter' => $user->isSupporter(),
+            'last_visit' => json_time($user->displayed_last_visit),
+            'pm_friends_only' => $user->pm_friends_only,
         ];
     }
 
     public function includeCountry(User $user)
     {
-        return $this->item($user->country, new CountryTransformer);
+        return $user->country === null
+            ? $this->primitive(null)
+            : $this->item($user->country, new CountryTransformer);
     }
 
     public function includeCover(User $user)
@@ -64,18 +71,20 @@ class UserCompactTransformer extends Fractal\TransformerAbstract
         });
     }
 
-    public function includeGroups(User $user)
+    public function includeCurrentModeRank(User $user)
     {
-        return $this->item($user, function ($user) {
-            $groups = [];
+        $currentModeStatistics = $user->statistics(auth()->user()->playmode ?? 'osu');
 
-            foreach ($user->groupIds() as $id) {
-                if (($name = array_search_null($id, UserGroup::GROUPS)) !== null) {
-                    $groups[] = $name;
-                }
-            }
+        return $this->primitive($currentModeStatistics ? $currentModeStatistics->globalRank() : null);
+    }
 
-            return $groups;
-        });
+    public function includeGroupBadge(User $user)
+    {
+        return $this->primitive($user->groupBadge());
+    }
+
+    public function includeSupportLevel(User $user)
+    {
+        return $this->primitive($user->supportLevel());
     }
 }

@@ -1,6 +1,7 @@
 <?php
+
 /**
- *    Copyright 2015-2018 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -16,27 +17,20 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 return [
-    'button' => [
-        'action' => [
-            'to_0' => 'No mirar',
-            'to_1' => 'Mirar',
-        ],
-    ],
     'index' => [
-        'description' => 'Estos son las discusiones de beatmaps que estás siguiendo. Serás notificado cuando se realize un nuevo post o actualización.',
-        'title_compact' => 'seguimientos de modding',
-        'title_main' => 'Lista de seguimientos de modding',
+        'description' => 'Estas son las discusiones de Beatmap que estás siguiendo. Se te notificará cuando haya nuevas publicaciones o actualizaciones.',
+        'title_compact' => 'lista de seguimiento de modificaciones',
+
         'table' => [
-            'empty' => 'No estás viendo ninguna discusión de un mapa.',
+            'empty' => 'No estás mirando discusiones de Beatmaps.',
             'open_issues' => 'Problemas abiertos',
             'state' => 'Estado',
             'title' => 'Título',
         ],
     ],
-    'mail' => [
-        'update' => 'Nueva actualización para el mapa ":title"',
-    ],
+
     'status' => [
         'read' => 'Leer',
         'unread' => 'No leer',

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -42,27 +42,32 @@ class FriendsController extends Controller
             ],
         ]);
 
+        if (is_api_request()) {
+            $this->middleware('require-scopes:friends.read', ['only' => ['index']]);
+        }
+
         return parent::__construct();
     }
 
     public function index()
     {
-        $friends = Auth::user()
+        $currentUser = Auth::user();
+        $currentMode = studly_case($currentUser->playmode);
+
+        $friends = $currentUser
             ->friends()
-            ->with([
-                'userProfileCustomization',
-                'country',
-            ])
+            ->with('statistics'.$currentMode)
+            ->eagerloadForListing()
             ->orderBy('username', 'asc')
             ->get();
 
-        if (is_api_request()) {
-            return json_collection($friends, 'UserCompact', ['cover', 'country']);
-        } else {
-            $userlist = group_users_by_online_state($friends);
+        $usersJson = json_collection($friends, 'UserCompact', ['cover', 'country', 'current_mode_rank', 'support_level']);
 
-            return view('friends.index', compact('userlist'));
+        if (is_api_request()) {
+            return $usersJson;
         }
+
+        return view('friends.index', compact('usersJson'));
     }
 
     public function store()
@@ -82,14 +87,14 @@ class FriendsController extends Controller
         }
 
         $alreadyFriends = $friends
-            ->where('user_id', $targetId)
+            ->wherePivot('zebra_id', $targetId)
             ->exists();
 
         if (!$alreadyFriends) {
             UserRelation::create([
                 'user_id' => $currentUser->user_id,
                 'zebra_id' => $targetId,
-                'friend' => 1,
+                'friend' => true,
             ]);
 
             dispatch(new UpdateUserFollowerCountCache($targetId));
@@ -105,7 +110,7 @@ class FriendsController extends Controller
     {
         $friend = Auth::user()
             ->friends()
-            ->where(['user_id' => $id])
+            ->wherePivot('zebra_id', $id)
             ->firstOrFail();
 
         UserRelation::where([

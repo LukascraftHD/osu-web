@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,16 +20,17 @@
 
 namespace App\Exceptions;
 
-use App;
+use App\Libraries\UserVerification;
 use Auth;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException as LaravelAuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
-use Sentry;
+use Laravel\Passport\Exceptions\MissingScopeException;
+use Laravel\Passport\Exceptions\OAuthServerException as PassportOAuthServerException;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -51,10 +52,50 @@ class Handler extends ExceptionHandler
         // local
         AuthorizationException::class,
         SilencedException::class,
+        VerificationRequiredException::class,
 
         // oauth
-        \League\OAuth2\Server\Exception\OAuthServerException::class,
+        OAuthServerException::class,
     ];
+
+    public static function exceptionMessage($e)
+    {
+        if ($e instanceof ModelNotFoundException) {
+            return;
+        }
+
+        if (static::statusCode($e) >= 500) {
+            return;
+        }
+
+        return $e->getMessage();
+    }
+
+    public static function statusCode($e)
+    {
+        if (method_exists($e, 'getStatusCode')) {
+            return $e->getStatusCode();
+        } elseif ($e instanceof ModelNotFoundException) {
+            return 404;
+        } elseif ($e instanceof NotFoundHttpException) {
+            return 404;
+        } elseif ($e instanceof TokenMismatchException) {
+            return 403;
+        } elseif ($e instanceof AuthenticationException) {
+            return 401;
+        } elseif ($e instanceof AuthorizationException || $e instanceof MissingScopeException) {
+            return 403;
+        } elseif (static::isOAuthServerException($e)) {
+            return $e->getPrevious()->getHttpStatusCode();
+        } else {
+            return 500;
+        }
+    }
+
+    private static function isOAuthServerException($e)
+    {
+        return ($e instanceof PassportOAuthServerException) && ($e->getPrevious() instanceof OAuthServerException);
+    }
 
     /**
      * Report or log an exception.
@@ -67,8 +108,8 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        view()->share('current_action', $this->statusCode($e));
-        view()->share('current_section', 'error');
+        view()->share('currentAction', static::statusCode($e));
+        view()->share('currentSection', 'error');
 
         // immediately done if the error should not be reported
         if ($this->shouldntReport($e)) {
@@ -96,51 +137,50 @@ class Handler extends ExceptionHandler
             return $e->getResponse();
         }
 
+        if ($e instanceof VerificationRequiredException) {
+            return $this->unverified();
+        }
+
         if ($e instanceof AuthenticationException) {
             return $this->unauthenticated($request, $e);
         }
 
         if (config('app.debug')) {
-            if ($this->isHttpException($e)) {
-                $response = $this->renderHttpException($e);
-            } else {
-                $response = parent::render($request, $e);
-            }
+            $response = parent::render($request, $e);
         } else {
-            if ($request->ajax()) {
-                $response = response(['error' => $this->ajaxMessage($e)]);
+            $message = static::exceptionMessage($e);
+
+            if (is_json_request() || $request->ajax()) {
+                $response = response(['error' => $message]);
             } else {
-                $response = response()->view('layout.error');
+                $response = response()->view('layout.error', ['exceptionMessage' => $message]);
             }
         }
 
-        return $response->setStatusCode($this->statusCode($e));
+        return $response->setStatusCode(static::statusCode($e));
+    }
+
+    protected function shouldntReport(Exception $e)
+    {
+        return parent::shouldntReport($e) || $this->isOAuthServerException($e);
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($request->expectsJson()) {
+        if (is_json_request() || $request->ajax()) {
             return response(['authentication' => 'basic'], 401);
         }
 
-        return response()->view('users.login');
+        return response()->view('users.login')->setStatusCode(401);
     }
 
-    private function ajaxMessage($e)
+    protected function unverified()
     {
-        if ($e instanceof QueryException) {
-            return;
-        }
-
-        return $e->getMessage();
+        return UserVerification::fromCurrentRequest()->initiate();
     }
 
     private function reportWithSentry($e)
     {
-        $extra = [
-            'http_code' => $this->statusCode($e),
-        ];
-
         if (Auth::check()) {
             $userContext = [
                 'id' => Auth::user()->user_id,
@@ -152,29 +192,13 @@ class Handler extends ExceptionHandler
             ];
         }
 
-        Sentry::user_context($userContext);
+        app('sentry')->configureScope(function ($scope) use ($e, $userContext) {
+            $scope->setUser($userContext);
+            $scope->setTag('http_code', (string) static::statusCode($e));
+        });
 
-        $ref = Sentry::captureException($e, compact('extra'));
+        $ref = app('sentry')->captureException($e);
 
         view()->share('ref', $ref);
-    }
-
-    private function statusCode($e)
-    {
-        if (method_exists($e, 'getStatusCode')) {
-            return $e->getStatusCode();
-        } elseif ($e instanceof ModelNotFoundException) {
-            return 404;
-        } elseif ($e instanceof NotFoundHttpException) {
-            return 404;
-        } elseif ($e instanceof TokenMismatchException) {
-            return 403;
-        } elseif ($e instanceof AuthenticationException) {
-            return 401;
-        } elseif ($e instanceof AuthorizationException) {
-            return 403;
-        } else {
-            return 500;
-        }
     }
 }

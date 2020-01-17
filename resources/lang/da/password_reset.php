@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,17 +19,11 @@
  */
 
 return [
-    'title' => 'Nulstil Adgangskode',
-
     'button' => [
-        'cancel' => 'Annullér',
+        'cancel' => 'Annuller',
         'resend' => 'Gensend Bekræftelsesemail',
         'set' => 'Indstil adgangskode',
         'start' => 'Start',
-    ],
-
-    'email' => [
-        'subject' => 'osu! konto genoprettelse',
     ],
 
     'error' => [
@@ -55,5 +49,10 @@ return [
 
     'starting' => [
         'username' => 'Indtast email-adresse eller brugernavn',
+
+        'support' => [
+            '_' => 'Har du brug for yderligere assistance? Kontakt os via vores :button.',
+            'button' => 'support system',
+        ],
     ],
 ];

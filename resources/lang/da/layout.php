@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,41 +20,144 @@
 
 return [
     'defaults' => [
-        'page_description' => 'osu! - Rytmen er kun et *klik* away!  Med Ouendan/EBA, Taiko og originale spiltilstande, såvel som en fuld funktionel beatmap-editor.',
+        'page_description' => 'osu! - Rytme er kun et *klik* væk!  Med Ouendan/EBA, Taiko og originale spil-modes, såvel som en fuld funktionel level-editor.',
+    ],
+
+    'header' => [
+        'admin' => [
+            '_' => '',
+            'beatmapset' => '',
+            'beatmapset_covers' => '',
+            'contest' => '',
+            'contests' => '',
+            'root' => '',
+            'store_orders' => '',
+        ],
+
+        'artists' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'beatmapsets' => [
+            '_' => '',
+            'discussions' => '',
+            'index' => '',
+            'show' => '',
+            'packs' => '',
+        ],
+
+        'changelog' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'community' => [
+            '_' => 'Fællesskab',
+            'comments' => '',
+            'forum' => 'Forum',
+            'livestream' => '',
+        ],
+
+        'contests' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'error' => [
+            '_' => '',
+        ],
+
+        'help' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'home' => [
+            '_' => '',
+            'password_reset' => '',
+        ],
+
+        'matches' => [
+            '_' => '',
+        ],
+
+        'notice' => [
+            '_' => '',
+        ],
+
+        'rankings' => [
+            '_' => '',
+        ],
+
+        'tournaments' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'users' => [
+            '_' => '',
+            'forum_posts' => '',
+            'modding' => '',
+            'show' => '',
+        ],
+    ],
+
+    'gallery' => [
+        'close' => 'Luk (Esc)',
+        'fullscreen' => 'Skift til fuldskærm',
+        'zoom' => 'Zoom ind/ud',
+        'previous' => 'Forrige (højre pil)',
+        'next' => 'Næste (ventre pil)',
     ],
 
     'menu' => [
         'home' => [
             '_' => 'hjem',
             'account-edit' => 'indstillinger',
+            'account-verifyLink' => 'Bekræftelse Gennemført',
+            'beatmapset-watches-index' => '',
+            'changelog-build' => 'build',
+            'changelog-index' => 'ændringsoversigt',
+            'forum-topic-watches-index' => '',
             'friends-index' => 'venner',
-            'changelog-index' => 'changelog',
-            'changelog-show' => 'build',
             'getDownload' => 'download',
             'getIcons' => 'ikoner',
             'groups-show' => 'grupper',
+            'index' => 'instrumentbræt',
             'legal-show' => 'information',
+            'messages-index' => 'beskeder',
             'news-index' => 'nyheder',
             'news-show' => 'nyheder',
             'password-reset-index' => 'nulstil adgangskode',
             'search' => 'søg',
             'supportTheGame' => 'støt spillet',
+            'team' => 'team',
+            'testflight' => '',
+        ],
+        'profile' => [
+            '_' => 'profil',
+            'friends' => 'venner',
+            'settings' => 'indstillinger',
         ],
         'help' => [
             '_' => 'hjælp',
             'getFaq' => 'faq',
-            'getSupport' => 'support', //obsolete
+            'getRules' => 'regler',
+            'getSupport' => 'nej, jeg behøver virkelig noget hjælp!',
             'getWiki' => 'wiki',
             'wiki-show' => 'wiki',
         ],
         'beatmaps' => [
             '_' => 'beatmaps',
-            'show' => 'info',
+            'artists' => 'udvalgte kunstnere',
+            'beatmap_discussion_posts-index' => 'beatmap diskussion opslag',
+            'beatmap_discussions-index' => 'beatmap diskussioner',
+            'beatmapset_discussion_votes-index' => 'beatmap diskussion votes',
+            'beatmapset_events-index' => 'beatmapset events',
             'index' => 'liste',
-            'artists' => 'fremhævede artister',
             'packs' => 'pakker',
-            'beatmapset-watches-index' => 'modding watchlist',
-            // 'getCharts' => 'charts',
+            'show' => 'info',
         ],
         'beatmapsets' => [
             '_' => 'beatmaps',
@@ -64,31 +167,33 @@ return [
             '_' => 'rangering',
             'index' => 'præstation',
             'performance' => 'præstation',
-            'charts' => 'diagrammer',
+            'charts' => 'spotlights',
             'score' => 'score',
             'country' => 'land',
             'kudosu' => 'kudosu',
         ],
         'community' => [
             '_' => 'fællesskab',
-            'dev' => 'osu!dev',
-            'getForum' => 'forum', // Base text changed to plural, please check.
-            'getChat' => 'chat',
+            'chat' => 'chat',
+            'chat-index' => 'chat',
+            'dev' => 'udvikling',
+            'getForum' => 'forummer',
             'getLive' => 'live',
+            'comments-index' => 'kommentarer',
+            'comments-show' => 'kommentar',
             'contests' => 'konkurrencer',
             'profile' => 'profil',
             'tournaments' => 'turneringer',
             'tournaments-index' => 'turneringer',
             'tournaments-show' => 'turneringsinfo',
-            'forum-topic-watches-index' => 'abonnementer',
-            'forum-topics-create' => 'forum', // Base text changed to plural, please check.
-            'forum-topics-show' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-index' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-show' => 'forum', // Base text changed to plural, please check.
+            'forum-topics-create' => 'forummer',
+            'forum-topics-show' => 'forummer',
+            'forum-forums-index' => 'forummer',
+            'forum-forums-show' => 'forummer',
         ],
         'multiplayer' => [
             '_' => 'multiplayer',
-            'show' => 'match',
+            'show' => 'kamp',
         ],
         'error' => [
             '_' => 'fejl',
@@ -96,7 +201,7 @@ return [
             '403' => 'nægtet',
             '401' => 'uautoriseret',
             '405' => 'mangler',
-            '500' => 'noget er galt',
+            '500' => 'mm, der er noget der gået i stykker',
             '503' => 'vedligeholdelse',
         ],
         'user' => [
@@ -105,13 +210,21 @@ return [
             'disabled' => 'deaktiveret',
 
             'register' => 'registrer',
-            'reset' => 'genvind',
+            'reset' => 'gendan',
             'new' => 'ny',
 
-            'messages' => 'Beskeder',
-            'settings' => 'Indstillinger',
-            'logout' => 'Log Ud', // Base text changed from "Log Out" to "Sign Out", please check.
             'help' => 'Hjælp',
+            'logout' => 'Log Ud',
+            'messages' => 'Beskeder',
+            'modding-history-discussions' => 'user modding diskussioner',
+            'modding-history-events' => 'user modding events',
+            'modding-history-index' => 'user modding history',
+            'modding-history-posts' => 'user modding opslag',
+            'modding-history-votesGiven' => 'user modding votes givet',
+            'modding-history-votesReceived' => 'user modding votes received',
+            'oauth_login' => 'log ind for oauth',
+            'oauth_request' => 'OAuth-autorisation',
+            'settings' => 'Indstillinger',
         ],
         'store' => [
             '_' => 'butik',
@@ -121,6 +234,7 @@ return [
 
             'getCheckout' => 'betaling',
             'getInvoice' => 'faktura',
+            'orders-index' => 'ordrehistorik',
             'products-show' => 'produkt',
 
             'new' => 'ny',
@@ -140,8 +254,9 @@ return [
         'admin' => [
             '_' => 'admin',
             'beatmapsets-covers' => 'beatmapset covers',
-            'root' => 'index',
             'logs-index' => 'log',
+            'root' => 'index',
+
             'beatmapsets' => [
                 '_' => 'beatmapsets',
                 'show' => 'detalje',
@@ -165,16 +280,12 @@ return [
             'livestreams' => 'Live Streams',
             'report' => 'Rapportér en Fejl',
         ],
-        'support' => [
-            '_' => 'Støt osu!',
-            'tags' => 'Supporter Tags',
-            'merchandise' => 'Merchandise',
-        ],
         'legal' => [
             '_' => 'Legal & Status',
             'copyright' => 'Copyright (DMCA)',
-            'osu_status' => '@osustatus',
+            'privacy' => 'Privatliv',
             'server_status' => 'Server Status',
+            'source_code' => 'Kildekode',
             'terms' => 'Betingelser for Brug',
         ],
     ],
@@ -182,62 +293,57 @@ return [
     'errors' => [
         '404' => [
             'error' => 'Siden findes ikke',
-            'description' => 'Beklager, men siden, du forsøger at finde, eksisterer ikke!',
-            'link' => false,
+            'description' => "Beklager, men siden du forsøger at finde, eksisterer ikke!",
         ],
         '403' => [
-            'error' => 'Du burde ikke være her.',
+            'error' => "Du burde ikke være her.",
             'description' => 'Du kunne prøve at gå tilbage igen, okay?',
-            'link' => false,
         ],
         '401' => [
-            'error' => 'Du burde ikke være her.',
+            'error' => "Du burde ikke være her.",
             'description' => 'Du kunne prøve at gå tilbage igen, okay? Eller bare logge ind måske.',
-            'link' => false,
         ],
         '405' => [
             'error' => 'Siden findes ikke',
-            'description' => 'Beklager, men siden, du forsøger at finde, eksisterer ikke!!',
-            'link' => false,
+            'description' => "Beklager, men siden, du forsøger at finde, eksisterer ikke!!",
         ],
         '500' => [
             'error' => 'Åh nej! Der er noget galt! ;_;',
-            'description' => 'Vi er blevet informeret om fejlen.',
-            'link' => false,
+            'description' => "Vi er blevet informeret om fejlen.",
         ],
         'fatal' => [
-            'error' => 'Åh nej! Der er noget galt! ;_;',
-            'description' => 'Vi er blevet informeret om fejlen.',
-            'link' => false,
+            'error' => 'Åh nej! Der er noget (voldsomt) galt! ;_;',
+            'description' => "Vi er blevet informeret om fejlen.",
         ],
         '503' => [
             'error' => 'Under Vedligeholdelse!',
-            'description' => 'Vedligeholdelse tager som regel mellem 5 sekunder og 10 minutter. Hvis siden er nede i længere tid, se :link for mere information.',
+            'description' => "Vedligeholdelse tager som regel mellem 5 sekunder og 10 minutter. Hvis siden er nede i længere tid, se :link for mere information.",
             'link' => [
                 'text' => '@osustatus',
                 'href' => 'https://twitter.com/osustatus',
             ],
         ],
         // used by sentry if it returns an error
-        'reference' => 'Her er en kode, som du kan sige videre til support, hvis du vil!',
+        'reference' => "Her er en kode, som du kan sige videre til support, hvis du vil!",
     ],
 
     'popup_login' => [
         'login' => [
-            'email' => 'email-adresse',
-            'forgot' => 'Jeg har glemt min login-info',
+            'forgot' => "Jeg har glemt min login-info",
             'password' => 'adgangskode',
             'title' => 'Log ind for at fortsætte',
+            'username' => 'brugernavn',
 
             'error' => [
-                'email' => 'Brugernavn eller adgangskode eksisterer ikke',
+                'email' => "Brugernavn eller email-addresse eksisterer ikke",
                 'password' => 'Forkert adgangskode',
             ],
         ],
 
         'register' => [
+            'download' => 'Hent',
             'info' => 'Du skal have en konto, min gode mand! Hvor har du ikke én endnu?',
-            'title' => 'Har du ikke en konto?',
+            'title' => "Har du ikke en konto?",
         ],
     ],
 
@@ -245,7 +351,7 @@ return [
         'links' => [
             'account-edit' => 'Indstillinger',
             'friends' => 'Venner',
-            'logout' => 'Log ud', // Base text changed from "Log Out" to "Sign Out", please check.
+            'logout' => 'Log ud',
             'profile' => 'Min Profil',
         ],
     ],

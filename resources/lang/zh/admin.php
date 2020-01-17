@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -22,9 +22,10 @@ return [
     'beatmapsets' => [
         'covers' => [
             'regenerate' => '重新生成',
-            'regenerating' => '重新生成中。。。',
+            'regenerating' => '重新生成中...',
             'remove' => '移除',
-            'removing' => '移除中。。。',
+            'removing' => '正在删除...',
+            'title' => '',
         ],
         'show' => [
             'covers' => '管理谱面封面',
@@ -45,7 +46,7 @@ return [
 
                 'forum-name' => '论坛 #:id: :name',
 
-                'no-cover' => '没有封面',
+                'no-cover' => '没有头图',
 
                 'submit' => [
                     'save' => '保存',
@@ -55,8 +56,8 @@ return [
                 'title' => '论坛封面列表',
 
                 'type-title' => [
-                    'default-topic' => '默认板块封面',
-                    'main' => '论坛封面',
+                    'default-topic' => '默认板块头图',
+                    'main' => '论坛头图',
                 ],
             ],
         ],
@@ -70,9 +71,8 @@ return [
 
     'pages' => [
         'root' => [
-            'title' => '管理员控制台',
-
             'sections' => [
+                'beatmapsets' => '',
                 'forum' => '论坛',
                 'general' => '常规',
                 'store' => '商店',

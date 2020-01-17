@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -25,13 +25,14 @@ return [
             'regenerating' => 'Revivendo...',
             'remove' => 'Remover',
             'removing' => 'Removendo...',
+            'title' => '',
         ],
         'show' => [
             'covers' => 'Gerenciar capas',
             'discussion' => [
                 '_' => 'Modding v2',
                 'activate' => 'ativar',
-                'activate_confirm' => 'deseja ativar o modding v2 neste mapa?',
+                'activate_confirm' => 'deseja ativar o modding v2 neste beatmap?',
                 'active' => 'ativo',
                 'inactive' => 'inativo',
             ],
@@ -70,9 +71,8 @@ return [
 
     'pages' => [
         'root' => [
-            'title' => 'Coisinha fofa da administração. Desu~',
-
             'sections' => [
+                'beatmapsets' => '',
                 'forum' => 'Fórum',
                 'general' => 'Geral',
                 'store' => 'Loja',
@@ -91,7 +91,7 @@ return [
     'users' => [
         'restricted_banner' => [
             'title' => 'Este usuário está restrito.',
-            'message' => '(só administradores conseguem ver isto)',
+            'message' => '(somente administradores podem ver isto)',
         ],
     ],
 

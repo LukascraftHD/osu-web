@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -23,6 +23,18 @@ namespace App\Libraries;
 class LocaleMeta
 {
     const MAPPINGS = [
+        'be' => [
+            'name' => 'Беларуская мова',
+            'flag' => 'BY',
+        ],
+        'bg' => [
+            'name' => 'Български',
+            'flag' => 'BG',
+        ],
+        'cs' => [
+            'name' => 'Česky',
+            'flag' => 'CZ',
+        ],
         'da' => [
             'name' => 'Dansk',
             'flag' => 'DK',
@@ -91,9 +103,17 @@ class LocaleMeta
             'name' => 'Português (Brasil)',
             'flag' => 'BR',
         ],
+        'ro' => [
+            'name' => 'Română',
+            'flag' => 'RO',
+        ],
         'ru' => [
             'name' => 'Русский',
             'flag' => 'RU',
+        ],
+        'sk' => [
+            'name' => 'Slovenčina',
+            'flag' => 'SK',
         ],
         'sv' => [
             'name' => 'Svenska',
@@ -106,6 +126,14 @@ class LocaleMeta
         'tl' => [
             'name' => 'Tagalog',
             'flag' => 'PH',
+        ],
+        'tr' => [
+            'name' => 'Türkçe',
+            'flag' => 'TR',
+        ],
+        'vi' => [
+            'name' => 'Tiếng Việt',
+            'flag' => 'VN',
         ],
         'zh' => [
             'name' => '简体中文',

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,17 +19,9 @@
  */
 
 return [
-    'button' => [
-        'action' => [
-            'to_0' => 'Bevaka inte',
-            'to_1' => 'Bekava',
-        ],
-    ],
-
     'index' => [
         'description' => 'Detta är beatmap diskussioner du följer. Du kommer bli notifierad när det finns nya inlägg eller uppdateringar.',
         'title_compact' => 'modding bevakningslista',
-        'title_main' => 'Modding Bevakningslista',
 
         'table' => [
             'empty' => 'Inga beatmap diskussioner bevakade.',
@@ -37,10 +29,6 @@ return [
             'state' => 'Tillstånd',
             'title' => 'Titel',
         ],
-    ],
-
-    'mail' => [
-        'update' => 'Ny uppdatering för beatmap ":title"',
     ],
 
     'status' => [

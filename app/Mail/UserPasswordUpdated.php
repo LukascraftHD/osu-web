@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -49,7 +49,7 @@ class UserPasswordUpdated extends Mailable implements ShouldQueue
     public function build()
     {
         return $this
-            ->text(i18n_view('emails.user_password_updated'))
-            ->subject(trans('accounts.update_password.email_subject'));
+            ->text('emails.user_password_updated')
+            ->subject(trans('mail.user_password_updated.subject'));
     }
 }

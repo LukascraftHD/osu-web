@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,7 +21,7 @@
 return [
     'authorizations' => [
         'update' => [
-            'null_user' => 'Precisa conectar-se para editar.',
+            'null_user' => 'Precisa estar conectado para editar.',
             'system_generated' => 'Postagens geradas pelo sistema não podem ser editadas.',
             'wrong_user' => 'Precisa ser dono da postagem para editá-la.',
         ],
@@ -33,10 +33,23 @@ return [
 
     'index' => [
         'deleted_beatmap' => 'excluído',
-        'title' => 'Discussão do mapa',
+        'title' => 'Discussão do Beatmap',
 
         'form' => [
+            '_' => 'Pesquisar',
             'deleted' => 'Incluir discussões excluídas',
+            'only_unresolved' => 'Mostrar apenas discussões não resolvidas',
+            'types' => 'Tipos de mensagem',
+            'username' => 'Nome de Usuário',
+
+            'beatmapset_status' => [
+                '_' => 'Status do Beatmap',
+                'all' => 'Todos',
+                'disqualified' => 'Desqualificado',
+                'never_qualified' => 'Nunca Qualificado',
+                'qualified' => 'Qualificado',
+                'ranked' => 'Ranqueado',
+            ],
 
             'user' => [
                 'label' => 'Usuário',
@@ -46,10 +59,10 @@ return [
     ],
 
     'item' => [
-        'created_at' => 'Data de postagem',
+        'created_at' => 'Data de publicação',
         'deleted_at' => 'Data de exclusão',
         'message_type' => 'Tipo',
-        'permalink' => 'Copiar link da postagem',
+        'permalink' => 'Copiar link da publicação',
     ],
 
     'nearby_posts' => [
@@ -59,22 +72,30 @@ return [
 
     'reply' => [
         'open' => [
-            'guest' => 'Conecte-se para responder',
+            'guest' => 'Conecte-se para Responder',
             'user' => 'Responder',
         ],
     ],
 
+    'review' => [
+        'go_to_parent' => 'Ver Publicação de Revisão',
+        'go_to_child' => 'Ver Discussão',
+    ],
+
     'system' => [
         'resolved' => [
-            'true' => 'Marcada como resolvida por :user',
+            'true' => 'Marcado como resolvido por :user',
             'false' => 'Reaberto por :user',
         ],
     ],
 
-    'user' => [
-        'admin' => 'admin',
-        'bng' => 'nominator',
-        'owner' => 'mapper',
-        'qat' => 'qat',
+    'timestamp_display' => [
+        'general' => 'geral',
+        'general_all' => 'geral (tudo)',
+    ],
+
+    'user_filter' => [
+        'everyone' => 'Todos',
+        'label' => 'Filtrar por usuário',
     ],
 ];

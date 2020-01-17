@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -57,7 +57,7 @@
         </div>
         <div class="search-forum-post__more">
             <div class="search-result__more-button">
-                <span class="fa fa-angle-right"></span>
+                <span class="fas fa-angle-right"></span>
             </div>
         </div>
     </div>

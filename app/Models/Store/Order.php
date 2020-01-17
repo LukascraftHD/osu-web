@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,12 +20,12 @@
 
 namespace App\Models\Store;
 
+use App\Exceptions\OrderNotModifiableException;
 use App\Models\Country;
 use App\Models\SupporterTag;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
-use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -40,6 +40,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * The contents of the cart should not be cleared until the payment request is
  *  successfully sent to the payment provider.
  * i.e. it should not be cleared immediately on checking out.
+ *
+ * @property Address $address
+ * @property int|null $address_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property \Illuminate\Database\Eloquent\Collection $items OrderItem
+ * @property string|null $last_tracking_state
+ * @property int $order_id
+ * @property \Carbon\Carbon|null $paid_at
+ * @property \Illuminate\Database\Eloquent\Collection $payments Payment
+ * @property \Carbon\Carbon|null $shipped_at
+ * @property float|null $shipping
+ * @property mixed $status
+ * @property string|null $tracking_code
+ * @property string|null $transaction_id
+ * @property \Carbon\Carbon|null $updated_at
+ * @property User $user
+ * @property int $user_id
  */
 class Order extends Model
 {
@@ -48,6 +66,14 @@ class Order extends Model
     const ECHECK_CLEARED = 'ECHECK CLEARED';
     const ORDER_NUMBER_REGEX = '/^(?<prefix>[A-Za-z]+)-(?<userId>\d+)-(?<orderId>\d+)$/';
     const PENDING_ECHECK = 'PENDING ECHECK';
+
+    const PROVIDER_CENTILLI = 'centili';
+    const PROVIDER_FREE = 'free';
+    const PROVIDER_PAYPAL = 'paypal';
+    const PROVIDER_SHOPIFY = 'shopify';
+    const PROVIDER_XSOLLA = 'xsolla';
+
+    const STATUS_HAS_INVOICE = ['processing', 'checkout', 'paid', 'shipped', 'cancelled', 'delivered'];
 
     protected $primaryKey = 'order_id';
 
@@ -60,7 +86,7 @@ class Order extends Model
 
     public function items()
     {
-        return $this->hasMany(OrderItem::class, 'order_id');
+        return $this->hasMany(OrderItem::class);
     }
 
     public function address()
@@ -70,7 +96,7 @@ class Order extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'order_id');
+        return $this->hasMany(Payment::class);
     }
 
     public function user()
@@ -80,12 +106,22 @@ class Order extends Model
 
     public function scopeInCart($query)
     {
-        return $query->whereIn('status', ['incart', 'processing']);
+        return $query->where('status', 'incart');
     }
 
     public function scopeProcessing($query)
     {
         return $query->where('status', 'processing');
+    }
+
+    public function scopeStale($query)
+    {
+        return $query->where('updated_at', '<', Carbon::now()->subDays(config('store.order.stale_days')));
+    }
+
+    public function scopeWhereHasInvoice($query)
+    {
+        return $query->whereIn('status', static::STATUS_HAS_INVOICE);
     }
 
     public function scopeWithPayments($query)
@@ -153,7 +189,40 @@ class Order extends Model
             return;
         }
 
-        return studly_case(explode('-', $this->transaction_id)[0]);
+        return explode('-', $this->transaction_id)[0];
+    }
+
+    public function getPaymentStatusText()
+    {
+        switch ($this->status) {
+            case 'cancelled':
+                return 'Cancelled';
+            case 'checkout':
+            case 'processing':
+                return 'Awaiting Payment';
+            case 'incart':
+                return '';
+            case 'paid':
+            case 'shipped':
+            case 'delivered':
+                return 'Paid';
+            default:
+                return 'Unknown';
+        }
+    }
+
+    /**
+     * Returns the reference id for the provider associated with this Order.
+     *
+     * @return string|null
+     */
+    public function getProviderReference(): ?string
+    {
+        if (!present($this->transaction_id)) {
+            return null;
+        }
+
+        return explode('-', $this->transaction_id)[1] ?? null;
     }
 
     public function getSubtotal($forShipping = false)
@@ -219,33 +288,31 @@ class Order extends Model
         return (float) $total * $rate;
     }
 
-    public function getStatusText()
-    {
-        switch ($this->status) {
-            case 'cancelled':
-                return 'Cancelled';
-            case 'checkout':
-            case 'processing':
-                return 'Awaiting Payment';
-            case 'incart':
-                return '';
-            case 'paid':
-            case 'shipped':
-            case 'delivered':
-                return 'Paid';
-            default:
-                return 'Unknown';
-        }
-    }
-
     public function getTotal()
     {
         return $this->getSubtotal() + $this->shipping;
     }
 
+    public function guardNotModifiable(callable $callable)
+    {
+        return $this->getConnection()->transaction(function () use ($callable) {
+            $locked = $this->exists ? $this->lockSelf() : $this;
+            if ($locked->isModifiable() === false) {
+                throw new OrderNotModifiableException($locked);
+            }
+
+            return $callable();
+        });
+    }
+
     public function canCheckout()
     {
         return in_array($this->status, ['incart', 'processing'], true);
+    }
+
+    public function hasInvoice()
+    {
+        return in_array($this->status, static::STATUS_HAS_INVOICE, true);
     }
 
     public function isEmpty()
@@ -279,34 +346,20 @@ class Order extends Model
         return $this->tracking_code === static::PENDING_ECHECK;
     }
 
-    public function removeInvalidItems()
+    public function isShopify(): bool
     {
-        $modified = false;
+        return $this->getPaymentProvider() === static::PROVIDER_SHOPIFY;
+    }
 
-        //check to make sure we don't have any invalid products in our cart.
-        $deleteItems = [];
-
-        foreach ($this->items as $i) {
-            if ($i->product === null || !$i->product->enabled) {
-                $deleteItems[] = $i;
-                continue;
-            }
-
-            if (!$i->product->inStock($i->quantity)) {
-                $this->updateItem(['product_id' => $i->product_id, 'quantity' => $i->product->stock]);
-                $modified = true;
+    public function isShouldShopify(): bool
+    {
+        foreach ($this->items as $item) {
+            if ($item->product->shopify_id !== null) {
+                return true;
             }
         }
 
-        if (count($deleteItems)) {
-            foreach ($deleteItems as $i) {
-                $i->delete();
-            }
-
-            $modified = true;
-        }
-
-        return $modified;
+        return false;
     }
 
     /**
@@ -320,7 +373,7 @@ class Order extends Model
     {
         foreach ($this->items as $i) {
             $i->refreshCost();
-            $i->saveOrExplode();
+            $i->saveOrExplode(['skipValidations' => true]);
         }
 
         if ($this->requiresShipping()) {
@@ -340,13 +393,9 @@ class Order extends Model
 
     public function delete()
     {
-        if ($this->isModifiable() === false) {
-            // in most cases this would return a null key because the lookup for the cart
-            // would return a new cart anyway?
-            throw new Exception("Delete not allowed on Order ({$this->getKey()}).");
-        }
-
-        parent::delete();
+        $this->guardNotModifiable(function () {
+            parent::delete();
+        });
     }
 
     public function paid(Payment $payment = null)
@@ -369,87 +418,67 @@ class Order extends Model
      * Updates the Order with form parameters.
      *
      * Updates the Order with with an item extracted from submitted form parameters.
-     * The function returns an array containing whether the operation was successful,
-     * and a message.
+     * The function returns null on success; an error message, otherwise.
      *
      * @param array $itemForm form parameters.
      * @param bool $addToExisting whether the quantity should be added or replaced.
-     * @return array [success, message]
+     * @return string|null null on success; error message, otherwise.
      **/
     public function updateItem(array $itemForm, $addToExisting = false)
     {
-        if ($this->isModifiable() === false) {
-            // FIXME: better handling.
-            return [false, 'Cart cannot be updated at this time.'];
-        }
+        return $this->guardNotModifiable(function () use ($itemForm, $addToExisting) {
+            $params = static::orderItemParams($itemForm);
 
-        $params = [
-            'id' => array_get($itemForm, 'id'),
-            'quantity' => array_get($itemForm, 'quantity'),
-            'product' => Product::enabled()->find(array_get($itemForm, 'product_id')),
-            'cost' => intval(array_get($itemForm, 'cost')),
-            'extraInfo' => array_get($itemForm, 'extra_info'),
-            'extraData' => array_get($itemForm, 'extra_data'),
-        ];
+            // done first to allow removing of disabled products from cart.
+            if ($params['quantity'] <= 0) {
+                return $this->removeOrderItem($params);
+            }
 
-        if ($params['product'] === null) {
-            return [false, 'no product'];
-        }
+            // TODO: better validation handling.
+            if ($params['product'] === null) {
+                return trans('model_validation/store/product.not_available');
+            }
 
-        $result = [true, ''];
+            $this->saveOrExplode();
 
-        if ($params['quantity'] <= 0) {
-            $this->removeOrderItem($params);
-        } else {
             if ($params['product']->allow_multiple) {
                 $item = $this->newOrderItem($params);
             } else {
                 $item = $this->updateOrderItem($params, $addToExisting);
             }
 
-            $result = $this->validateBeforeSave($params['product'], $item);
-            if ($result[0]) {
-                $this->save();
-                $this->items()->save($item);
-            }
-        }
-
-        return $result;
+            $item->saveOrExplode();
+        });
     }
 
     public function releaseItems()
     {
         // locking bottleneck
-        DB::connection($this->connection)->transaction(function () {
-            list($items, $products) = $this->lockForReserve();
+        $this->getConnection()->transaction(function () {
+            [$items, $products] = $this->lockForReserve();
 
-            foreach ($items as $item) {
-                $item->product->release($item->quantity);
-            }
+            $items->each->releaseProduct();
         });
     }
 
     public function reserveItems()
     {
         // locking bottleneck
-        DB::connection($this->connection)->transaction(function () {
-            list($items, $products) = $this->lockForReserve();
-
-            foreach ($items as $item) {
-                $item->product->reserve($item->quantity);
-            }
+        $this->getConnection()->transaction(function () {
+            [$items, $products] = $this->lockForReserve();
+            $items->each->reserveProduct();
         });
     }
 
     public function switchItems($orderItem, $newProduct)
     {
-        DB::connection($this->connection)->transaction(function () use ($orderItem, $newProduct) {
+        $this->getConnection()->transaction(function () use ($orderItem, $newProduct) {
             $this->lockForReserve([$orderItem->product_id, $newProduct->product_id]);
 
             $quantity = $orderItem->quantity;
-            $orderItem->product->release($quantity);
+            $orderItem->releaseProduct();
             $orderItem->product()->associate($newProduct);
-            $newProduct->reserve($quantity);
+            $orderItem->reserveProduct();
 
             $orderItem->saveOrExplode();
         });
@@ -457,27 +486,11 @@ class Order extends Model
 
     public static function cart($user)
     {
-        $cart = static::query()
+        return static::query()
             ->where('user_id', $user->user_id)
             ->inCart()
             ->with('items.product')
             ->first();
-
-        if (!$cart) {
-            // still stuff that relies on cart not returning null.
-            $cart = new static();
-            $cart->user_id = $user->user_id;
-
-            return $cart;
-        }
-
-        // TODO: maybe should show a notification and only remove
-        // when beginning the checkout process?
-        if ($cart->removeInvalidItems()) {
-            $cart = $cart->fresh();
-        }
-
-        return $cart;
     }
 
     public function macroItemsQuantities()
@@ -485,7 +498,7 @@ class Order extends Model
         return function ($query) {
             $query = clone $query;
 
-            $order = new Order();
+            $order = new self();
             $orderItem = new OrderItem();
             $product = new Product();
 
@@ -531,16 +544,7 @@ class Order extends Model
 
     private function removeOrderItem(array $params)
     {
-        $itemId = $params['id'];
-        $item = $this->items()->find($itemId);
-
-        if ($item) {
-            $item->delete();
-        }
-
-        if ($this->items()->count() === 0) {
-            $this->delete();
-        }
+        optional($this->items()->find($params['id']))->delete();
     }
 
     private function newOrderItem(array $params)
@@ -554,9 +558,13 @@ class Order extends Model
         // FIXME: custom class stuff should probably not go in Order...
         switch ($product->custom_class) {
             case 'supporter-tag':
-                $targetId = $params['extraData']['target_id'];
-                $user = User::default()->where('user_id', $targetId)->firstOrFail();
-                $params['extraData']['username'] = $user->username;
+                $targetId = (int) $params['extraData']['target_id'];
+                if ($targetId === $this->user_id) {
+                    $params['extraData']['username'] = $this->user->username;
+                } else {
+                    $user = User::default()->where('user_id', $targetId)->firstOrFail();
+                    $params['extraData']['username'] = $user->username;
+                }
 
                 $params['extraData']['duration'] = SupporterTag::getDuration($params['cost']);
                 break;
@@ -579,14 +587,13 @@ class Order extends Model
                 $params['cost'] = $product->cost ?? 0;
         }
 
-        $item = new OrderItem();
-        $item->quantity = $params['quantity'];
-        $item->extra_info = $params['extraInfo'];
-        $item->extra_data = $params['extraData'];
-        $item->cost = $params['cost'];
-        $item->product()->associate($product);
-
-        return $item;
+        return $this->items()->make([
+            'quantity' => $params['quantity'],
+            'extra_info' => $params['extraInfo'],
+            'extra_data' => $params['extraData'],
+            'cost' => $params['cost'],
+            'product_id' => $product->product_id,
+        ]);
     }
 
     private function updateOrderItem(array $params, $addToExisting = false)
@@ -606,18 +613,15 @@ class Order extends Model
         return $item;
     }
 
-    private function validateBeforeSave(Product $product, $item)
+    private static function orderItemParams(array $form)
     {
-        if (!$product->inStock($item->quantity)) {
-            return [false, 'not enough stock'];
-        } elseif (!$product->enabled) {
-            return [false, 'invalid item'];
-        } elseif ($item->quantity > $product->max_quantity) {
-            $route = route('store.cart.show');
-
-            return [false, "you can only order {$product->max_quantity} of this item per order. visit your <a href='{$route}'>shopping cart</a> to confirm your current order"];
-        }
-
-        return [true, ''];
+        return [
+            'id' => array_get($form, 'id'),
+            'quantity' => array_get($form, 'quantity'),
+            'product' => Product::enabled()->find(array_get($form, 'product_id')),
+            'cost' => intval(array_get($form, 'cost')),
+            'extraInfo' => array_get($form, 'extra_info'),
+            'extraData' => array_get($form, 'extra_data'),
+        ];
     }
 }

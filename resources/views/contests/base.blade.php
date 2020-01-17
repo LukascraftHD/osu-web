@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -15,25 +15,45 @@
     You should have received a copy of the GNU Affero General Public License
     along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 --}}
+@php
+    $links = [
+        [
+            'url' => route('contests.index'),
+            'title' => trans('layout.header.contests.index'),
+        ],
+        [
+            'url' => $contestMeta->url(),
+            'title' => $contestMeta->name,
+        ],
+    ];
+@endphp
+
 @extends('master', [
-    'current_section' => 'community',
-    'current_action' => 'contests',
+    'currentSection' => 'community',
+    'currentAction' => 'contests',
     'title' => "Contest: {$contestMeta->name}",
-    'pageDescription' => strip_tags(Markdown::convertToHtml($contestMeta->currentDescription())),
-    'body_additional_classes' => 'osu-layout--body-darker'
+    'pageDescription' => strip_tags(markdown($contestMeta->currentDescription())),
+    'canonicalUrl' => $contestMeta->url(),
+    'opengraph' => [
+        'title' => $contestMeta->name,
+        'section' => trans('layout.menu.community.contests'),
+        'image' => $contestMeta->header_url,
+    ],
 ])
 
 @section('content')
     @include('objects.css-override', ['mapping' => [
-        '.osu-page-header-v2--contests' => $contestMeta->header_url,
+        '.header-v4--contests .header-v4__bg' => $contestMeta->header_url,
     ]])
 
-    <div class="osu-page">
-        <div class="osu-page-header-v2 osu-page-header-v2--contests">
-            <div class="osu-page-header-v2__overlay"></div>
-            <div class="osu-page-header-v2__title">{{$contestMeta->name}}</div>
-        </div>
-    </div>
+    @include('layout._page_header_v4', ['params' => [
+        'links' => $links,
+        'linksBreadcrumb' => true,
+        'section' => trans('layout.header.contests._'),
+        'subSection' => $contestMeta->name,
+        'theme' => 'contests',
+    ]])
+
     <div class="osu-page osu-page--contest">
         <div class='contest'>
             @yield('contest-content')

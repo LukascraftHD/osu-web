@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,35 +20,39 @@
 
 return [
     'edit' => [
-        'title' => '<strong>Användar</strong> Inställningar',
         'title_compact' => 'inställningar',
+        'username' => 'användarnamn',
 
         'avatar' => [
-            'title' => 'Ändra Avatar',
+            'title' => 'Profilbild',
+            'rules' => '',
+            'rules_link' => 'gemenskaps regler',
         ],
 
         'email' => [
-            'current' => 'nuvarande email',
-            'new' => 'ny email',
+            'current' => 'nuvarande e-postadress',
+            'new' => 'ny e-postadress',
             'new_confirmation' => 'email bekräftelse',
-            'title' => 'Email',
+            'title' => 'E-postadress',
         ],
 
         'password' => [
             'current' => 'nuvarande lösenord',
             'new' => 'nytt lösenord',
-            'new_confirmation' => 'lösenord bekräftelse',
+            'new_confirmation' => 'lösenordsbekräftelse',
             'title' => 'Lösenord',
         ],
 
         'profile' => [
-            'title' => 'Ändra Profil',
+            'title' => 'Profil',
 
             'user' => [
+                'user_discord' => '',
                 'user_from' => 'nuvarande position',
-                'user_msnm' => 'skype',
+                'user_interests' => 'intressen',
+                'user_msnm' => '',
                 'user_occ' => 'sysselsättning',
-                'user_twitter' => 'twitter',
+                'user_twitter' => '',
                 'user_website' => 'hemsida',
             ],
         ],
@@ -59,21 +63,61 @@ return [
         ],
     ],
 
+    'notifications' => [
+        'title' => 'Aviseringar',
+        'topic_auto_subscribe' => '',
+        'beatmapset_discussion_qualified_problem' => '',
+
+        'mail' => [
+            '_' => '',
+            'beatmapset:modding' => '',
+            'forum_topic_reply' => '',
+        ],
+    ],
+
+    'oauth' => [
+        'authorized_clients' => '',
+        'own_clients' => 'egna klienter',
+        'title' => '',
+    ],
+
+    'playstyles' => [
+        'keyboard' => 'tangentbord',
+        'mouse' => 'mus',
+        'tablet' => 'platta',
+        'title' => 'Spelstil',
+        'touch' => 'pekskärm',
+    ],
+
+    'privacy' => [
+        'friends_only' => 'Blockera privata meddelanden från icke-vänner',
+        'hide_online' => '',
+        'title' => 'Sekretess',
+    ],
+
+    'security' => [
+        'current_session' => '',
+        'end_session' => 'Avsluta sessionen',
+        'end_session_confirmation' => 'Detta kommer avsluta din session på den valda enheten. Är du säker?',
+        'last_active' => 'Senast aktiv:',
+        'title' => 'Säkerhet',
+        'web_sessions' => '',
+    ],
+
     'update_email' => [
-        'email_subject' => 'ändring av osu! email bekräftelse',
         'update' => 'uppdatera',
     ],
 
     'update_password' => [
-        'email_subject' => 'ändring av osu! lösenord bekräftelse',
         'update' => 'uppdatera',
     ],
 
-    'playstyles' => [
-        'title' => 'Spelsätt',
-        'mouse' => 'mus',
-        'keyboard' => 'tangentbord',
-        'tablet' => 'platta',
-        'touch' => 'touch',
+    'verification_completed' => [
+        'text' => 'Du kan stänga detta fönstret nu',
+        'title' => 'Verifieringen har blivit slutförd',
+    ],
+
+    'verification_invalid' => [
+        'title' => '',
     ],
 ];

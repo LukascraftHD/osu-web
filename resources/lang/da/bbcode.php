@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -25,7 +25,7 @@ return [
     'italic' => 'Italic',
     'link' => 'Link',
     'list' => 'Liste',
-    'list_numbered' => 'Numereret List',
+    'list_numbered' => 'Numereret Liste',
     'size' => [
         '_' => 'Skriftstørrelse',
         'tiny' => 'Meget lille',
@@ -33,6 +33,6 @@ return [
         'normal' => 'Normal',
         'large' => 'Stor',
     ],
-    'spoilerbox' => 'Spoiler Box',
+    'spoilerbox' => 'Spoiler Boks',
     'strikethrough' => 'Gennemstreget',
 ];

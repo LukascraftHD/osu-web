@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -67,7 +67,7 @@ class PaypalController extends Controller
             $payment = $command->run();
             Log::debug($payment);
         } catch (PayPalConnectionException $e) {
-            return $this->setAndRedirectCheckoutError($this->userErrorMessage($e));
+            return $this->setAndRedirectCheckoutError($order, $this->userErrorMessage($e));
         }
 
         return redirect(route('store.invoice.show', ['invoice' => $order->order_id, 'thanks' => 1]));
@@ -91,11 +91,14 @@ class PaypalController extends Controller
         $orderId = Request::input('order_id');
 
         $order = Order::where('user_id', Auth::user()->user_id)->processing()->find($orderId);
-        if ($order) {
-            (new OrderCheckout($order, 'paypal'))->failCheckout();
+
+        if ($order === null) {
+            return ujs_redirect(route('store.cart.show'));
         }
 
-        return $this->setAndRedirectCheckoutError(trans('store.checkout.declined'));
+        (new OrderCheckout($order, Order::PROVIDER_PAYPAL))->failCheckout();
+
+        return $this->setAndRedirectCheckoutError($order, trans('store.checkout.declined'));
     }
 
     // Called by Paypal.

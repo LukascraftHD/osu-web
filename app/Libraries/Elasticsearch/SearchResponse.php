@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -36,6 +36,13 @@ class SearchResponse implements \ArrayAccess, \Countable, \Iterator
         $this->raw = $results;
 
         $this->index = 0;
+    }
+
+    public function aggregations(string $name = null)
+    {
+        return $name === null
+            ? $this->raw['aggregations'] ?? []
+            : $this->raw['aggregations'][$name] ?? [];
     }
 
     public function count()
@@ -81,16 +88,6 @@ class SearchResponse implements \ArrayAccess, \Countable, \Iterator
             return array_map(function ($hit) use ($field) {
                 return $hit['_source'][$field];
             }, $this->hits());
-        }
-    }
-
-    public function innerHits($index, string $name)
-    {
-        $results = $this->hits()[$index] ?? null;
-        $results = $results['inner_hits'][$name];
-
-        if ($results) {
-            return new static($results, $name);
         }
     }
 
@@ -200,13 +197,24 @@ class SearchResponse implements \ArrayAccess, \Countable, \Iterator
         return $this->offsetExists($this->index);
     }
 
-    public static function failed()
+    public static function empty()
     {
         return new static([
             'hits' => [
                 'hits' => [],
                 'total' => 0,
             ],
+        ]);
+    }
+
+    public static function failed($exception)
+    {
+        return new static([
+            'hits' => [
+                'hits' => [],
+                'total' => 0,
+            ],
+            'exception' => $exception,
         ]);
     }
 }

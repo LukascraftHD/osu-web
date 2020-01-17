@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -17,8 +17,13 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+namespace Tests\Libraries;
+
+use App\Exceptions\ValidationException;
 use App\Libraries\UserRegistration;
 use App\Models\User;
+use Tests\TestCase;
 
 class UserRegistrationTest extends TestCase
 {
@@ -28,9 +33,10 @@ class UserRegistrationTest extends TestCase
 
         $origCount = User::count();
         $reg = new UserRegistration($attrs);
-        $reg->save();
+        $thrown = $this->runSubject($reg);
 
-        $this->assertEquals($origCount + 1, User::count());
+        $this->assertFalse($thrown);
+        $this->assertSame($origCount + 1, User::count());
     }
 
     public function testRequiresUsername()
@@ -40,16 +46,18 @@ class UserRegistrationTest extends TestCase
 
         $origCount = User::count();
         $reg = new UserRegistration($attrs);
-        $reg->save();
+        $thrown = $this->runSubject($reg);
 
+        $this->assertTrue($thrown);
         $this->assertArraySubset(
             $reg->user()->validationErrors()->all(),
             [
-                'username' => [trans('model_validation.required', ['attribute' => 'username'])],
+                'username' => [trans('model_validation.required', [
+                    'attribute' => trans('model_validation.user.attributes.username'),
+                ])],
             ]
         );
-
-        $this->assertEquals($origCount, User::count());
+        $this->assertSame($origCount, User::count());
     }
 
     public function testStoreRequiresEmail()
@@ -59,16 +67,18 @@ class UserRegistrationTest extends TestCase
 
         $origCount = User::count();
         $reg = new UserRegistration($attrs);
-        $reg->save();
+        $thrown = $this->runSubject($reg);
 
+        $this->assertTrue($thrown);
         $this->assertArraySubset(
             $reg->user()->validationErrors()->all(),
             [
-                'user_email' => [trans('model_validation.required', ['attribute' => 'user_email'])],
+                'user_email' => [trans('model_validation.required', [
+                    'attribute' => trans('model_validation.user.attributes.user_email'),
+                ])],
             ]
         );
-
-        $this->assertEquals($origCount, User::count());
+        $this->assertSame($origCount, User::count());
     }
 
     public function testStoreRequiresPassword()
@@ -78,16 +88,31 @@ class UserRegistrationTest extends TestCase
 
         $origCount = User::count();
         $reg = new UserRegistration($attrs);
-        $reg->save();
+        $thrown = $this->runSubject($reg);
 
+        $this->assertTrue($thrown);
         $this->assertArraySubset(
             $reg->user()->validationErrors()->all(),
             [
-                'password' => [trans('model_validation.required', ['attribute' => 'password'])],
+                'password' => [trans('model_validation.required', [
+                    'attribute' => trans('model_validation.user.attributes.password'),
+                ])],
             ]
         );
+        $this->assertSame($origCount, User::count());
+    }
 
-        $this->assertEquals($origCount, User::count());
+    // wrapper to catch the exception
+    // so that the contents of validationErrors can be examined.
+    private function runSubject($subject)
+    {
+        try {
+            $subject->save();
+        } catch (ValidationException $e) {
+            return true;
+        }
+
+        return false;
     }
 
     private function basicAttributes()

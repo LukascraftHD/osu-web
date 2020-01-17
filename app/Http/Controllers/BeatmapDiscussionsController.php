@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -23,7 +23,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\ModelNotSavedException;
 use App\Models\BeatmapDiscussion;
 use Auth;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Request;
 
 class BeatmapDiscussionsController extends Controller
@@ -32,7 +32,7 @@ class BeatmapDiscussionsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['except' => 'show']);
+        $this->middleware('auth', ['except' => ['index', 'show']]);
 
         return parent::__construct();
     }
@@ -81,27 +81,28 @@ class BeatmapDiscussionsController extends Controller
 
     public function index()
     {
-        priv_check('BeatmapDiscussionModerate')->ensureCan();
-
+        $isModerator = priv_check('BeatmapDiscussionModerate')->can();
         $params = request();
+        $params['is_moderator'] = $isModerator;
 
-        // for when the priv_check lock above is removed
-        if (!priv_check('BeatmapDiscussionModerate')->can()) {
+        if (!$isModerator) {
             $params['with_deleted'] = false;
         }
 
         $search = BeatmapDiscussion::search($params);
-        $discussions = new LengthAwarePaginator(
-            $search['query']->with([
-                    'user',
-                    'beatmapset',
-                    'startingPost',
-                ])->get(),
-            $search['query']->realCount(),
+
+        $query = $search['query']->with([
+            'user',
+            'beatmapset',
+            'startingPost',
+        ])->limit($search['params']['limit'] + 1);
+
+        $discussions = new Paginator(
+            $query->get(),
             $search['params']['limit'],
             $search['params']['page'],
             [
-                'path' => route('beatmap-discussions.index'),
+                'path' => Paginator::resolveCurrentPath(),
                 'query' => $search['params'],
             ]
         );

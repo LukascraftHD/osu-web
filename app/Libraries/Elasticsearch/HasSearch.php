@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,22 +20,25 @@
 
 namespace App\Libraries\Elasticsearch;
 
-trait HasSearch
+abstract class HasSearch
 {
-    protected $from;
     protected $highlight;
+    protected $params;
     protected $query;
-    protected $size = 10;
-    protected $sort = [];
     protected $source;
     protected $type;
 
+    public function __construct(SearchParams $params)
+    {
+        $this->params = $params;
+    }
+
     /**
      * @return $this
      */
-    public function from(?int $from)
+    public function from(int $from)
     {
-        $this->from = $from;
+        $this->params->from = $from;
 
         return $this;
     }
@@ -43,49 +46,11 @@ trait HasSearch
     /**
      * @return $this
      */
-    public function limit(?int $limit)
+    public function size(int $size)
     {
-        return $this->size($limit);
-    }
-
-    /**
-     * @return $this
-     */
-    public function size(?int $size)
-    {
-        $this->size = clamp($size ?? 50, 1, 50);
+        $this->params->size = $size;
 
         return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function page(?int $page)
-    {
-        $this->page = $page;
-
-        return $this;
-    }
-
-    /**
-     * page is not returned if using offset query.
-     *
-     * @return array
-     */
-    protected function getPaginationParams()
-    {
-        $params = ['size' => $this->size, 'limit' => $this->size];
-
-        // from overrides page.
-        if (isset($this->from)) {
-            $params['from'] = $this->from;
-        } else {
-            $params['page'] = max(1, $this->page ?? 1);
-            $params['from'] = ($params['page'] - 1) * $this->size;
-        }
-
-        return $params;
     }
 
     /**
@@ -126,11 +91,19 @@ trait HasSearch
     }
 
     /**
+     * @param array|Sort $sort
+     *
      * @return $this
      */
-    public function sort(array $sort)
+    public function sort($sort)
     {
-        $this->sort[] = $sort;
+        if (is_array($sort)) {
+            foreach ($sort as $s) {
+                $this->addSort($s);
+            }
+        } else {
+            $this->addSort($sort);
+        }
 
         return $this;
     }
@@ -143,5 +116,28 @@ trait HasSearch
         $this->type = $type;
 
         return $this;
+    }
+
+    /**
+     *  Gets the actual size to use in queries.
+     *
+     * @return int actual size to use.
+     */
+    protected function getQuerySize(): int
+    {
+        return min($this->maxResults() - $this->params->from, $this->params->size);
+    }
+
+    protected function maxResults(): int
+    {
+        // the default is the maximum number of total results allowed when not using the scroll API.
+        return 10000;
+    }
+
+    private function addSort(Sort $sort)
+    {
+        if (!$sort->isBlank()) {
+            $this->params->sorts[] = $sort;
+        }
     }
 }

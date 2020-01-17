@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -20,18 +20,81 @@ class @BeatmapDiscussionHelper
   @DEFAULT_BEATMAP_ID: '-'
   @DEFAULT_MODE: 'timeline'
   @DEFAULT_FILTER: 'total'
+  @MAX_MESSAGE_PREVIEW_LENGTH: 100
+  @MAX_LENGTH_TIMELINE: 750
 
-  @MODES = ['events', 'general', 'generalAll', 'timeline']
+
+  @MODES = ['events', 'general', 'generalAll', 'timeline', 'reviews']
   @FILTERS = ['deleted', 'hype', 'mapperNotes', 'mine', 'pending', 'praises', 'resolved', 'total']
 
+
+  @canModeratePosts: (user) =>
+    user ?= currentUser
+
+    user.is_admin || user.can_moderate
+
+
+  # text should be pre-escaped.
+  @discussionLinkify: (text) =>
+    currentUrl = new URL(window.location)
+    currentBeatmapsetDiscussions = @urlParse(currentUrl.href)
+
+    text.replace osu.urlRegex, (url, _, displayUrl) =>
+      targetUrl = new URL(url)
+
+      if targetUrl.host == currentUrl.host
+        targetBeatmapsetDiscussions = @urlParse targetUrl.href, null, forceDiscussionId: true
+        if targetBeatmapsetDiscussions?.discussionId?
+          if currentBeatmapsetDiscussions? &&
+              currentBeatmapsetDiscussions.beatmapsetId == targetBeatmapsetDiscussions.beatmapsetId
+            # same beatmapset, format: #123
+            linkText = "##{targetBeatmapsetDiscussions.discussionId}"
+            attrs = 'class="js-beatmap-discussion--jump"'
+          else
+            # different beatmapset, format: 1234#567
+            linkText = "#{targetBeatmapsetDiscussions.beatmapsetId}##{targetBeatmapsetDiscussions.discussionId}"
+
+      linkText ?= displayUrl
+
+      "<a href='#{url}' rel='nofollow' #{attrs ? ''}>#{linkText ? url}</a>"
+
+
+
   @discussionMode: (discussion) ->
-    if discussion.beatmap_id?
-      if discussion.timestamp?
-        'timeline'
-      else
-        'general'
+    if discussion.message_type == 'review'
+      'reviews'
     else
-      'generalAll'
+      if discussion.beatmap_id?
+        if discussion.timestamp?
+          'timeline'
+        else
+          'general'
+      else
+        'generalAll'
+
+
+  @format: (text, options = {}) =>
+    blockName = 'beatmapset-discussion-message'
+    text = _.escape text
+    text = text.trim()
+    text = @discussionLinkify text
+    text = @linkTimestamp text, ["#{blockName}__timestamp"]
+
+    if options.newlines ? true
+      # replace newlines with <br>
+      # - trim trailing spaces
+      # - then join with <br>
+      # - limit to 2 consecutive <br>s
+      text = text
+        .split '\n'
+        .map (x) -> x.trim()
+        .join '<br>'
+        .replace /(?:<br>){2,}/g, '<br><br>'
+
+    blockClass = blockName
+    blockClass += " #{blockName}--#{modifier}" for modifier in options.modifiers ? []
+
+    "<div class='#{blockClass}'>#{text}</div>"
 
 
   @formatTimestamp: (value) =>
@@ -47,38 +110,36 @@ class @BeatmapDiscussionHelper
 
   @linkTimestamp: (text, classNames = []) =>
     text
-      .replace /\b((\d{2}):(\d{2})[:.](\d{3})( \([\d,|]+\)|\b))/g, (_, text, m, s, ms, range) =>
-        "#{osu.link(Url.openBeatmapEditor("#{m}:#{s}:#{ms}#{range ? ''}"), text, classNames: classNames)}"
-
-
-  @maxlength: 750
+      .replace /\b((\d{2}):(\d{2})[:.](\d{3})( \([\d,|]+\)|\b))/g, (_match, text, m, s, ms, range) =>
+        osu.link(Url.openBeatmapEditor("#{m}:#{s}:#{ms}#{range ? ''}"), text, classNames: classNames)
 
 
   @messageType:
     icon:
-      hype: 'bullhorn'
-      mapperNote: 'sticky-note-o'
-      praise: 'heart'
-      problem: 'exclamation-circle'
-      suggestion: 'circle-o'
+      hype: 'fas fa-bullhorn'
+      mapperNote: 'far fa-sticky-note'
+      praise: 'fas fa-heart'
+      problem: 'fas fa-exclamation-circle'
+      review: 'fas fa-tasks'
+      suggestion: 'far fa-circle'
 
     # used for svg since it doesn't seem to have ::before pseudo-element
     iconText:
-      mapperNote: '&#xf24a;'
-      praise: '&#xf004;'
-      problem: '&#xf06a;'
-      resolved: '&#xf05d;'
-      suggestion: '&#xf10c;'
+      mapperNote: ['far', '&#xf249;']
+      praise: ['fas', '&#xf004;']
+      problem: ['fas', '&#xf06a;']
+      resolved: ['far', '&#xf058;']
+      suggestion: ['far', '&#xf111;']
 
 
-  @moderationGroup: (user) =>
-    if user.groups?
-      _.intersection(user.groups, ['admin', 'qat', 'bng'])[0]
+  @previewMessage = (message) =>
+    if message.length > @MAX_MESSAGE_PREVIEW_LENGTH
+      _.chain(message)
+      .truncate length: @MAX_MESSAGE_PREVIEW_LENGTH
+      .escape()
+      .value()
     else
-      switch
-        when user.is_admin then 'admin'
-        when user.is_qat then 'qat'
-        when user.is_bng then 'bng'
+      @format message, newlines: false
 
 
   @stateFromDiscussion: (discussion) =>
@@ -91,7 +152,7 @@ class @BeatmapDiscussionHelper
 
 
   # Don't forget to update BeatmapDiscussionsController@show when changing this.
-  @url: (options = {}) =>
+  @url: (options = {}, useCurrent = false) =>
     {
       beatmapsetId
       beatmapId
@@ -101,7 +162,8 @@ class @BeatmapDiscussionHelper
       discussionId
       discussions # for validating discussionId and getting relevant params
       discussion
-    } = options
+      user
+    } = if useCurrent then _.assign(@urlParse(), options) else options
 
     params = {}
 
@@ -113,7 +175,7 @@ class @BeatmapDiscussionHelper
     params.mode = mode ? @DEFAULT_MODE
 
     params.beatmap =
-      if !beatmapId? || params.mode in ['events', 'generalAll']
+      if !beatmapId? || params.mode in ['events', 'generalAll', 'reviews']
         @DEFAULT_BEATMAP_ID
       else
         beatmapId
@@ -134,20 +196,23 @@ class @BeatmapDiscussionHelper
         params.beatmap = discussionState.beatmapId
         params.mode = discussionState.mode
 
-    url = new URL(document.location)
-    url.pathname = laroute.route 'beatmapsets.discussion', params
+    url = new URL(laroute.route('beatmapsets.discussion', params))
     url.hash = if discussionId? then url.hash = "/#{discussionId}" else ''
+
+    if user?
+      url.searchParams.set('user', user)
+    else
+      url.searchParams.delete('user')
 
     url.toString()
 
 
   # see @url
-  @urlParse: (urlString, discussions, options = {}) ->
+  @urlParse: (urlString, discussions, options = {}) =>
     options.forceDiscussionId ?= false
 
     url = new URL(urlString ? document.location.href)
-    params = url.searchParams
-    [__, pathBeatmapsets, beatmapsetId, pathDiscussions, beatmapId, mode, filter] = url.pathname.split '/'
+    [__, pathBeatmapsets, beatmapsetId, pathDiscussions, beatmapId, mode, filter] = url.pathname.split /\/+/
 
     return if pathBeatmapsets != 'beatmapsets' || pathDiscussions != 'discussion'
 
@@ -160,6 +225,7 @@ class @BeatmapDiscussionHelper
       # empty path segments are ''
       mode: if _.includes(@MODES, mode) then mode else @DEFAULT_MODE
       filter: if _.includes(@FILTERS, filter) then filter else @DEFAULT_FILTER
+      user: parseInt(url.searchParams.get('user'), 10) if url.searchParams.get('user')?
 
     if url.hash[1] == '/'
       discussionId = parseInt(url.hash[2..], 10)
@@ -175,5 +241,10 @@ class @BeatmapDiscussionHelper
     ret
 
 
-  @validMessageLength: (message) =>
-    message.length > 0 && message.length <= @maxlength
+  @validMessageLength: (message, isTimeline) =>
+    return false unless message?.length > 0
+
+    if isTimeline
+      message.length <= @MAX_LENGTH_TIMELINE
+    else
+      true

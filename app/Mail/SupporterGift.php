@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2018 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -39,12 +39,12 @@ class SupporterGift extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($donor, $giftee, $length)
+    public function __construct($donor, $giftee, $duration)
     {
         $this->params = [
             'donor' => $donor,
             'giftee' => $giftee,
-            'duration' => SupporterTag::getDurationText($length),
+            'duration' => SupporterTag::getDurationText($duration),
         ];
     }
 
@@ -55,8 +55,8 @@ class SupporterGift extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->text(i18n_view('emails.store.supporter_gift'))
+        return $this->text('emails.store.supporter_gift')
             ->with($this->params)
-            ->subject(trans('fulfillments.mail.supporter_gift.subject'));
+            ->subject(trans('mail.supporter_gift.subject'));
     }
 }

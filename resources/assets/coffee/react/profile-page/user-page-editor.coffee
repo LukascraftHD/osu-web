@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -16,99 +16,47 @@
 #    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-{div} = ReactDOMFactories
+import { BBCodeEditor } from 'bbcode-editor'
+import * as React from 'react'
 el = React.createElement
 
-class ProfilePage.UserPageEditor extends React.Component
-  componentDidMount: =>
-    $(@body)
-      .off 'bbcode:inserted'
-      .on 'bbcode:inserted', @_change
-
-    @body.selectionStart = @props.userPage.selection[0]
-    @body.selectionEnd = @props.userPage.selection[1]
-    @body.focus()
-
-
-  componentWillUnmount: =>
-    # FIXME: Doesn't work on page nagivation.
-    #        Looks like the listener has gone when this is triggered.
-    $.publish 'user:page:update',
-      selection: [@body.selectionStart, @body.selectionEnd]
-
-
+export class UserPageEditor extends React.PureComponent
   render: =>
-    el 'form', null,
-      el 'textarea',
-        className: 'profile-extra-user-page-editor'
-        name: 'body'
-        value: @props.userPage.raw
-        onChange: @_change
-        placeholder: osu.trans('users.show.page.placeholder')
-        ref: @setBody
-
-      el 'div', className: 'post-editor__footer post-editor__footer--profile-page',
-        div
-          className: 'post-editor__toolbar'
-          dangerouslySetInnerHTML:
-            __html: postEditorToolbar.html
-
-        el 'div', className: 'post-editor__actions',
-          el 'button',
-            className: 'btn-osu btn-osu--small btn-osu-default post-editor__action'
-            type: 'button'
-            onClick: @_cancel
-            osu.trans('common.buttons.cancel')
-
-          el 'button',
-            className: 'btn-osu btn-osu--small btn-osu-default post-editor__action'
-            type: 'button'
-            onClick: @_reset
-            osu.trans('common.buttons.reset')
-
-          el 'button',
-            className: 'btn-osu btn-osu--small btn-osu-default post-editor__action'
-            type: 'button'
-            onClick: @_save
-            osu.trans('common.buttons.save')
+    el BBCodeEditor,
+      modifiers: ['profile-page']
+      rawValue: @props.userPage.raw
+      placeholder: osu.trans('users.show.page.placeholder')
+      onChange: @onChange
 
 
-  _change: (e) =>
-    $.publish 'user:page:update',
-      raw: e.currentTarget.value
+  onChange: ({event, type, value}) =>
+    switch type
+      when 'cancel'
+        @cancel()
+      when 'save'
+        @save({event, value})
 
 
-  _reset: =>
-    $.publish 'user:page:update',
-      raw: @props.userPage.initialRaw
-
-    @body.focus()
-
-
-  _cancel: =>
+  cancel: =>
     $.publish 'user:page:update',
       editing: false
-      raw: @props.userPage.initialRaw
 
 
-  _save: (e) =>
-    body = @props.userPage.raw
+  save: ({event, value}) =>
+    return @cancel() if value == @props.userPage.raw
+
     LoadingOverlay.show()
 
-    $.ajax laroute.route('account.page'),
+    $.ajax laroute.route('users.page', user: @props.user.id),
       method: 'PUT'
       dataType: 'json'
       data:
-        body: body
+        body: value
     .done (data) ->
       $.publish 'user:page:update',
         html: data.html
         editing: false
-        raw: body
-        initialRaw: body
-    .fail osu.emitAjaxError(e.target)
+        raw: value
+        initialRaw: value
+    .fail osu.emitAjaxError(event.target)
     .always LoadingOverlay.hide
-
-
-  setBody: (el) =>
-    @body = el

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,13 +20,17 @@
 
 return [
     'index' => [
+        'description' => '围绕某个相同主题打包好的曲包',
+        'nav_title' => '',
+        'title' => '曲包',
+
         'blurb' => [
             'important' => '下载前必读',
             'instruction' => [
-                '_' => '安装：下载好曲包之后,直接解压 .rar 文件到你的 osu! 的 Songs 文件夹下。
-                    所有的谱面此时都是 .zip 或 .osz 文件, osu! 会在你下一次启动时自动载入这些谱面，
-                    因此 :scary 自己解压这些谱面。
-                    否则这些谱面可能无法正常游玩。',
+                '_' => "安装：下载好曲包之后，直接解压 .rar 文件到 osu! 的 Songs 文件夹下。
+                    所有的谱面此时都是 .zip 或 .osz 文件，osu! 会在下一次启动时自动载入这些谱面，
+                    :scary 自己解压这些谱面。
+                    否则这些谱面可能显示错误并无法正常游玩。",
                 'scary' => '不要',
             ],
             'note' => [
@@ -34,8 +38,6 @@ return [
                 'scary' => '下载最新的曲包',
             ],
         ],
-        'title' => '曲包',
-        'description' => '围绕某个相同主题打包好的曲包',
     ],
 
     'show' => [
@@ -49,7 +51,7 @@ return [
     'mode' => [
         'artist' => '艺术家/专辑',
         'chart' => '月赛',
-        'standard' => '标准',
+        'standard' => '常规',
         'theme' => '主题',
     ],
 

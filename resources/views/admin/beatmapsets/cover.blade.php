@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -18,28 +18,31 @@
 @extends('master')
 
 @section('content')
-    <div class="osu-page osu-page--generic">
+    @include('admin/_header', ['title' => trans('layout.header.admin.beatmapset_covers')])
+    <div class="osu-page osu-page--admin">
         <div class="beatmapset-cover-admin">
             <h2>{{$beatmapset->title}} - {{$beatmapset->artist}}</h2>
             <br>
             <button
+                class="btn-osu-big btn-osu-big--rounded-thin"
                 data-remote="true"
                 data-method="POST"
                 data-url="{{ route('admin.beatmapsets.covers.regenerate', $beatmapset->beatmapset_id) }}"
                 data-reload-on-success="1"
                 data-disable-with="{{ trans('admin.beatmapsets.covers.regenerating') }}"
             >
-                <i class="fa fa-fw fa-refresh"></i>
+                <i class="fas fa-fw fa-sync"></i>
                 {{trans('admin.beatmapsets.covers.regenerate')}}
             </button>
             <button
+                class="btn-osu-big btn-osu-big--rounded-thin"
                 data-remote="true"
                 data-method="POST"
                 data-url="{{ route('admin.beatmapsets.covers.remove', $beatmapset->beatmapset_id) }}"
                 data-reload-on-success="1"
                 data-disable-with="{{ trans('admin.beatmapsets.covers.removing') }}"
             >
-                <i class="fa fa-fw fa-trash"></i>
+                <i class="fas fa-fw fa-trash"></i>
                 {{trans('admin.beatmapsets.covers.remove')}}
             </button>
             @foreach (array_merge(['raw', 'fullsize'], $beatmapset->coverSizes()) as $size)

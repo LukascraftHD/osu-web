@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,8 +21,8 @@
 return [
     'authorizations' => [
         'update' => [
-            'null_user' => '編輯前請先登錄。',
-            'system_generated' => '無法編輯系統回覆。',
+            'null_user' => '編輯前請先登入。',
+            'system_generated' => '無法編輯系統發佈的貼文。',
             'wrong_user' => '只有作者可以編輯。',
         ],
     ],
@@ -32,13 +32,26 @@ return [
     ],
 
     'index' => [
-        'deleted_beatmap' => '刪除',
-        'title' => '譜面討論',
+        'deleted_beatmap' => '已刪除',
+        'title' => '圖譜討論',
 
         'form' => [
+            '_' => '搜尋',
             'deleted' => '包含已經刪除的討論',
+            'only_unresolved' => '只顯示未解決的討論',
+            'types' => '訊息類別',
+            'username' => '使用者名稱',
 
-            'user' => [ //上下文
+            'beatmapset_status' => [
+                '_' => '圖譜狀態',
+                'all' => '全部',
+                'disqualified' => 'Disqualified',
+                'never_qualified' => 'Never Qualified',
+                'qualified' => 'Qualified',
+                'ranked' => '已進榜',
+            ],
+
+            'user' => [
                 'label' => '用戶',
                 'overview' => '活動總覽',
             ],
@@ -46,10 +59,10 @@ return [
     ],
 
     'item' => [
-        'created_at' => '發帖時間',
-        'deleted_at' => '刪帖時間',
+        'created_at' => '發佈日期',
+        'deleted_at' => '刪除日期',
         'message_type' => '類型',
-        'permalink' => '靜態鏈接',
+        'permalink' => '固定連結',
     ],
 
     'nearby_posts' => [
@@ -59,9 +72,14 @@ return [
 
     'reply' => [
         'open' => [
-            'guest' => '登錄以回覆',
+            'guest' => '登入以回覆',
             'user' => '回覆',
         ],
+    ],
+
+    'review' => [
+        'go_to_parent' => '檢視其他人的評論',
+        'go_to_child' => '查看討論',
     ],
 
     'system' => [
@@ -71,10 +89,13 @@ return [
         ],
     ],
 
-    'user' => [
-        'admin' => '管理員',
-        'bng' => '譜面管理團隊',
-        'owner' => '譜面作者',
-        'qat' => '質量保證團隊',
+    'timestamp_display' => [
+        'general' => '一般',
+        'general_all' => '一般(所有)',
+    ],
+
+    'user_filter' => [
+        'everyone' => '所有人',
+        'label' => '按使用者篩選',
     ],
 ];

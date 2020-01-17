@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -29,7 +29,7 @@ class QueryHelper
      *
      * @return array
      */
-    public static function clauseToArray($clause) : array
+    public static function clauseToArray($clause): array
     {
         if (is_array($clause)) {
             return $clause;
@@ -40,5 +40,25 @@ class QueryHelper
         }
 
         throw new Exception('$clause should be array or Queryable.');
+    }
+
+    /**
+     * Helper method that creates the simple_query_string query.
+     *
+     * @param string $query The query string.
+     * @param array $fields The fields to search; Use an empty array to search all fields.
+     *
+     * @return array
+     */
+    public static function queryString(string $query, array $fields = [], string $operator = 'or', float $boost = 1): array
+    {
+        return [
+            'simple_query_string' => [
+                'query' => $query,
+                'fields' => $fields,
+                'default_operator' => $operator,
+                'boost' => $boost,
+            ],
+        ];
     }
 }

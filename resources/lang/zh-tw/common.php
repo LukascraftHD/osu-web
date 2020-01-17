@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,7 +20,8 @@
 
 return [
     'confirmation' => '確定？',
-    'saved' => '已保存',
+    'confirmation_unsaved' => '未被修改的將不會保存。你確定嗎？',
+    'saved' => '儲存',
 
     'array_and' => [
         'words_connector' => '，',
@@ -28,35 +29,81 @@ return [
         'last_word_connector' => '和',
     ],
 
+    'badges' => [
+        'new' => '全新功能！',
+    ],
+
     'buttons' => [
+        'admin' => '管理員',
+        'back_to_previous' => '返回到上一個位置',
+        'back_to_top' => '返回頂部',
         'cancel' => '取消',
+        'change' => '變更',
+        'click_to_copy' => '點擊以複製到剪貼簿',
+        'click_to_copy_copied' => '已複製到剪貼簿！',
+        'close' => '關閉',
+        'collapse' => '摺疊',
         'delete' => '刪除',
-        'permalink' => '靜態鏈接',
-        'permalink_copied' => '鏈接已複製',
-        'post' => '發送',
+        'edit' => '編輯',
+        'expand' => '展開',
+        'hide' => '隱藏',
+        'permalink' => '永久連結',
+        'permalink_copied' => '連結已複製',
+        'post' => '發表',
         'reply' => '回覆',
         'reply_reopen' => '回覆並重新打開',
         'reply_resolve' => '回覆並標記為已解決',
-        'reset' => '重置',
-        'save' => '保存',
-        'saving' => '保存中...',
+        'reset' => '重設',
+        'restore' => '復原',
+        'save' => '儲存',
+        'saving' => '儲存中...',
+        'search' => '搜尋',
+        'see_more' => '查看更多',
+        'show' => '顯示',
+        'show_deleted' => '顯示刪除的項目',
         'show_more' => '顯示更多',
+        'show_more_options' => '顯示更多選項',
+        'update' => '更新',
         'upload_image' => '上傳圖片',
+
+        'watch' => [
+            'to_0' => '取消關注',
+            'to_1' => '關注',
+        ],
     ],
 
     'count' => [
+        'badges' => ':count 枚徽章',
+        'days' => ':count 天',
         'hour_short_unit' => '小時',
+        'hours' => ':count 小時',
         'item' => ':count 個',
-        'minute_short_unit' => '分鐘',
+        'minute_short_unit' => '分',
+        'minutes' => ':count_delimited 分鐘|:count_delimited 分鐘',
         'months' => ':count 個月',
+        'plus_others' => '+ :count_delimited 其他!|+ :count_delimited 其他!',
+        'post' => ':count_delimited 篇貼文',
         'second_short_unit' => '秒',
+        'star_priority' => ':count_delimited 星數優先|:count_delimited 星數優先',
+        'update' => ':count_delimited 更新|:count_delimited 更新',
+        'view' => ':count_delimited 次瀏覽',
         'years' => ':count 年',
+    ],
+
+    'countdown' => [
+        'days' => '天',
+        'hours' => '小時',
+        'minutes' => '分鐘',
+        'seconds' => '秒',
     ],
 
     'datetime' => [
         'year_month' => [
             'moment' => 'YYYY年 MMMM',
             'php' => 'y年 MMMM',
+        ],
+        'year_month_short' => [
+            'moment' => 'YYYY年 MMM',
         ],
     ],
 
@@ -68,7 +115,11 @@ return [
     ],
 
     'dropzone' => [
-        'target' => '拖動到此處以上傳',
+        'target' => '拉到此處以上傳',
+    ],
+
+    'input' => [
+        'search' => '搜尋...',
     ],
 
     'pagination' => [

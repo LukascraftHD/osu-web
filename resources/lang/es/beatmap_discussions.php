@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2018 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -22,13 +22,13 @@ return [
     'authorizations' => [
         'update' => [
             'null_user' => 'Debes iniciar sesión para editar.',
-            'system_generated' => 'No se puede editar una publicación generada por el sistema.',
-            'wrong_user' => 'Debes ser dueño del post para editarlo.',
+            'system_generated' => 'Una publicación generada por el sistema no se puede editar.',
+            'wrong_user' => 'Debes ser el dueño de la publicación para editarla.',
         ],
     ],
 
     'events' => [
-        'empty' => 'Aún... no ha ocurrido nada.',
+        'empty' => 'Nada ha sucedido... aún.',
     ],
 
     'index' => [
@@ -36,24 +36,37 @@ return [
         'title' => 'Discusiones del beatmap',
 
         'form' => [
+            '_' => 'Buscar',
             'deleted' => 'Incluir discusiones eliminadas',
+            'only_unresolved' => 'Mostrar sólo discusiones no resueltas',
+            'types' => 'Tipos de mensaje',
+            'username' => 'Nombre de usuario',
+
+            'beatmapset_status' => [
+                '_' => 'Estado de Beatmap',
+                'all' => 'Todo',
+                'disqualified' => 'Descalificado',
+                'never_qualified' => 'No calificado',
+                'qualified' => 'Calificado',
+                'ranked' => 'Clasificado',
+            ],
 
             'user' => [
                 'label' => 'Usuario',
-                'overview' => 'Actividades generales',
+                'overview' => 'Resumen de actividades',
             ],
         ],
     ],
 
     'item' => [
-        'created_at' => 'Fecha de posting',
+        'created_at' => 'Fecha de publicación',
         'deleted_at' => 'Fecha de eliminación',
         'message_type' => 'Tipo',
         'permalink' => 'Enlace permanente',
     ],
 
     'nearby_posts' => [
-        'confirm' => 'Ninguno de estos posts se relaciona con mi caso',
+        'confirm' => 'Ninguna de las publicaciones aborda mi asunto',
         'notice' => 'Ya hay posts cerca de :timestamp (:existing_timestamps). Por favor revísalos antes de publicar.',
     ],
 
@@ -64,6 +77,11 @@ return [
         ],
     ],
 
+    'review' => [
+        'go_to_parent' => '',
+        'go_to_child' => 'Ver discusión',
+    ],
+
     'system' => [
         'resolved' => [
             'true' => 'Marcado como resuelto por :user',
@@ -71,10 +89,13 @@ return [
         ],
     ],
 
-    'user' => [
-        'admin' => 'admin',
-        'bng' => 'nominador',
-        'owner' => 'mapper',
-        'qat' => 'qat',
+    'timestamp_display' => [
+        'general' => 'general',
+        'general_all' => 'general (todo)',
+    ],
+
+    'user_filter' => [
+        'everyone' => 'Todos',
+        'label' => 'Filtrar por usuario',
     ],
 ];

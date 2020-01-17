@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,23 +19,26 @@
  */
 
 return [
-    'deleted' => '[被刪除的用戶]', //TODO 需要上下文
+    'deleted' => '[已刪除的使用者]',
 
     'beatmapset_activities' => [
+        'title' => ":user 的摸圖紀錄",
+        'title_compact' => '摸圖',
+
         'discussions' => [
-            'title_recent' => '最近打開的討論', //上下文
+            'title_recent' => '最近討論的主題',
         ],
 
         'events' => [
-            'title_recent' => '最近事件',
+            'title_recent' => '近期活動',
         ],
 
         'posts' => [
-            'title_recent' => '最近帖子',
+            'title_recent' => '最新貼文',
         ],
 
         'votes_received' => [
-            'title_most' => '得讚最多（最近三個月）',
+            'title_most' => '得讚最多（近三個月）',
         ],
 
         'votes_made' => [
@@ -43,211 +46,396 @@ return [
         ],
     ],
 
-    'login' => [
-        '_' => '登錄',
-        'locked_ip' => 'IP 已被鎖定，請稍等幾分鐘',
-        'username' => '用戶名',
-        'password' => '密碼',
-        'button' => '登錄',
-        'button_posting' => '登錄中...',
-        'remember' => '記住此電腦',
-        'title' => '登錄以繼續',
-        'failed' => '登錄失敗',
-        'register' => '沒有 osu! 帳戶？現在就註冊一個！',
-        'forgot' => '忘記密碼？',
-        'beta' => [ //已棄用(?)
-            'main' => 'Beta 僅限於特定用戶訪問',
-            'small' => '（捐贈玩家將在不久開放）',
+    'blocks' => [
+        'banner_text' => '您已經封鎖這位使用者。',
+        'blocked_count' => '被封鎖的使用者 (:count)',
+        'hide_profile' => '隱藏用戶資料',
+        'not_blocked' => '這位使用者未被封鎖。',
+        'show_profile' => '顯示用戶資料',
+        'too_many' => '已達到封鎖上限。',
+        'button' => [
+            'block' => '封鎖',
+            'unblock' => '解除封鎖',
+        ],
+    ],
+
+    'card' => [
+        'loading' => '載入中...',
+        'send_message' => '傳送訊息',
+    ],
+
+    'disabled' => [
+        'title' => '',
+        'warning' => "",
+
+        'if_mistake' => [
+            '_' => '',
+            'email' => '',
         ],
 
-        'here' => '這裡', // this is substituted in when generating a link above. change it to suit the language. //TODO 需要上下文
+        'reasons' => [
+            'compromised' => '',
+            'opening' => '',
+
+            'tos' => [
+                '_' => '',
+                'community_rules' => '社群規則',
+                'tos' => '服務條款',
+            ],
+        ],
     ],
-    'signup' => [
-        '_' => '註冊',
+
+    'force_reactivation' => [
+        'reason' => [
+            'inactive_different_country' => "你的帳號已經一段時間沒有登入了",
+        ],
     ],
+
+    'login' => [
+        '_' => '登入',
+        'button' => '登入',
+        'button_posting' => '登入中...',
+        'email_login_disabled' => '目前沒辦法使用Email登入了，請使用使用者名稱登入。',
+        'failed' => '登入失敗',
+        'forgot' => '忘記密碼？',
+        'info' => '',
+        'locked_ip' => '您的 IP 位址已被鎖定。請稍候幾分鐘。',
+        'password' => '密碼',
+        'register' => "沒有 osu! 帳號嗎？現在就註冊一個吧！",
+        'remember' => '記住我這台裝置',
+        'title' => '登入以繼續',
+        'username' => '使用者名稱',
+
+        'beta' => [
+            'main' => 'Beta 版僅限於特定使用者存取',
+            'small' => '(osu!贊助者將在不久後開放)',
+        ],
+    ],
+
+    'posts' => [
+        'title' => ':username 的貼文',
+    ],
+
     'anonymous' => [
-        'login_link' => '點擊登錄',
-        'login_text' => '登錄',
-        'username' => '遊客',
-        'error' => '請先登錄',
+        'login_link' => '點擊登入',
+        'login_text' => '登入',
+        'username' => '訪客',
+        'error' => '請先登入',
     ],
-    'logout_confirm' => '確定要退出嗎？o(TヘTo)',
+    'logout_confirm' => '確定要登出嗎？o(TヘTo)',
+    'report' => [
+        'button_text' => '檢舉',
+        'comments' => '補充評論',
+        'placeholder' => '請提供任何您覺得有用的資訊。',
+        'reason' => '原因',
+        'thanks' => '感謝您的舉報！',
+        'title' => '檢舉 :username?',
+
+        'actions' => [
+            'send' => '傳送檢舉',
+            'cancel' => '取消',
+        ],
+
+        'options' => [
+            'cheating' => '違規 / 作弊',
+            'insults' => '侮辱我 / 其他人',
+            'spam' => '垃圾訊息',
+            'unwanted_content' => '鏈接不適當的內容',
+            'nonsense' => '無用內容',
+            'other' => '其他（在下方輸入原因）',
+        ],
+    ],
     'restricted_banner' => [
-        'title' => '帳戶進入限制模式！',
-        'message' => '在被限制時，無法與其他玩家互動，分數只有自己可見。該限制通常由系統自動給予，並將在24小時內解除。需要申訴？請<a href="mailto:accounts@ppy.sh">聯繫支持團隊</a>.',
+        'title' => '您的帳號已受到限制!',
+        'message' => '當您的帳號受到系統自動限制時，您將無法與其他玩家互動，且您的遊戲分數僅供自己查閱。系統將在24小時內解除限制。如果您需要申訴？請<a href="mailto:accounts@ppy.sh">聯繫支援服務</a>.',
     ],
     'show' => [
-        '404' => '找不到指定的用戶',
         'age' => ':age 歲',
-        'current_location' => '位於 :location',
+        'change_avatar' => '變更您的頭像！',
         'first_members' => '元老玩家',
         'is_developer' => 'osu! 開發者',
-        'is_supporter' => 'osu! 支持者',
+        'is_supporter' => 'osu! 贊助者',
         'joined_at' => '註冊時間：:date',
-        'lastvisit' => '上次登錄：:date',
-        'missingtext' => '未找到用戶！（或者該用戶已經被 ban）',
-        'origin_age' => ':age 歲',
+        'lastvisit' => '最後登入於：:date',
+        'lastvisit_online' => '正在線上',
+        'missingtext' => '未找到的使用者！（或者該使用者已經被封鎖）',
         'origin_country' => '來自 :country',
-        'origin_country_age' => ':age，來自 :country',
-        'page_description' => 'osu! - 你想知道的關於 :username 的一切!',
+        'page_description' => 'osu! - 您想知道關於 :username 的資訊!',
+        'previous_usernames' => '前一個的使用者名稱',
         'plays_with' => '慣用 :devices',
-        'title' => ':username 的個人資料',
-        'change_avatar' => '更換你的頭像！',
+        'title' => ":username 的個人簡介",
 
         'edit' => [
             'cover' => [
-                'button' => '更換個人資料皮膚',
-                'defaults_info' => '在將來會有更多皮膚可用',
+                'button' => '變更個人簡介封面',
+                'defaults_info' => '未來將提供更多的封面選項',
                 'upload' => [
-                    'broken_file' => '上傳失敗.請檢查上傳的圖片然後重試.',
+                    'broken_file' => '上傳失敗。請檢查上傳的圖片並重試.',
                     'button' => '上傳圖片',
-                    'dropzone' => '拖拽到此處',
-                    'dropzone_info' => '將圖片拖動到這裡也可以上傳',
-                    'restriction_info' => "自定義皮膚只有 <a href='".route('store.products.show', 'supporter-tag')."' target='_blank'>osu!支持者</a> 可用",
-                    'size_info' => '圖片尺寸應為2000x500',
-                    'too_large' => '上傳的圖片過大.',
-                    'unsupported_format' => '不支持的格式.',
+                    'dropzone' => '拖動到此處以上傳',
+                    'dropzone_info' => '您也可以將圖片拉到此處上傳',
+                    'size_info' => '圖片尺寸應為2800x620',
+                    'too_large' => '上傳的圖片檔案過大.',
+                    'unsupported_format' => '不支援的檔案格式.',
+
+                    'restriction_info' => [
+                        '_' => '上傳可用於 :link 僅',
+                        'link' => 'osu! 贊助者',
+                    ],
                 ],
+            ],
+
+            'default_playmode' => [
+                'is_default_tooltip' => '預設遊戲模式',
+                'set' => '設定 :mode 為個人簡介預設的遊戲模式',
             ],
         ],
+
         'extra' => [
-            'followers' => '關注者：:count',
-            'unranked' => '最近沒有玩過',
+            'none' => '無',
+            'unranked' => '近期沒有遊玩記錄',
 
             'achievements' => [
-                'title' => '成就',
                 'achieved-on' => '達成於 :date',
+                'locked' => '已鎖定',
+                'title' => '成就',
             ],
             'beatmaps' => [
+                'by_artist' => '作者：:artist',
                 'none' => '暫時沒有...',
-                'title' => '譜面',
+                'title' => '圖譜',
 
                 'favourite' => [
-                    'title' => '收藏的譜面 (:count)',
+                    'title' => '收藏的譜面',
                 ],
                 'graveyard' => [
-                    'title' => '墳場裡的譜面 (:count)',
+                    'title' => '墳場裡的譜面',
+                ],
+                'loved' => [
+                    'title' => '喜歡的譜面',
                 ],
                 'ranked_and_approved' => [
-                    'title' => 'Ranked 並且得到讚的譜面 (:count)',
+                    'title' => 'Ranked 和 Approved 的譜面',
                 ],
                 'unranked' => [
-                    'title' => 'Pending Beatmaps (:count)',
+                    'title' => 'Pending Beatmaps',
                 ],
             ],
+            'discussions' => [
+                'title' => '討論',
+                'title_longer' => '最近討論',
+                'show_more' => '顯示更多討論',
+            ],
+            'events' => [
+                'title' => '活動',
+                'title_longer' => '近期活動',
+                'show_more' => '顯示更多活動',
+            ],
             'historical' => [
-                'empty' => '沒有遊戲記錄。:(',
+                'empty' => '尚無遊戲分數。:(',
+                'title' => '歷史記錄',
+
+                'monthly_playcounts' => [
+                    'title' => '遊玩紀錄',
+                    'count_label' => '遊玩次數',
+                ],
                 'most_played' => [
                     'count' => '遊玩次數',
-                    'title' => '玩得最多的譜面',
+                    'title' => '玩過次數最多的圖譜',
                 ],
                 'recent_plays' => [
                     'accuracy' => '準確率：:percentage',
                     'title' => '最近24小時遊玩',
                 ],
-                'title' => '歷史記錄',
+                'replays_watched_counts' => [
+                    'title' => '重播觀看的歷史記錄',
+                    'count_label' => '重播觀看次數',
+                ],
             ],
             'kudosu' => [
-                'available' => '可用 kudosu',
-                'available_info' => 'kudosu 可以兌換為 kudosu 星,它可以讓你的譜面更引人注意。這是你還沒有兌換的 kudosu 數。',
-                'recent_entries' => '最近 Kudosu 記錄',
+                'available' => '可使用的 kudosu',
+                'available_info' => "kudosu 點數可以兌換成 kudosu 星星點數，該點數可以讓您的圖譜更引人注目。這是您尚未兌換的 kudosu 點數。",
+                'recent_entries' => '近期 Kudosu 記錄',
                 'title' => 'Kudosu!',
                 'total' => '總共獲得 kudosu',
-                'total_info' => '取決於你對制譜的貢獻如何。查看 <a href="'.osu_url('user.kudosu').'">這個頁面</a> 以得到更多信息。',
 
                 'entry' => [
                     'amount' => ':amount kudosu',
-                    'empty' => '該用戶還沒有收到過 kudosu ！',
+                    'empty' => "該使用者尚未收到任何 kudosu ！",
 
-                    'beatmap_discussion' => [ //TODO 專有名詞太多,需要幫助
+                    'beatmap_discussion' => [
                         'allow_kudosu' => [
-                            'give' => '因討論帖 :post 的 kudosu 移除操作的撤銷而獲得 :amount',
+                            'give' => '此貼文 :post 總共獲得 :amount 點 kudosu',
                         ],
 
                         'deny_kudosu' => [
-                            'reset' => '在討論帖 :post 中被移除 :amount',
+                            'reset' => '此貼文 :post 總共被拒絕 :amount 點 kudosu',
                         ],
 
                         'delete' => [
-                            'reset' => '因討論帖 :post 被刪除而失去 :amount',
+                            'reset' => '此貼文 :post 因被移除總共失去 :amount 點 kudosu',
                         ],
 
                         'restore' => [
-                            'give' => '因討論帖 :post 被恢復而獲得 :amount',
+                            'give' => '此貼文 :post 因被還原總共獲得 :amount 點 kudosu',
                         ],
 
                         'vote' => [
-                            'give' => '因在討論帖 :post 中得到了足夠票數而獲得 :amount',
-                            'reset' => '因在討論帖 :post 中丟失了票數而失去 :amount',
+                            'give' => '此貼文 :post 因取得足夠票數總共獲得 :amount 點 kudosu',
+                            'reset' => '此貼文 :post 因得票數不足總共失去 :amount 點 kudosu',
                         ],
 
                         'recalculate' => [
-                            'give' => '因討論帖 :post 的投票重新計算而獲得 :amount',
-                            'reset' => '因討論帖 :post 的投票重新計算而失去 :amount',
+                            'give' => '此貼文 :post 因得票數重新計算總共獲得 :amount 點 kudosu',
+                            'reset' => '此貼文 :post 因得票數重新計算總共失去 :amount 點 kudosu',
                         ],
                     ],
 
                     'forum_post' => [
-                        'give' => '在帖子 :post 中被 :giver 給予 :amount ',
-                        'reset' => '在帖子 :post 中被 :giver 重置 kudosu ',
-                        'revoke' => '在帖子 :post 中被 :giver 移除 kudosu ',
+                        'give' => '此貼文 :post 由 :giver 給予 :amount 點 kudosu',
+                        'reset' => '此貼文 :post 的 kudosu 點數由 :giver 重新設定 ',
+                        'revoke' => '此貼文 :post 已被 :giver 移除 kudosu 點數',
                     ],
+                ],
+
+                'total_info' => [
+                    '_' => '基於使用者對圖譜審核的貢獻量。請看 :link 以獲得更多信息。',
+                    'link' => '這個頁面',
                 ],
             ],
             'me' => [
-                'title' => '個人介紹',
+                'title' => '個人簡介!',
             ],
             'medals' => [
-                'empty' => '該用戶還沒有獲得成就。;_;',
+                'empty' => "該使用者尚未獲得成就。;_;",
+                'recent' => '最新',
                 'title' => '成就',
+            ],
+            'posts' => [
+                'title' => '貼文',
+                'title_longer' => '最新貼文',
+                'show_more' => '顯示更多貼文',
             ],
             'recent_activity' => [
                 'title' => '最近活動',
             ],
             'top_ranks' => [
+                'download_replay' => '下載重播',
+                'empty' => '尚未有好成績。 :(',
+                'not_ranked' => '僅被列入排名的圖譜才能獲得 pp。',
+                'pp_weight' => '權重 :percentage',
+                'title' => '排名',
+
                 'best' => [
-                    'title' => '最好成績',
+                    'title' => '最佳成績',
                 ],
-                'empty' => '還沒有上傳過成績。 :(',
                 'first' => [
                     'title' => '第一名',
                 ],
-                'pp' => ':amountpp',
-                'title' => '成績',
-                'weighted_pp' => '權重：:pp (:percentage)',
+            ],
+            'votes' => [
+                'given' => '給予投票（最近三個月）',
+                'received' => '獲得的投票（最近三個月）',
+                'title' => '投票',
+                'title_longer' => '最近投票',
+                'vote_count' => ':count_delimited 票',
+            ],
+            'account_standing' => [
+                'title' => '帳號狀態',
+                'bad_standing' => "<strong>:username</strong> 的帳號存在不良紀錄 :(",
+                'remaining_silence' => '<strong>:username</strong> 的禁言將在 :duration 解除',
+
+                'recent_infringements' => [
+                    'title' => '最近違規',
+                    'date' => '時間',
+                    'action' => '處理',
+                    'length' => '時長',
+                    'length_permanent' => '永久',
+                    'description' => '詳情',
+                    'actor' => '裁决者： :username',
+
+                    'actions' => [
+                        'restriction' => '封鎖',
+                        'silence' => '禁言',
+                        'note' => '備註',
+                    ],
+                ],
             ],
         ],
+
+        'info' => [
+            'discord' => 'Discord',
+            'interests' => '興趣愛好',
+            'lastfm' => 'Last.fm',
+            'location' => '所在地',
+            'occupation' => '職業',
+            'skype' => 'Skype',
+            'twitter' => '推特',
+            'website' => '個人網站',
+        ],
+        'not_found' => [
+            'reason_1' => '他可能已經更換了使用者名稱。',
+            'reason_2' => '該帳號因安全或濫用問題故暫不開放。',
+            'reason_3' => '您可能輸入錯誤！',
+            'reason_header' => '可能是由以下幾個原因：',
+            'title' => '找不到使用者',
+        ],
         'page' => [
-            'description' => '<strong>個人介紹</strong> 是您可以自定義的展示區.',
+            'button' => '編輯個人簡介頁',
+            'description' => '<strong>個人介紹</strong> 在您的個人簡介網頁可以自行修改。',
             'edit_big' => '編輯',
             'placeholder' => '在這裡編輯',
-            'restriction_info' => "需要成為 <a href='".route('store.products.show', 'supporter-tag')."' target='_blank'>osu!支持者</a> 以解鎖該特性.",
+
+            'restriction_info' => [
+                '_' => '你需要成為一個 :link 解鎖此功能。',
+                'link' => 'osu! 贊助者',
+            ],
+        ],
+        'post_count' => [
+            '_' => '發表 :link',
+            'count' => ':count 篇貼文',
         ],
         'rank' => [
             'country' => ':mode 模式的國內排名',
+            'country_simple' => '地區排名',
             'global' => ':mode 模式的全球排名',
+            'global_simple' => '全球排名',
         ],
         'stats' => [
             'hit_accuracy' => '準確率',
             'level' => '等級 :level',
+            'level_progress' => '距離下一級的進度',
             'maximum_combo' => '最大連擊',
-            'play_count' => '遊戲次數',
-            'play_time' => '遊戲時間',
-            'ranked_score' => 'Ranked 譜面總分',
-            'replays_watched_by_others' => '回放被觀看次數',
+            'medals' => '成就',
+            'play_count' => '遊玩次數',
+            'play_time' => '總遊玩時間',
+            'ranked_score' => 'Ranked 圖譜總分',
+            'replays_watched_by_others' => '重播觀看的次數',
             'score_ranks' => '得分等級',
             'total_hits' => '總命中次數',
             'total_score' => '總分',
+            // modding stats
+            'ranked_and_approved_beatmapset_count' => '進榜 & 批准圖譜',
+            'loved_beatmapset_count' => 'Loved 圖譜',
+            'unranked_beatmapset_count' => 'Pending 的譜面',
+            'graveyard_beatmapset_count' => '墳場裡的譜面',
         ],
     ],
+
     'status' => [
-        'online' => '在線',
+        'all' => '全部',
+        'online' => '線上',
         'offline' => '離線',
     ],
     'store' => [
-        'saved' => '帳戶已創建',
+        'saved' => '帳號已註冊',
     ],
     'verify' => [
-        'title' => '帳戶認證',
+        'title' => '帳號驗證',
+    ],
+
+    'view_mode' => [
+        'card' => '卡片檢視',
+        'list' => '列表檢視',
     ],
 ];

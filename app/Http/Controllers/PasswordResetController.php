@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -22,6 +22,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\PasswordReset;
 use App\Models\User;
+use App\Models\UserAccountHistory;
 use Carbon\Carbon;
 use Mail;
 use Request;
@@ -61,7 +62,9 @@ class PasswordResetController extends Controller
         if ($error === null) {
             return ['message' => trans('password_reset.notice.sent')];
         } else {
-            return error_popup($error);
+            return response(['form_error' => [
+                'username' => [$error],
+            ]], 422);
         }
     }
 
@@ -107,6 +110,8 @@ class PasswordResetController extends Controller
             $this->clear();
             $this->login($user);
 
+            UserAccountHistory::logUserResetPassword($user);
+
             return ['message' => trans('password_reset.notice.saved')];
         } else {
             return response(['form_error' => [
@@ -122,7 +127,7 @@ class PasswordResetController extends Controller
 
     private function issue($username)
     {
-        $user = User::findForLogin($username);
+        $user = User::findForLogin($username, true);
 
         if ($user === null) {
             return trans('password_reset.error.user_not_found');
@@ -132,7 +137,7 @@ class PasswordResetController extends Controller
             return trans('password_reset.error.contact_support');
         }
 
-        if ($user->isPrivileged()) {
+        if ($user->isPrivileged() && $user->user_password !== '') {
             return trans('password_reset.error.is_privileged');
         }
 
@@ -146,7 +151,7 @@ class PasswordResetController extends Controller
 
         Session::put('password_reset', $session);
 
-        Mail::to($user->user_email)->send(new PasswordReset([
+        Mail::to($user)->send(new PasswordReset([
             'user' => $user,
             'key' => $session['key'],
         ]));

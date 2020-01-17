@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,36 +19,41 @@
  */
 
 return [
-    'breadcrumbs' => [
-        'news-index' => '列表',
-        'news-show' => '新聞', //未使用字段
-    ],
-
     'index' => [
-        'title' => 'osu!新聞',
+        'title_page' => 'osu!新聞',
 
         'nav' => [
-            'newer' => '下一條新聞',
-            'older' => '上一條新聞',
+            'newer' => '下一條新消息',
+            'older' => '上一條新消息',
+        ],
+
+        'title' => [
+            '_' => '新聞 :info',
+            'info' => '首頁',
         ],
     ],
 
     'show' => [
-        'posted' => ':time 推送',
+        'by' => '作者: :user',
 
         'nav' => [
-            'newer' => '下一條新聞',
-            'older' => '上一條新聞',
+            'newer' => '下一條新消息',
+            'older' => '上一條新消息',
+        ],
+
+        'title' => [
+            '_' => '新聞 :info',
+            'info' => '發布',
         ],
     ],
 
     'store' => [
-        'button' => '更新', //未使用字段
-        'ok' => '列表已更新.', //未使用字段
+        'button' => '更新',
+        'ok' => '列表已更新。',
     ],
 
     'update' => [
         'button' => '更新',
-        'ok' => '新聞已更新.', //未使用字段
+        'ok' => '消息已更新。',
     ],
 ];

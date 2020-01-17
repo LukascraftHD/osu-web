@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -25,19 +25,21 @@
         <div class='user-home-beatmapset__title u-ellipsis-overflow'>{{$beatmapset->title}}</div>
         <div class='user-home-beatmapset__artist u-ellipsis-overflow'>{{$beatmapset->artist}}</div>
         <div class='user-home-beatmapset__creator u-ellipsis-overflow'>
-            {{ trans('home.user.beatmaps.by') }}
-            <span class="js-usercard" data-user-id="{{ $beatmapset->user_id}}">{{$beatmapset->creator}}</span>,
+            {!! trans('home.user.beatmaps.by_user', ['user' => tag(
+                'span',
+                ['data-user-id' => $beatmapset->user_id, 'class' => 'js-usercard'],
+                e($beatmapset->creator)
+            )]) !!}
 
             <span class='user-home-beatmapset__playcount'>
                 @if ($type === 'new')
                     {!! timeago($beatmapset->approved_date) !!}
                 @elseif ($type === 'popular')
-                    {{ trans('home.user.beatmaps.plays', [
-                        'count' => number_format($popularBeatmapsetsPlaycount[$beatmapset->beatmapset_id])
-                    ]) }}
+                    <span class="fa fa-heart"></span>
+                    {{ i18n_number_format($beatmapset->favourite_count) }}
             @endif
             </span>
         </div>
     </div>
-    <div class='user-home-beatmapset__chevron'><i class='fa fa-chevron-right'></i></div>
+    <div class='user-home-beatmapset__chevron'><i class='fas fa-chevron-right'></i></div>
 </a>

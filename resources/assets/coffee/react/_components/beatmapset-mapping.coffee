@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -16,32 +16,36 @@
 #    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 ###
 
-{div, span, a, time} = ReactDOMFactories
+import * as React from 'react'
+import { div, span, a, time } from 'react-dom-factories'
 el = React.createElement
 
 bn = 'beatmapset-mapping'
 dateFormat = 'LL'
 
-class @BeatmapsetMapping extends React.PureComponent
+export class BeatmapsetMapping extends React.PureComponent
   render: =>
-    user = @props.user ? @props.beatmapset.user
-    userURL = laroute.route 'users.show', user: user.id
+    user =
+      id: @props.beatmapset.user_id
+      username: @props.beatmapset.creator
+      avatar_url: (@props.user ? @props.beatmapset.user)?.avatar_url
 
     div className: bn,
-      a
-        href: userURL
-        className: 'avatar avatar--beatmapset'
-        style:
-          backgroundImage: "url(#{user.avatar_url})"
+      if user.id?
+        a
+          href: laroute.route 'users.show', user: user.id
+          className: 'avatar avatar--beatmapset'
+          style:
+            backgroundImage: osu.urlPresence(user.avatar_url)
+      else
+        span className: 'avatar avatar--beatmapset avatar--guest'
 
       div className: "#{bn}__content",
-        div className: "#{bn}__mapper",
-          osu.trans 'beatmapsets.show.details.made-by'
-          a
-            className: "#{bn}__user js-usercard"
-            'data-user-id': user.id
-            href: userURL
-            user.username
+        div
+          className: "#{bn}__mapper"
+          dangerouslySetInnerHTML:
+            __html: osu.trans 'beatmapsets.show.details.mapped_by',
+              mapper: @userLink(user)
 
         @renderDate 'submitted', 'submitted_date'
 
@@ -59,3 +63,14 @@ class @BeatmapsetMapping extends React.PureComponent
         dateTime: @props.beatmapset[attribute]
         title: @props.beatmapset[attribute]
         moment(@props.beatmapset[attribute]).format dateFormat
+
+
+  userLink: (user) ->
+    if user.id?
+      laroute.link_to_route 'users.show',
+        user.username
+        { user: user.id }
+        class: "#{bn}__user js-usercard"
+        'data-user-id': user.id
+    else
+      "<span class='#{bn}__user'>#{_.escape(user.username ? osu.trans('users.deleted'))}</span>"

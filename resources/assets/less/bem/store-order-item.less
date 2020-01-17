@@ -1,5 +1,5 @@
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -17,11 +17,53 @@
  */
 
 .store-order-item {
-  &__error {
-    list-style: none;
+  .default-border-radius();
+  .default-box-shadow();
+  padding: 10px;
+  background-color: @osu-colour-b4;
+  display: grid;
+  gap: 10px;
+  align-items: baseline;
+  grid-template-areas: "name name" "quantity delete" "subtotal subtotal";
+  grid-template-columns: 1fr auto;
+  font-size: @font-size--title-small;
+
+  @media @narrow-up {
+    grid-template-areas: "name quantity subtotal delete";
+    grid-template-columns: 1fr 150px 100px 35px;
+    grid-template-rows: auto;
+  }
+
+  @media @desktop {
+    font-size: inherit;
   }
 
   &__errors {
     color: @red;
+    list-style: none;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    order: 10;
+  }
+
+  &__delete {
+    grid-area: delete;
+    text-align: right;
+  }
+
+  &__quantity {
+    grid-area: quantity;
+  }
+
+  &__name {
+    grid-area: name;
+  }
+
+  &__subtotal {
+    grid-area: subtotal;
+
+    @media @desktop {
+      text-align: right;
+    }
   }
 }

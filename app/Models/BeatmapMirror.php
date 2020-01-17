@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,6 +20,22 @@
 
 namespace App\Models;
 
+use Auth;
+
+/**
+ * @property string $base_url
+ * @property int|null $disk_space_free
+ * @property int $enabled
+ * @property int $mirror_id
+ * @property string $pending_purge
+ * @property int $perform_updates
+ * @property int $provider_user_id
+ * @property string|null $regions
+ * @property string $secret_key
+ * @property int $traffic_limit
+ * @property int $traffic_used
+ * @property float|null $version
+ */
 class BeatmapMirror extends Model
 {
     protected $table = 'osu_mirrors';
@@ -47,7 +63,12 @@ class BeatmapMirror extends Model
 
     public static function getRandom()
     {
-        return self::randomUsable()->first();
+        return self::where('regions', null)->randomUsable()->first();
+    }
+
+    public static function getRandomFromList(array $mirrorIds)
+    {
+        return self::whereIn('mirror_id', $mirrorIds)->randomUsable()->first();
     }
 
     public static function getRandomForRegion($region = null)
@@ -75,9 +96,10 @@ class BeatmapMirror extends Model
         $serveFilename = str_replace(['"', '?'], ['', ''], $serveFilename);
 
         $time = time();
+        $userId = Auth::check() ? Auth::user()->user_id : 0;
         $checksum = md5("{$beatmapset->beatmapset_id}{$diskFilename}{$serveFilename}{$time}{$noVideo}{$this->secret_key}");
 
-        $url = "{$this->base_url}d/{$beatmapset->beatmapset_id}?fs=".rawurlencode($serveFilename).'&fd='.rawurlencode($diskFilename)."&ts=$time&cs=$checksum&u=0&nv=$noVideo";
+        $url = "{$this->base_url}d/{$beatmapset->beatmapset_id}?fs=".rawurlencode($serveFilename).'&fd='.rawurlencode($diskFilename)."&ts=$time&cs=$checksum&nv=$noVideo";
 
         return $url;
     }

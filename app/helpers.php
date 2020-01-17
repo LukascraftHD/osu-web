@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -31,6 +31,11 @@ function array_search_null($value, $array)
     }
 }
 
+function atom_id(string $namespace, $id = null): string
+{
+    return 'tag:'.request()->getHttpHost().',2019:'.$namespace.($id === null ? '' : "/{$id}");
+}
+
 function background_image($url, $proxy = true)
 {
     if (!present($url)) {
@@ -50,6 +55,162 @@ function beatmap_timestamp_format($ms)
     $s = $s % 60;
 
     return sprintf('%02d:%02d.%03d', $m, $s, $ms);
+}
+
+/**
+ * Allows using both html-safe and non-safe text inside `{{ }}` directive.
+ */
+function blade_safe($html)
+{
+    return new Illuminate\Support\HtmlString($html);
+}
+
+function broadcast_notification(...$arguments)
+{
+    return (new App\Jobs\BroadcastNotification(...$arguments))->dispatch();
+}
+
+/**
+ * Like cache_remember_with_fallback but with a mutex that only allows a single process to run the callback.
+ */
+function cache_remember_mutexed(string $key, $seconds, $default, callable $callback, ?callable $exceptionHandler = null)
+{
+    static $oneMonthInSeconds = 30 * 24 * 60 * 60;
+    $fullKey = "{$key}:with_fallback";
+    $data = cache()->get($fullKey);
+
+    if ($data === null || $data['expires_at']->isPast()) {
+        $lockKey = "{$key}:lock";
+        // this is arbitrary, but you've got other problems if it takes more than 5 minutes.
+        // the max is because cache()->add() doesn't work so well with funny values.
+        $lockTime = min(max($seconds, 60), 300);
+
+        // only the first caller that manages to setnx runs this.
+        if (cache()->add($lockKey, 1, $lockTime)) {
+            try {
+                $data = [
+                    'expires_at' => Carbon\Carbon::now()->addSeconds($seconds),
+                    'value' => $callback(),
+                ];
+
+                cache()->put($fullKey, $data, max($oneMonthInSeconds, $seconds * 10));
+            } catch (Exception $e) {
+                $handled = $exceptionHandler !== null && $exceptionHandler($e);
+
+                if (!$handled) {
+                    // Log and continue with data from the first ::get.
+                    log_error($e);
+                }
+            } finally {
+                cache()->forget($lockKey);
+            }
+        }
+    }
+
+    return $data['value'] ?? $default;
+}
+
+/**
+ * Like Cache::remember but always save for one month or 10 * $seconds (whichever is longer)
+ * and return old value if failed getting the value after it expires.
+ */
+function cache_remember_with_fallback($key, $seconds, $callback)
+{
+    static $oneMonthInSeconds = 30 * 24 * 60 * 60;
+
+    $fullKey = "{$key}:with_fallback";
+
+    $data = Cache::get($fullKey);
+
+    if ($data === null || $data['expires_at']->isPast()) {
+        try {
+            $data = [
+                'expires_at' => Carbon\Carbon::now()->addSeconds($seconds),
+                'value' => $callback(),
+            ];
+
+            Cache::put($fullKey, $data, max($oneMonthInSeconds, $seconds * 10));
+        } catch (Exception $e) {
+            // Log and continue with data from the first ::get.
+            log_error($e);
+        }
+    }
+
+    return $data['value'] ?? null;
+}
+
+// Just normal Cache::forget but with the suffix.
+function cache_forget_with_fallback($key)
+{
+    return Cache::forget("{$key}:with_fallback");
+}
+
+function class_with_modifiers(string $className, ?array $modifiers = null)
+{
+    $class = $className;
+
+    foreach ($modifiers ?? [] as $modifier) {
+        $class .= " {$className}--{$modifier}";
+    }
+
+    return $class;
+}
+
+function cleanup_cookies()
+{
+    $host = request()->getHttpHost();
+    $domains = [$host, ''];
+
+    $hostParts = explode('.', $host);
+
+    while (count($hostParts) > 1) {
+        array_shift($hostParts);
+        $domains[] = implode('.', $hostParts);
+    }
+
+    // remove duplicates and current session domain
+    $sessionDomain = presence(ltrim(config('session.domain'), '.')) ?? '';
+    $domains = array_diff(array_unique($domains), [$sessionDomain]);
+
+    foreach (['locale', 'osu_session', 'XSRF-TOKEN'] as $key) {
+        foreach ($domains as $domain) {
+            cookie()->queueForget($key, null, $domain);
+        }
+    }
+}
+
+function datadog_timing(callable $callable, $stat, array $tag = null)
+{
+    $uid = uniqid($stat);
+    // spaces used so clockwork doesn't run across the whole screen.
+    $description = $stat
+                   .' '.($tag['type'] ?? null)
+                   .' '.($tag['index'] ?? null);
+
+    $start = microtime(true);
+
+    clock()->startEvent($uid, $description);
+    $result = $callable();
+    clock()->endEvent($uid);
+
+    if (config('datadog-helper.enabled')) {
+        $duration = microtime(true) - $start;
+        Datadog::microtiming($stat, $duration, 1, $tag);
+    }
+
+    return $result;
+}
+
+function db_unsigned_increment($column, $count)
+{
+    if ($count >= 0) {
+        $value = "{$column} + {$count}";
+    } else {
+        $change = -$count;
+        $value = "IF({$column} < {$change}, 0, {$column} - {$change})";
+    }
+
+    return DB::raw($value);
 }
 
 function es_query_and_words($words)
@@ -126,33 +287,6 @@ function es_records($results, $class)
     return $records;
 }
 
-function es_search($params)
-{
-    try {
-        return Es::search($params);
-    } catch (Elasticsearch\Common\Exceptions\NoNodesAvailableException $e) {
-        // all servers down
-        $error = $e;
-    } catch (Elasticsearch\Common\Exceptions\BadRequest400Exception $e) {
-        // invalid query
-        $error = $e;
-    } catch (Elasticsearch\Common\Exceptions\Missing404Exception $e) {
-        // index is missing ?_?
-        $error = $e;
-    }
-
-    Log::debug($error);
-
-    // default return on failure
-    return [
-        'hits' => [
-            'hits' => [],
-            'total' => 0,
-        ],
-        'exception' => $error ?? null,
-    ];
-}
-
 function flag_path($country)
 {
     return '/images/flags/'.$country.'.png';
@@ -163,14 +297,6 @@ function get_valid_locale($requestedLocale)
     if (in_array($requestedLocale, config('app.available_locales'), true)) {
         return $requestedLocale;
     }
-
-    return array_first(
-        config('app.available_locales'),
-        function ($value) use ($requestedLocale) {
-            return starts_with($requestedLocale, $value);
-        },
-        config('app.fallback_locale')
-    );
 }
 
 function html_entity_decode_better($string)
@@ -183,19 +309,24 @@ function html_excerpt($body, $limit = 300)
 {
     $body = html_entity_decode_better(replace_tags_with_spaces($body));
 
-    if (strlen($body) >= $limit) {
-        $body = mb_substr($body, 0, $limit).'...';
-    }
-
-    return e($body);
+    return e(truncate($body, $limit));
 }
 
-function json_date(?DateTime $date) : ?string
+function truncate(string $text, $limit = 100, $ellipsis = '...')
+{
+    if (mb_strlen($text) > $limit) {
+        return mb_substr($text, 0, $limit - mb_strlen($ellipsis)).$ellipsis;
+    }
+
+    return $text;
+}
+
+function json_date(?DateTime $date): ?string
 {
     return $date === null ? null : $date->format('Y-m-d');
 }
 
-function json_time(?DateTime $time) : ?string
+function json_time(?DateTime $time): ?string
 {
     return $time === null ? null : $time->format(DateTime::ATOM);
 }
@@ -213,19 +344,11 @@ function locale_name($locale)
 function locale_for_moment($locale)
 {
     if ($locale === 'en') {
-        return;
+        return 'en-gb';
     }
 
     if ($locale === 'zh') {
         return 'zh-cn';
-    }
-
-    if ($locale === 'zh-hk') {
-        return 'zh-hk';
-    }
-
-    if ($locale === 'zh-tw') {
-        return 'zh-tw';
     }
 
     return $locale;
@@ -244,6 +367,44 @@ function locale_for_timeago($locale)
     return $locale;
 }
 
+function log_error($exception)
+{
+    Log::error($exception);
+
+    if (config('sentry.dsn')) {
+        Sentry::captureException($exception);
+    }
+}
+
+function logout()
+{
+    auth()->logout();
+
+    // FIXME: Temporarily here for cross-site login, nuke after old site is... nuked.
+    foreach (['phpbb3_2cjk5_sid', 'phpbb3_2cjk5_sid_check'] as $key) {
+        foreach (['ppy.sh', 'osu.ppy.sh', ''] as $domain) {
+            cookie()->queueForget($key, null, $domain);
+        }
+    }
+
+    cleanup_cookies();
+
+    session()->invalidate();
+}
+
+function markdown($input, $preset = 'default')
+{
+    static $converter;
+
+    App\Libraries\Markdown\OsuMarkdown::PRESETS[$preset] ?? $preset = 'default';
+
+    if (!isset($converter[$preset])) {
+        $converter[$preset] = new App\Libraries\Markdown\OsuMarkdown($preset);
+    }
+
+    return $converter[$preset]->load($input)->html();
+}
+
 function mysql_escape_like($string)
 {
     return addcslashes($string, '%_\\');
@@ -260,6 +421,11 @@ function osu_url($key)
     return $url;
 }
 
+function pack_str($str)
+{
+    return pack('ccH*', 0x0b, strlen($str), bin2hex($str));
+}
+
 function param_string_simple($value)
 {
     if (is_array($value)) {
@@ -269,16 +435,22 @@ function param_string_simple($value)
     return presence($value);
 }
 
-function product_quantity_options($product)
+function product_quantity_options($product, $selected = null)
 {
     if ($product->stock === null) {
         $max = $product->max_quantity;
     } else {
         $max = min($product->max_quantity, $product->stock);
     }
+
     $opts = [];
     for ($i = 1; $i <= $max; $i++) {
         $opts[$i] = trans_choice('common.count.item', $i);
+    }
+
+    // include selected value separately if it's out of range.
+    if ($selected > $max) {
+        $opts[$selected] = trans_choice('common.count.item', $selected);
     }
 
     return $opts;
@@ -337,6 +509,13 @@ function render_to_string($view, $variables = [])
     return view()->make($view, $variables)->render();
 }
 
+function spinner(?array $modifiers = null)
+{
+    return tag('div', [
+        'class' => class_with_modifiers('la-ball-clip-rotate', $modifiers),
+    ]);
+}
+
 function strip_utf8_bom($input)
 {
     if (substr($input, 0, 3) === "\xEF\xBB\xBF") {
@@ -344,6 +523,17 @@ function strip_utf8_bom($input)
     }
 
     return $input;
+}
+
+function tag($element, $attributes = [], $content = null)
+{
+    $attributeString = '';
+
+    foreach ($attributes ?? [] as $key => $value) {
+        $attributeString .= ' '.$key.'="'.e($value).'"';
+    }
+
+    return '<'.$element.$attributeString.'>'.($content ?? '').'</'.$element.'>';
 }
 
 function to_sentence($array, $key = 'common.array_and')
@@ -358,6 +548,14 @@ function to_sentence($array, $key = 'common.array_and')
         default:
             return implode(trans("{$key}.words_connector"), array_slice($array, 0, -1)).trans("{$key}.last_word_connector").array_last($array);
     }
+}
+
+// Handles case where crowdin fills in untranslated key with empty string.
+function trans_exists($key, $locale)
+{
+    $translated = app('translator')->get($key, [], $locale, false);
+
+    return present($translated) && $translated !== $key;
 }
 
 function obscure_email($email)
@@ -387,13 +585,14 @@ function countries_array_for_select()
     return $out;
 }
 
-function currency($price)
+function currency($price, $precision = 2, $zeroShowFree = true)
 {
-    if ($price === 0) {
+    $price = round($price, $precision);
+    if ($price === 0.00 && $zeroShowFree) {
         return 'free!';
     }
 
-    return sprintf('US$%.2f', $price);
+    return 'US$'.i18n_number_format($price, null, null, $precision);
 }
 
 /**
@@ -414,20 +613,14 @@ function error_popup($message, $statusCode = 422)
     return response(['error' => $message], $statusCode);
 }
 
-function i18n_view($view)
-{
-    $localViewPath = sprintf('%s-%s', $view, App::getLocale());
-
-    if (view()->exists($localViewPath)) {
-        return $localViewPath;
-    } else {
-        return sprintf('%s-%s', $view, config('app.fallback_locale'));
-    }
-}
-
 function is_api_request()
 {
-    return Request::is('api/*');
+    return request()->is('api/*');
+}
+
+function is_json_request()
+{
+    return is_api_request() || request()->expectsJson();
 }
 
 function is_sql_unique_exception($ex)
@@ -476,35 +669,49 @@ function current_action()
     return explode('@', Route::currentRouteAction(), 2)[1] ?? null;
 }
 
-function link_to_user($user_id, $user_name = null, $user_color = null)
+function link_to_user($id, $username = null, $color = null, $classNames = null)
 {
-    if ($user_id instanceof App\Models\User) {
-        $user_name = $user_id->username;
-        $user_color = $user_id->user_colour;
-        $user_id = $user_id->getKey();
+    if ($id instanceof App\Models\User) {
+        $username ?? ($username = $id->username);
+        $color ?? ($color = $id->user_colour);
+        $id = $id->getKey();
     }
-    $user_name = e($user_name);
-    $style = user_color_style($user_color, 'color');
+    $username = e($username);
+    $style = user_color_style($color, 'color');
 
-    if ($user_id) {
-        $user_url = e(route('users.show', $user_id));
+    if ($classNames === null) {
+        $classNames = ['user-name'];
+    }
 
-        return "<a class='user-name js-usercard' data-user-id='{$user_id}' href='{$user_url}' style='{$style}'>{$user_name}</a>";
+    $class = implode(' ', $classNames);
+
+    if ($id === null) {
+        return "<span class='{$class}'>{$username}</span>";
     } else {
-        return "<span class='user-name'>{$user_name}</span>";
+        $class .= ' js-usercard';
+        // FIXME: remove `rawurlencode` workaround when fixed upstream.
+        // Reference: https://github.com/laravel/framework/issues/26715
+        $url = e(route('users.show', rawurlencode($id)));
+
+        return "<a class='{$class}' data-user-id='{$id}' href='{$url}' style='{$style}'>{$username}</a>";
     }
 }
 
 function issue_icon($issue)
 {
     switch ($issue) {
-        case 'added': return 'fa-cogs';
-        case 'assigned': return 'fa-user';
-        case 'confirmed': return 'fa-exclamation-triangle';
-        case 'resolved': return 'fa-check-circle';
-        case 'duplicate': return 'fa-copy';
-        case 'invalid': return 'fa-times-circle';
+        case 'added': return 'fas fa-cogs';
+        case 'assigned': return 'fas fa-user';
+        case 'confirmed': return 'fas fa-exclamation-triangle';
+        case 'resolved': return 'far fa-check-circle';
+        case 'duplicate': return 'fas fa-copy';
+        case 'invalid': return 'far fa-times-circle';
     }
+}
+
+function build_url($build)
+{
+    return route('changelog.build', [optional($build->updateStream)->name ?? 'unknown', $build->version]);
 }
 
 function post_url($topicId, $postId, $jumpHash = true, $tail = false)
@@ -514,14 +721,20 @@ function post_url($topicId, $postId, $jumpHash = true, $tail = false)
         $postIdParamKey = 'end';
     }
 
-    $url = route('forum.topics.show', ['topics' => $topicId, $postIdParamKey => $postId]);
+    if ($topicId === null) {
+        return;
+    }
+
+    $url = route('forum.topics.show', ['topic' => $topicId, $postIdParamKey => $postId]);
 
     return $url;
 }
 
-function wiki_url($page = 'Welcome', $locale = null)
+function wiki_url($page = 'Main_Page', $locale = null)
 {
-    $params = compact('page');
+    // FIXME: remove `rawurlencode` workaround when fixed upstream.
+    // Reference: https://github.com/laravel/framework/issues/26715
+    $params = ['page' => str_replace('%2F', '/', rawurlencode($page))];
 
     if (present($locale) && $locale !== App::getLocale()) {
         $params['locale'] = $locale;
@@ -535,7 +748,7 @@ function bbcode($text, $uid, $options = [])
     return (new App\Libraries\BBCodeFromDB($text, $uid, $options))->toHTML();
 }
 
-function bbcode_for_editor($text, $uid)
+function bbcode_for_editor($text, $uid = null)
 {
     return (new App\Libraries\BBCodeFromDB($text, $uid))->toEditor();
 }
@@ -553,7 +766,7 @@ function proxy_image($url)
 
     $decoded = urldecode(html_entity_decode_better($url));
 
-    if (config('osu.camo.key') === '') {
+    if (config('osu.camo.key') === null) {
         return $decoded;
     }
 
@@ -594,13 +807,14 @@ function nav_links()
     ];
     $links['rankings'] = [
         'index' => route('rankings', ['mode' => 'osu', 'type' => 'performance']),
-        'charts' => osu_url('rankings.charts'),
+        'charts' => route('rankings', ['mode' => 'osu', 'type' => 'charts']),
         'score' => route('rankings', ['mode' => 'osu', 'type' => 'score']),
         'country' => route('rankings', ['mode' => 'osu', 'type' => 'country']),
         'kudosu' => osu_url('rankings.kudosu'),
     ];
     $links['community'] = [
         'forum-forums-index' => route('forum.forums.index'),
+        'chat' => route('chat.index'),
         'contests' => route('contests.index'),
         'tournaments' => route('tournaments.index'),
         'getLive' => route('livestreams.index'),
@@ -609,15 +823,30 @@ function nav_links()
     $links['store'] = [
         'getListing' => action('StoreController@getListing'),
         'cart-show' => route('store.cart.show'),
+        'orders-index' => route('store.orders.index'),
     ];
     $links['help'] = [
-        'getWiki' => wiki_url('Welcome'),
+        'getWiki' => wiki_url('Main_Page'),
         'getFaq' => wiki_url('FAQ'),
         'getRules' => wiki_url('Rules'),
-        'getSupport' => wiki_url('Help_Center'),
+        'getSupport' => wiki_url('Help_Centre'),
     ];
 
     return $links;
+}
+
+function nav_links_mobile()
+{
+    $links = [];
+
+    if (Auth::check()) {
+        $links['profile'] = [
+            'friends' => route('friends.index'),
+            'settings' => route('account.edit'),
+        ];
+    }
+
+    return array_merge($links, nav_links());
 }
 
 function footer_landing_links()
@@ -628,17 +857,13 @@ function footer_landing_links()
             'changelog-index' => route('changelog.index'),
             'beatmaps' => action('BeatmapsetsController@index'),
             'download' => route('download'),
-            'wiki' => wiki_url('Welcome'),
+            'wiki' => wiki_url('Main_Page'),
         ],
         'help' => [
             'faq' => wiki_url('FAQ'),
             'forum' => route('forum.forums.index'),
             'livestreams' => route('livestreams.index'),
             'report' => route('forum.topics.create', ['forum_id' => 5]),
-        ],
-        'support' => [
-            'tags' => route('support-the-game'),
-            'merchandise' => action('StoreController@getListing'),
         ],
         'legal' => footer_legal_links(),
     ];
@@ -648,9 +873,10 @@ function footer_legal_links()
 {
     return [
         'terms' => route('legal', 'terms'),
+        'privacy' => route('legal', 'privacy'),
         'copyright' => route('legal', 'copyright'),
-        'server_status' => osu_url('status.server'),
-        'osu_status' => osu_url('status.osustatus'),
+        'server_status' => osu_url('server_status'),
+        'source_code' => osu_url('source_code'),
     ];
 }
 
@@ -695,14 +921,16 @@ function display_regdate($user)
         return;
     }
 
+    $tooltipDate = i18n_date($user->user_regdate);
+
     $formattedDate = i18n_date($user->user_regdate, null, 'year_month');
 
     if ($user->user_regdate < Carbon\Carbon::createFromDate(2008, 1, 1)) {
-        return "<div title='{$formattedDate}'>".trans('users.show.first_members').'</div>';
+        return '<div title="'.$tooltipDate.'">'.trans('users.show.first_members').'</div>';
     }
 
     return trans('users.show.joined_at', [
-        'date' => "<strong>{$formattedDate}</strong>",
+        'date' => "<strong title='{$tooltipDate}'>{$formattedDate}</strong>",
     ]);
 }
 
@@ -719,6 +947,21 @@ function i18n_date($datetime, $format = IntlDateFormatter::LONG, $pattern = null
     }
 
     return $formatter->format($datetime);
+}
+
+function i18n_number_format($number, $style = null, $pattern = null, $precision = null, $locale = null)
+{
+    $formatter = NumberFormatter::create(
+        $locale ?? App::getLocale(),
+        $style ?? NumberFormatter::DEFAULT_STYLE,
+        $pattern
+    );
+
+    if ($precision !== null) {
+        $formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $precision);
+    }
+
+    return $formatter->format($number);
 }
 
 function i18n_time($datetime, $format = IntlDateFormatter::LONG)
@@ -937,6 +1180,8 @@ function deltree($dir)
 function get_param_value($input, $type)
 {
     switch ($type) {
+        case 'any':
+            return $input;
         case 'bool':
             return get_bool($input);
             break;
@@ -970,16 +1215,18 @@ function get_params($input, $namespace, $keys)
 
     $params = [];
 
-    foreach ($keys as $keyAndType) {
-        $keyAndType = explode(':', $keyAndType);
+    if (is_array($input) || ($input instanceof ArrayAccess)) {
+        foreach ($keys as $keyAndType) {
+            $keyAndType = explode(':', $keyAndType);
 
-        $key = $keyAndType[0];
-        $type = $keyAndType[1] ?? null;
+            $key = $keyAndType[0];
+            $type = $keyAndType[1] ?? null;
 
-        $value = get_param_value(array_get($input, $key), $type);
+            if (array_has($input, $key)) {
+                $value = get_param_value(array_get($input, $key), $type);
 
-        if ($value !== null) {
-            array_set($params, $key, $value);
+                array_set($params, $key, $value);
+            }
         }
     }
 
@@ -1030,7 +1277,7 @@ function get_time_or_null($timestamp)
  * Returns 0 if $time is null so mysql doesn't explode because of not null
  * constraints.
  */
-function get_timestamp_or_zero(DateTime $time = null) : int
+function get_timestamp_or_zero(DateTime $time = null): int
 {
     return $time === null ? 0 : $time->getTimestamp();
 }
@@ -1046,7 +1293,11 @@ function parse_time_to_carbon($value)
     }
 
     if (is_string($value)) {
-        return Carbon\Carbon::parse($value);
+        try {
+            return Carbon\Carbon::parse($value);
+        } catch (Exception $_e) {
+            return;
+        }
     }
 
     if ($value instanceof Carbon\Carbon) {
@@ -1070,14 +1321,14 @@ function retinaify($url)
     return preg_replace('/(\.[^.]+)$/', '@2x\1', $url);
 }
 
-function priv_check($ability, $args = null)
+function priv_check($ability, $object = null)
 {
-    return priv_check_user(Auth::user(), $ability, $args);
+    return priv_check_user(Auth::user(), $ability, $object);
 }
 
-function priv_check_user($user, $ability, $args = null)
+function priv_check_user($user, $ability, $object = null)
 {
-    return app()->make('OsuAuthorize')->doCheckUser($user, $ability, $args);
+    return app()->make('OsuAuthorize')->doCheckUser($user, $ability, $object);
 }
 
 // Used to generate x,y pairs for fancy-chart.coffee
@@ -1146,14 +1397,15 @@ function suffixed_number_format($number)
 
 function suffixed_number_format_tag($number)
 {
-    return "<span title='".number_format($number)."'>".suffixed_number_format($number).'</span>';
+    return "<span title='".i18n_number_format($number)."'>".suffixed_number_format($number).'</span>';
 }
 
 // formats a number as a percentage with a fixed number of precision
 // e.g.: 98.3 -> 98.30%
 function format_percentage($number, $precision = 2)
 {
-    return sprintf("%.{$precision}f%%", round($number, $precision));
+    // the formatter assumes decimal number while the function receives percentage number.
+    return i18n_number_format($number / 100, NumberFormatter::PERCENT, null, $precision);
 }
 
 function group_users_by_online_state($users)
@@ -1199,4 +1451,55 @@ function check_url(string $url): bool
     curl_close($ch);
 
     return !$errored;
+}
+
+function mini_asset(string $url): string
+{
+    return present(config('osu.assets.mini_url'))
+        ? str_replace(config('osu.assets.base_url'), config('osu.assets.mini_url'), $url)
+        : $url;
+}
+
+function section_to_hue_map($section): int
+{
+    static $colourToHue = [
+        'blue' => 200,
+        'darkorange' => 20,
+        'green' => 115,
+        'orange' => 46,
+        'pink' => 333,
+        'purple' => 255,
+        'red' => 0,
+    ];
+
+    static $sectionMapping = [
+        'admin' => 'red',
+        'admin-forum' => 'red',
+        'admin-store' => 'red',
+        'beatmaps' => 'blue',
+        'beatmapsets' => 'blue',
+        'community' => 'pink',
+        'error' => 'pink',
+        'help' => 'orange',
+        'home' => 'purple',
+        'multiplayer' => 'pink',
+        'rankings' => 'green',
+        'store' => 'darkorange',
+        'user' => 'pink',
+    ];
+
+    return isset($sectionMapping[$section]) ? $colourToHue[$sectionMapping[$section]] : $colourToHue['pink'];
+}
+
+function search_error_message(?Exception $e): ?string
+{
+    if ($e === null) {
+        return null;
+    }
+
+    $basename = snake_case(get_class_basename(get_class($e)));
+    $key = "errors.search.${basename}";
+    $text = trans($key);
+
+    return $text === $key ? trans('errors.search.default') : $text;
 }

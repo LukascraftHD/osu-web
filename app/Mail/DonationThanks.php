@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -39,9 +39,10 @@ class DonationThanks extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($donor, $length, $amount, $isGift)
+    public function __construct($donor, $length, $amount, $isGift, $continued)
     {
         $this->params = [
+            'continued' => $continued,
             'donor' => $donor,
             'duration' => SupporterTag::getDurationText($length),
             'amount' => $amount,
@@ -57,8 +58,12 @@ class DonationThanks extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->text(i18n_view('emails.store.donation_thanks'))
+        return $this->text('emails.store.donation_thanks')
             ->with($this->params)
-            ->subject(trans('fulfillments.mail.donation_thanks.subject'));
+            ->from(
+                config('store.mail.donation_thanks.sender_address'),
+                config('store.mail.donation_thanks.sender_name')
+            )
+            ->subject(trans('mail.donation_thanks.subject'));
     }
 }

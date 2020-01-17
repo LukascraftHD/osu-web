@@ -1,5 +1,5 @@
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -15,6 +15,18 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+.no-print, .no-print * {
+  @media print {
+    display: none !important;
+  }
+}
+
+.print-page-break {
+  @media print {
+    page-break-before: always;
+  }
+}
 
 .u-blackout-visible {
   z-index: @z-index--blackout-visible !important;
@@ -32,6 +44,20 @@
   }
 }
 
+.u-fancy-scrollbar {
+  .fancy-scrollbar();
+}
+
+// so elements with anchors as subelements don't create stacking contexts
+// that block each other.
+.u-has-anchor {
+  position: static;
+
+  &--no-event {
+    pointer-events: none;
+  }
+}
+
 .u-hidden {
   display: none !important;
 }
@@ -46,6 +72,6 @@
   z-index: @z-index--nav-float !important;
 }
 
-.u-nav-popup {
-  z-index: @z-index--nav-popup !important;
+.u-full-size {
+  .full-size();
 }

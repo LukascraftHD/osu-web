@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -26,17 +26,13 @@ return [
         'issuing' => 'Laver ny kode...',
 
         'info' => [
-            'check_spam' => 'Husk at tjekke din spammappe, hvis ikke du kan finde emailen.',
-            'recover' => 'Hvis ikke du har adgang til din email-adresse eller har glemt hvilken email-adresse, du bruger, følg venligst :link.',
+            'check_spam' => "Husk at tjekke din spammappe, hvis ikke du kan finde emailen.",
+            'recover' => "Hvis ikke du har adgang til din email-adresse eller har glemt hvilken email-adresse, du bruger, følg venligst :link.",
             'recover_link' => 'email-adresse genoprettelsesprocessen her',
             'reissue' => 'Du kan også :reissue_link eller :logout_link.',
             'reissue_link' => 'anmode om en ny kode',
             'logout_link' => 'logge ud',
         ],
-    ],
-
-    'email' => [
-        'subject' => 'osu! kontobekræftelse',
     ],
 
     'errors' => [

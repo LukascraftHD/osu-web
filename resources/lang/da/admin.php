@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,13 +19,13 @@
  */
 
 return [
-
     'beatmapsets' => [
         'covers' => [
             'regenerate' => 'Regenerer',
             'regenerating' => 'Regenererer...',
             'remove' => 'Fjern',
             'removing' => 'Fjerner...',
+            'title' => '',
         ],
         'show' => [
             'covers' => 'Administrer Beatmapset Covers',
@@ -71,9 +71,8 @@ return [
 
     'pages' => [
         'root' => [
-            'title' => 'Administrator Konsol Tingest',
-
             'sections' => [
+                'beatmapsets' => '',
                 'forum' => 'Forum',
                 'general' => 'Generelt',
                 'store' => 'Butik',

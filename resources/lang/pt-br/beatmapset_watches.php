@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,32 +19,20 @@
  */
 
 return [
-    'button' => [
-        'action' => [
-            'to_0' => 'Remover supervisão',
-            'to_1' => 'Supervisionar',
-        ],
-    ],
-
     'index' => [
-        'description' => 'Estas são as discussões de mapa que você está acompanhando. Você será notificado quando o mapa receber atualizações ou postagens novas.',
-        'title_compact' => 'supervisão de modding',
-        'title_main' => 'Lista de supervisão de modding',
+        'description' => 'Estas são as discussões de beatmap que você está acompanhando. Você será notificado quando o beatmap receber atualizações ou postagens novas.',
+        'title_compact' => 'notificações de modding',
 
         'table' => [
-            'empty' => 'Nenhuma discussão de mapa supervisionada.',
+            'empty' => 'Nenhuma discussão de beatmap supervisionada.',
             'open_issues' => 'Problemas em aberto',
             'state' => 'Estado',
             'title' => 'Título',
         ],
     ],
 
-    'mail' => [
-        'update' => 'Nova atualização no mapa ":title"',
-    ],
-
     'status' => [
         'read' => 'Lido',
-        'unread' => 'Marcar como não lido',
+        'unread' => 'Não lido',
     ],
 ];

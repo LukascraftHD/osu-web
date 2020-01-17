@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -35,8 +35,8 @@ class BBCodeForDB
     public function extraEscapes($text)
     {
         return str_replace(
-            ['[', ']', '.', ':'],
-            ['&#91;', '&#93;', '&#46;', '&#58;'],
+            ['[', ']', '.', ':', "\n"],
+            ['&#91;', '&#93;', '&#46;', '&#58;', '&#10;'],
             $text
         );
     }
@@ -84,11 +84,11 @@ class BBCodeForDB
     public function parseCode($text)
     {
         return preg_replace_callback(
-            "#\[code\](?<code>.+?)\[/code\]#s",
+            "#\[code\](?<prespaces>\n*)(?<code>.+?)(?<postspaces>\n*)\[/code\]#s",
             function ($m) {
                 $escapedCode = $this->extraEscapes($m['code']);
 
-                return "[code:{$this->uid}]{$escapedCode}[/code:{$this->uid}]";
+                return "[code:{$this->uid}]{$m['prespaces']}{$escapedCode}{$m['postspaces']}[/code:{$this->uid}]";
             },
             $text
         );
@@ -140,10 +140,11 @@ class BBCodeForDB
     * - Italic (i)
     * - Strike (strike, s)
     * - Underline (u)
+    * - Spoiler (spoiler)
     */
     public function parseInlineSimple($text)
     {
-        foreach (['b', 'i', 'strike', 's', 'u'] as $tag) {
+        foreach (['b', 'i', 'strike', 's', 'u', 'spoiler'] as $tag) {
             $text = preg_replace(
                 "#\[{$tag}](.*?)\[/{$tag}\]#s",
                 "[{$tag}:{$this->uid}]\\1[/{$tag}:{$this->uid}]",
@@ -168,8 +169,8 @@ class BBCodeForDB
     public function parseLinks($text)
     {
         $spaces = ["(^|\s)", "((?:\.|\))?(?:$|\s|\n|\r))"];
-        // plain http/https/ftp
 
+        // plain http/https/ftp
         $text = preg_replace(
             "#{$spaces[0]}((?:https?|ftp)://[^\s]+?){$spaces[1]}#",
             "\\1<!-- m --><a href='\\2' rel='nofollow'>\\2</a><!-- m -->\\3",
@@ -307,7 +308,7 @@ class BBCodeForDB
         return preg_replace_callback(
             "#\[youtube\](.+?)\[/youtube\]#",
             function ($m) {
-                $videoId = $this->extraEscapes($m[1]);
+                $videoId = preg_replace('/\?.*/', '', $this->extraEscapes($m[1]));
 
                 return "[youtube:{$this->uid}]{$videoId}[/youtube:{$this->uid}]";
             },

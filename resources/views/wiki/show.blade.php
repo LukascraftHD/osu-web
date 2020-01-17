@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -15,108 +15,69 @@
     You should have received a copy of the GNU Affero General Public License
     along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 --}}
+@php
+    $url = wiki_url($page->path, $locale);
+    $title = $page->title();
+    $subSection = $title;
+
+    $links = [
+        [
+            'title' => trans('layout.header.help.index'),
+            'url' => wiki_url('Main_Page'),
+        ],
+    ];
+
+    $parentTitle = presence($page->subtitle());
+    if ($parentTitle !== null) {
+        $link = ['title' => $parentTitle];
+        $subSection = "{$parentTitle} / {$subSection}";
+        if ($page->hasParent()) {
+            $link['url'] = wiki_url($page->parentPath(), $locale);
+        }
+        $links[] = $link;
+    }
+
+    $links[] = compact('title', 'url');
+@endphp
 
 @extends('master', [
-    'body_additional_classes' => 'osu-layout--body-333',
     'title' => null,
     'titlePrepend' => $page->title(true),
 ])
 
 @section('content')
-    <div class="osu-layout__row">
-        <div class="osu-page-header osu-page-header--wiki">
-            <div class="osu-page-header__title-box">
-                @if (present($page->subtitle()))
-                    <h2 class="osu-page-header__title osu-page-header__title--small">
-                        {{ $page->subtitle() }}
-                    </h2>
-                @endif
+    @component('layout._page_header_v4', ['params' => [
+        'links' => $links,
+        'linksBreadcrumb' => true,
+        'section' => trans('layout.header.help._'),
+        'subSection' => $subSection,
+        'theme' => 'help',
+    ]])
+        @slot('titleAppend')
+            @include('wiki._actions')
+        @endslot
+    @endcomponent
 
-                <h1 class="osu-page-header__title osu-page-header__title--main">
-                    {{ $page->title() }}
-                </h1>
-            </div>
-
-            <div class="osu-page-header__actions">
-                <div class="forum-post-actions">
-                    <div class="forum-post-actions__action">
-                        <a
-                            class="btn-circle"
-                            href="{{ $page->editUrl() }}"
-                            title="{{ trans('wiki.show.edit.link') }}"
-                            data-tooltip-position="left center"
-                        >
-                            <span class="btn-circle__content">
-                                <i class="fa fa-github"></i>
-                            </span>
-                        </a>
-                    </div>
-
-                    @if (priv_check('WikiPageRefresh')->can())
-                        <div class="forum-post-actions__action">
-                            <button
-                                type="button"
-                                class="btn-circle"
-                                data-remote="true"
-                                data-url="{{ route('wiki.show', [$page->path]) }}"
-                                data-method="PUT"
-                                title="{{ trans('wiki.show.edit.refresh') }}"
-                                data-tooltip-position="left center"
-                            >
-                                <span class="btn-circle__content">
-                                    <i class="fa fa-refresh"></i>
-                                </span>
-                            </button>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="osu-page osu-page--wiki">
-        @if ($page->page() !== null && $page->locale !== $page->requestedLocale)
-            <div class="wiki-notice">
-                <div class="wiki-notice__box">
-                    {{ trans('wiki.show.fallback_translation', ['language' => locale_name($page->requestedLocale)]) }}
-                </div>
-            </div>
-        @endif
-
-        @if ($page->isOutdated())
-            <div class="wiki-notice">
-                <div class="wiki-notice__box">
-                    {!! trans('wiki.show.outdated._', [
-                        'default' => '<a href="'.e(wiki_url($page->path, config('app.fallback_locale'))).'">'.e(trans('wiki.show.outdated.default')).'</a>',
-                    ]) !!}
-                </div>
-            </div>
-        @endif
+        @include('wiki._notice')
 
         <div class="wiki-page">
-            <div
-                class="hidden-xs wiki-page__toc js-wiki-toc-float-container js-sticky-header"
-                data-sticky-header-target="wiki-toc"
-            >
-                <div class="js-sync-height--target" data-sync-height-id="wiki-toc"></div>
-
-                <div
-                    class="wiki-toc js-wiki-toc js-wiki-toc-float js-sync-height--reference"
-                    data-sync-height-target="wiki-toc"
-                >
+            <div class="hidden-xs wiki-page__toc u-fancy-scrollbar">
+                <div class="wiki-toc">
                     <h2 class="wiki-toc__title">
                         {{ trans('wiki.show.toc') }}
                     </h2>
 
-                    @if ($page->page() !== null)
+                    @if ($page->get() !== null)
                         @include('wiki._toc')
                     @endif
                 </div>
             </div>
 
             <div class="wiki-page__content">
-                @if ($page->page() !== null)
-                    {!! $page->page()['output'] !!}
+                @if ($page->get() !== null)
+                    {!! $page->get()['output'] !!}
                 @else
                     <div class="wiki-content">
                         <p>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -48,10 +48,10 @@ class Hit implements \ArrayAccess
      *
      * @return array
      */
-    public function highlights(string $field, ?int $limit = null)
+    public function highlights(string $field, ?int $limit = null): array
     {
         if (isset($this['highlight'])) {
-            $highlights = $this['highlight'][$field];
+            $highlights = $this['highlight'][$field] ?? [];
             if ($limit === null) {
                 return $highlights;
             }
@@ -66,7 +66,7 @@ class Hit implements \ArrayAccess
         }
 
         // highlights are stored in an array, so return an array as well.
-        return [html_excerpt($this['_source'][$field])];
+        return [html_excerpt($this['_source'][$field], $limit)];
     }
 
     public function innerHits(string $name)
@@ -76,6 +76,8 @@ class Hit implements \ArrayAccess
         if ($results) {
             return new SearchResponse($results, $name);
         }
+
+        return SearchResponse::empty();
     }
 
     public function raw()

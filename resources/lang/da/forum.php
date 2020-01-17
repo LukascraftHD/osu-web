@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,12 +19,18 @@
  */
 
 return [
+    'pinned_topics' => 'Fastgjorte Emner',
+    'slogan' => "det er farligt at spille alene.",
+    'subforums' => 'Subforumer',
+    'title' => 'Forum',
 
     'covers' => [
+        'edit' => 'Rediger coverbillede',
+
         'create' => [
             '_' => 'Sæt coverbillede',
             'button' => 'Upload billede',
-            'info' => 'Coverstørrelse skal være :dimensions. Du kan også smide dit cover her for at uploade det.',
+            'info' => 'Cover-størrelsen bør være :dimensions. Du kan også smide dit billede her for at uploade det.',
         ],
 
         'destroy' => [
@@ -33,78 +39,113 @@ return [
         ],
     ],
 
-    'email' => [
-        'new_reply' => '[osu!] Nyt svar for emne ":title"',
-    ],
-
     'forums' => [
+        'latest_post' => 'Seneste Opslag',
+
+        'index' => [
+            'title' => 'Debatforumoversigt',
+        ],
+
         'topics' => [
             'empty' => 'Ingen emner!',
         ],
     ],
 
-    'pinned_topics' => 'Fastgjorte Emner',
+    'mark_as_read' => [
+        'forum' => 'Marker forum som læst',
+        'forums' => 'Marker forums som læst',
+        'busy' => 'Marker som læst...',
+    ],
+
     'post' => [
         'confirm_destroy' => 'Slet opslag?',
-        'confirm_restore' => 'Gendag opslag?',
-        'edited' => 'Sidst redigeret af :user på :when, redigeret i alt :count gange.',
+        'confirm_restore' => 'Gendan opslag?',
+        'edited' => 'Sidst redigeret af :user den :when, redigeret i alt :count gange.',
         'posted_at' => 'slået op på :when',
+
         'actions' => [
             'destroy' => 'Slet opslag',
             'restore' => 'Gendan opslag',
-            'edit' => 'Redigér opslag',
+            'edit' => 'Rediger opslag',
+        ],
+
+        'create' => [
+            'title' => [
+                'reply' => 'Nyt svar',
+            ],
+        ],
+
+        'info' => [
+            'post_count' => ':count_delimited opslag|:count_delimited opslag',
+            'topic_starter' => 'Emne Starter',
         ],
     ],
+
     'search' => [
         'go_to_post' => 'Gå til opslag',
         'post_number_input' => 'indtast opslagsnummer',
         'total_posts' => ':posts_count opslag i alt',
     ],
-    'subforums' => 'Subforums',
-    'title' => 'osu!community',
-    'slogan' => 'det er farlig at spille alene.',
+
     'topic' => [
+        'deleted' => 'slettede emne',
+        'go_to_latest' => 'vis det seneste opslag',
+        'latest_post' => ':when af :user',
+        'latest_reply_by' => 'seneste svar af :user',
+        'new_topic' => 'Nyt emne',
+        'new_topic_login' => 'Log ind for at kunne lave et nyt emne',
+        'post_reply' => 'Slå op',
+        'reply_box_placeholder' => 'Skriv her for at svare',
+        'reply_title_prefix' => 'Re',
+        'started_by' => 'af :user',
+        'started_by_verbose' => 'startet af :user',
+
         'create' => [
-            'placeholder' => [
-                'body' => 'Skriv opslagets indhold her',
-                'title' => 'Klik her for at lave en overskrift',
-            ],
+            'close' => 'Luk',
             'preview' => 'Forhåndsvisning',
             // TL note: this is used in the topic reply preview, when
             // the user goes back from previewing to editing the reply
             'preview_hide' => 'Skriv',
             'submit' => 'Slå op',
+
+            'necropost' => [
+                'default' => 'Dette emne har været inaktivt i et stykke tid. Post kun her hvis du har en særlig grund til det.',
+
+                'new_topic' => [
+                    '_' => "Dette opslag har været inaktivt i et stykke tid. Hvis du ikke har en specifik grund til at sende noget, så :create et nyt opslag i stedet.",
+                    'create' => 'opret nyt emne',
+                ],
+            ],
+
+            'placeholder' => [
+                'body' => 'Skriv opslagets indhold her',
+                'title' => 'Klik her for at lave en overskrift',
+            ],
         ],
-        'go_to_latest' => 'vist seneste opslag',
+
         'jump' => [
-            'enter' => 'klik for at vælge et specifikt opslagsnummer',
+            'enter' => 'klik for at vælge et specifikt opslags-nummer',
             'first' => 'gå til første opslag',
             'last' => 'gå til sidste opslag',
-            'next' => 'spring over næste 10 opslag',
+            'next' => 'spring over 10 opslag',
             'previous' => 'gå 10 opslag tilbage',
         ],
-        'latest_post' => ':when af :user',
-        'latest_reply_by' => 'seneste svar af :user',
-        'new_topic' => 'Slå nyt emne op',
+
         'post_edit' => [
             'cancel' => 'Annullér',
             'post' => 'Gem',
         ],
-        'post_reply' => 'Slå op',
-        'reply_box_placeholder' => 'Skriv her for at svare',
-        'started_by' => 'af :user',
     ],
 
     'topic_watches' => [
         'index' => [
-            'title' => 'Forum Abonnementer',
             'title_compact' => 'forum abonnementer',
-            'title_main' => 'Forum <strong>Abonnementer</strong>',
 
             'box' => [
-                'total' => 'Emner Abonneret',
+                'total' => 'Emner abonneret',
                 'unread' => 'Emner med nye svar',
             ],
+
             'info' => [
                 'total' => 'Du abonnerer i alt på :total emner.',
                 'unread' => 'Du har :unread ulæste svar til abonnerede emner.',
@@ -113,7 +154,7 @@ return [
 
         'topic_buttons' => [
             'remove' => [
-                'confirmation' => 'Opsig abonnement fra emne?',
+                'confirmation' => 'Opsig abonnement fra emnet?',
                 'title' => 'Opsig abonnement',
             ],
         ],
@@ -123,6 +164,7 @@ return [
         '_' => 'Emner',
 
         'actions' => [
+            'login_reply' => 'Log ind for at kunne svare',
             'reply' => 'Svar',
             'reply_with_quote' => 'Citér opslag til svar',
             'search' => 'Søg',
@@ -131,14 +173,17 @@ return [
         'create' => [
             'create_poll' => 'Oprettelse af afstemning',
 
+            'preview' => 'Indlæs forhåndsvisning',
+
             'create_poll_button' => [
-                'add' => 'Lav en afstemning',
+                'add' => 'Opret afstemning',
                 'remove' => 'Annullér oprettelsen af afstemning',
             ],
 
             'poll' => [
+                'hide_results' => 'Gem resultater fra afstemningen.',
+                'hide_results_info' => 'De vil kun blive vist efter afstemningen er afsluttet.',
                 'length' => 'Kør afstemning i',
-                'length_days_prefix' => '',
                 'length_days_suffix' => 'dage',
                 'length_info' => 'Efterlad blank for at køre afstemning på ubestemt tid',
                 'max_options' => 'Muligheder pr. bruger',
@@ -147,67 +192,68 @@ return [
                 'options_info' => 'Placer hver mulighed på en ny linje. Du kan lave op til 10 muligheder.',
                 'title' => 'Spørgsmål',
                 'vote_change' => 'Tillad ændring af stemme.',
-                'vote_change_info' => 'Hvis aktiveret, kan brugerne undervejs ændre stemme.',
+                'vote_change_info' => 'Hvis aktiveret, kan brugerne ændre deres stemme.',
             ],
         ],
 
         'edit_title' => [
-            'start' => 'Ændr titel',
+            'start' => 'Rediger titel',
         ],
 
         'index' => [
-            'views' => 'visninger',
+            'feature_votes' => 'stjerneprioritet',
             'replies' => 'svar',
+            'views' => 'visninger',
         ],
 
         'issue_tag_added' => [
-            'action-0' => 'Fjern "tilføjet" tag',
-            'action-1' => 'Tilføj "tilføjet" tag',
-            'state-0' => 'Fjern "tilføjet" tag',
-            'state-1' => 'Tilføj "tilføjet" tag',
+            'to_0' => 'Fjern "tilføjet" tag',
+            'to_0_done' => 'Fjern "tilføjet" tag',
+            'to_1' => 'Tilføj "tilføjet" tag',
+            'to_1_done' => 'Tilføj "tilføjet" tag',
         ],
 
         'issue_tag_assigned' => [
-            'action-0' => 'Fjern "tildelelt" tag',
-            'action-1' => 'Tilføj "tildelelt" tag',
-            'state-0' => 'Fjern "tildelelt" tag',
-            'state-1' => 'Tilføj "tildelelt" tag',
+            'to_0' => 'Fjern "tildelt" tag',
+            'to_0_done' => 'Fjern "tildelt" tag',
+            'to_1' => 'Tilføj "tildelt" tag',
+            'to_1_done' => 'Tilføj "tildelt" tag',
         ],
 
         'issue_tag_confirmed' => [
-            'action-0' => 'Fjern "bekræftet" tag',
-            'action-1' => 'Tilføj "bekræftet" tag',
-            'state-0' => 'Fjern "bekræftet" tag',
-            'state-1' => 'Tilføj "bekræftet" tag',
+            'to_0' => 'Fjern "bekræftet" tag',
+            'to_0_done' => 'Fjern "bekræftet" tag',
+            'to_1' => 'Tilføj "bekræftet" tag',
+            'to_1_done' => 'Tilføj "bekræftet" tag',
         ],
 
         'issue_tag_duplicate' => [
-            'action-0' => 'Fjern "duplikeret" tag',
-            'action-1' => 'Tilføj "duplikeret" tag',
-            'state-0' => 'Fjern "duplikeret" tag',
-            'state-1' => 'Tilføj "duplikeret" tag',
+            'to_0' => 'Fjern "duplikeret" tag',
+            'to_0_done' => 'Fjern "duplikeret" tag',
+            'to_1' => 'Tilføj "duplikeret" tag',
+            'to_1_done' => 'Tilføj "duplikeret" tag',
         ],
 
         'issue_tag_invalid' => [
-            'action-0' => 'Fjern "ugyldigt" tag',
-            'action-1' => 'Tilføj "ugyldigt" tag',
-            'state-0' => 'Fjern "ugyldigt" tag',
-            'state-1' => 'Tilføj "ugyldigt" tag',
+            'to_0' => 'Fjern "ugyldigt" tag',
+            'to_0_done' => 'Fjern "ugyldigt" tag',
+            'to_1' => 'Tilføj "ugyldigt" tag',
+            'to_1_done' => 'Tilføj "ugyldigt" tag',
         ],
 
         'issue_tag_resolved' => [
-            'action-0' => 'Fjern "løst" tag',
-            'action-1' => 'Tilføj "løst" tag',
-            'state-0' => 'Fjern "løst" tag',
-            'state-1' => 'Tilføj "løst" tag',
+            'to_0' => 'Fjern "løst" tag',
+            'to_0_done' => 'Fjern "løst" tag',
+            'to_1' => 'Tilføj "løst" tag',
+            'to_1_done' => 'Tilføj "løst" tag',
         ],
 
         'lock' => [
-            'is_locked' => 'Dette emne er arkiveret og kan ikke svares til',
-            'lock-0' => 'Oplås emne',
-            'lock-1' => 'Lås emne',
-            'state-0' => 'Emnet er blevet oplåst',
-            'state-1' => 'Emnet er blevet låst',
+            'is_locked' => 'Dette emne er arkiveret og kan ikke svares',
+            'to_0' => 'Oplås emne',
+            'to_0_done' => 'Emnet er blevet låst op',
+            'to_1' => 'Lås emne',
+            'to_1_done' => 'Emnet er blevet låst',
         ],
 
         'moderate_move' => [
@@ -215,46 +261,67 @@ return [
         ],
 
         'moderate_pin' => [
-            'pin-0' => 'Fjern fastgørelse af emne',
-            'pin-1' => 'Fastgør emne',
-            'pin-2' => 'Fastgør emne og marker som en meddelelse',
-            'state-0' => 'Emnet er blevet løsgjort',
-            'state-1' => 'Emnet er blevet fastgjort',
-            'state-2' => 'Emnet er blevet fastgjort og markeret som en meddelelse',
+            'to_0' => 'Fjern fra pins',
+            'to_0_done' => 'Emnet er blevet fjernet fra pins',
+            'to_1' => 'Fastgør emne',
+            'to_1_done' => 'Emnet er blevet fastgjort',
+            'to_2' => 'Fastgør emne og marker som en service-meddelelse',
+            'to_2_done' => 'Emnet er blevet fastgjort og markeret som en service-meddelelse',
+        ],
+
+        'moderate_toggle_deleted' => [
+            'show' => 'Vis slettede opslag',
+            'hide' => 'Gem slettede opslag',
         ],
 
         'show' => [
+            'deleted-posts' => 'Slettede Opslag',
             'total_posts' => 'Opslag i alt',
-            'deleted-posts' => 'Slettede opslag',
 
             'feature_vote' => [
-                'current' => 'Nuværende prioritet: +:count',
+                'current' => 'Nuværende Prioritet: +:count',
                 'do' => 'Promovér denne anmodning',
 
+                'info' => [
+                    '_' => 'Dette er en :feature_request. Foreslag om ny funktionalitet kan kun upvotes af :supporters.',
+                    'feature_request' => 'foreslag om ny funktionalitet',
+                    'supporters' => 'supportere',
+                ],
+
                 'user' => [
-                    'current' => 'Du har :votes stemmer tilbage.',
                     'count' => '{0} ingen stemmer|{1} :count stemme|[2,*] :count stemmer',
-                    'not_enough' => 'Du har ikke flere stemmer tilbage',
+                    'current' => 'Du har :votes stemmer tilbage.',
+                    'not_enough' => "Du har ikke flere stemmer tilbage",
                 ],
             ],
 
             'poll' => [
+                'edit' => 'Rediger Afstemning',
+                'edit_warning' => 'Redigering af afstemningen vil fjerne de nuværende resultater!',
                 'vote' => 'Stem',
 
+                'button' => [
+                    'change_vote' => 'Ændr stemme',
+                    'edit' => 'Rediger afstemning',
+                    'view_results' => 'Spring til resultater',
+                    'vote' => 'Stem',
+                ],
+
                 'detail' => [
-                    'total' => 'Stemmer i alt: :count',
-                    'ended' => 'Afstemning sluttede :time',
                     'end_time' => 'Afstemning slutter :time',
+                    'ended' => 'Afstemning sluttede :time',
+                    'results_hidden' => 'Resultater vil blive vist efter afstemningen er færdiggjort.',
+                    'total' => 'Stemmer i alt: :count',
                 ],
             ],
         ],
 
         'watch' => [
-            'state-0' => 'Opsagde abonnement for emnet',
-            'state-1' => 'Abonnerede på emnet',
-            'watch-0' => 'Opsagde abonnement for emnet',
-            'watch-1' => 'Abonnerede på emnet',
+            'to_not_watching' => 'Ikke gemt',
+            'to_watching' => 'Gem',
+            'to_watching_mail' => 'Gem med notifikation',
+            'tooltip_mail_disable' => 'Notifikationer er slået til. Klik for at slå dem fra',
+            'tooltip_mail_enable' => 'Notifikationer er slået fra. Klik for at slå dem til',
         ],
     ],
-
 ];

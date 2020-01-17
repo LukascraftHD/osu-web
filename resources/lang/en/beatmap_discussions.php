@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,7 +21,7 @@
 return [
     'authorizations' => [
         'update' => [
-            'null_user' => 'Must be logged in to edit.',
+            'null_user' => 'Must be signed in to edit.',
             'system_generated' => 'System-generated post can not be edited.',
             'wrong_user' => 'Must be owner of the post to edit.',
         ],
@@ -36,7 +36,20 @@ return [
         'title' => 'Beatmap Discussions',
 
         'form' => [
+            '_' => 'Search',
             'deleted' => 'Include deleted discussions',
+            'only_unresolved' => 'Show only unresolved discussions',
+            'types' => 'Message types',
+            'username' => 'Username',
+
+            'beatmapset_status' => [
+                '_' => 'Beatmap Status',
+                'all' => 'All',
+                'disqualified' => 'Disqualified',
+                'never_qualified' => 'Never Qualified',
+                'qualified' => 'Qualified',
+                'ranked' => 'Ranked',
+            ],
 
             'user' => [
                 'label' => 'User',
@@ -59,9 +72,14 @@ return [
 
     'reply' => [
         'open' => [
-            'guest' => 'Login to Respond',
+            'guest' => 'Sign in to Respond',
             'user' => 'Respond',
         ],
+    ],
+
+    'review' => [
+        'go_to_parent' => 'View Review Post',
+        'go_to_child' => 'View Discussion',
     ],
 
     'system' => [
@@ -71,10 +89,13 @@ return [
         ],
     ],
 
-    'user' => [
-        'admin' => 'admin',
-        'bng' => 'nominator',
-        'owner' => 'mapper',
-        'qat' => 'qat',
+    'timestamp_display' => [
+        'general' => 'general',
+        'general_all' => 'general (all)',
+    ],
+
+    'user_filter' => [
+        'everyone' => 'Everyone',
+        'label' => 'Filter by user',
     ],
 ];

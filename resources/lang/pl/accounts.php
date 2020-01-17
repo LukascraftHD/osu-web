@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -17,28 +17,37 @@
  *    You should have received a copy of the GNU Affero General Public License
  *    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 return [
     'edit' => [
-        'title' => 'Ustawienia <strong>konta</strong>',
         'title_compact' => 'ustawienia',
+        'username' => 'nazwa użytkownika',
+
         'avatar' => [
-            'title' => 'Zmień avatar',
+            'title' => 'Awatar',
+            'rules' => 'Upewnij się, że twój awatar jest zgodny z :link.<br/>Oznacza to, że musi być <strong>stosowny dla wszystkich grup wiekowych</strong> i nie może ukazywać nagości, wulgarności ani sugestywnej zawartości.',
+            'rules_link' => 'zasadami społeczności',
         ],
+
         'email' => [
-            'current' => 'aktualny email',
-            'new' => 'nowy email',
-            'new_confirmation' => 'potwierdź email',
-            'title' => 'Email',
+            'current' => 'obecny e-mail',
+            'new' => 'nowy e-mail',
+            'new_confirmation' => 'potwierdź e-mail',
+            'title' => 'E-mail',
         ],
+
         'password' => [
-            'current' => 'aktualne hasło',
+            'current' => 'obecne hasło',
             'new' => 'nowe hasło',
             'new_confirmation' => 'potwierdź hasło',
             'title' => 'Hasło',
         ],
+
         'profile' => [
-            'title' => 'Edytuj profil',
+            'title' => 'Profil',
+
             'user' => [
+                'user_discord' => 'discord',
                 'user_from' => 'obecna lokalizacja',
                 'user_interests' => 'zainteresowania',
                 'user_msnm' => 'skype',
@@ -47,24 +56,68 @@ return [
                 'user_website' => 'strona internetowa',
             ],
         ],
+
         'signature' => [
             'title' => 'Sygnatura',
             'update' => 'zaktualizuj',
         ],
     ],
-    'update_email' => [
-        'email_subject' => 'potwierdź zmianę maila',
-        'update' => 'zaktualizuj',
+
+    'notifications' => [
+        'title' => 'Powiadomienia',
+        'topic_auto_subscribe' => 'automatycznie włączaj powiadomienia dla twoich wątków na forum',
+        'beatmapset_discussion_qualified_problem' => 'otrzymuj powiadomienia o nowych problemach z zakwalifikowanymi beatmapami dla następujących trybów',
+
+        'mail' => [
+            '_' => 'otrzymuj powiadomienia e-mail dla',
+            'beatmapset:modding' => 'dyskusji beatmap',
+            'forum_topic_reply' => 'odpowiedzi w wątkach',
+        ],
     ],
-    'update_password' => [
-        'email_subject' => 'potwierdź zmianę hasła',
-        'update' => 'zaktualizuj',
+
+    'oauth' => [
+        'authorized_clients' => 'autoryzowane klienty',
+        'own_clients' => 'moje klienty',
+        'title' => 'OAuth',
     ],
+
     'playstyles' => [
-        'title' => 'Style gry',
-        'mouse' => 'myszka',
         'keyboard' => 'klawiatura',
+        'mouse' => 'myszka',
         'tablet' => 'tablet',
+        'title' => 'Style gry',
         'touch' => 'ekran dotykowy',
+    ],
+
+    'privacy' => [
+        'friends_only' => 'blokuj prywatne wiadomości od osób spoza listy znajomych',
+        'hide_online' => 'ukryj swoją obecność online',
+        'title' => 'Prywatność',
+    ],
+
+    'security' => [
+        'current_session' => 'obecna',
+        'end_session' => 'Zakończ sesję',
+        'end_session_confirmation' => 'Ta czynność natychmiastowo zakończy sesję na tym urządzeniu. Czy na pewno chcesz to zrobić?',
+        'last_active' => 'Ostatnio aktywna:',
+        'title' => 'Bezpieczeństwo',
+        'web_sessions' => 'sesje internetowe',
+    ],
+
+    'update_email' => [
+        'update' => 'zaktualizuj',
+    ],
+
+    'update_password' => [
+        'update' => 'zaktualizuj',
+    ],
+
+    'verification_completed' => [
+        'text' => 'Możesz zamknąć to okno',
+        'title' => 'Weryfikacja została zakończona',
+    ],
+
+    'verification_invalid' => [
+        'title' => 'Nieprawidłowy lub przedawniony link weryfikacyjny',
     ],
 ];

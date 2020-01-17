@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -62,8 +62,8 @@ class BeatmapsetUpdateNotice extends Mailable implements ShouldQueue
         }
 
         return $this
-            ->text(i18n_view('emails.beatmapset.update_notice'))
-            ->subject(trans('beatmapset_watches.mail.update', [
+            ->text('emails.beatmapset.update_notice')
+            ->subject(trans('mail.beatmapset_update_notice.subject', [
                 'title' => $beatmapset->title,
             ]))
             ->with(compact('beatmapset', 'user'));

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -22,12 +22,14 @@ return [
     'landing' => [
         'download' => 'Hent nu',
         'online' => '<strong>:players</strong> online i øjeblikket i <strong>:games</strong> spil',
-        'peak' => 'Peak, :count online brugere',
+        'peak' => 'Højeste antal, :count online brugere',
         'players' => '<strong>:count</strong> registrerede brugere',
+        'title' => 'velkommen',
+        'see_more_news' => 'se flere nyheder',
 
         'slogan' => [
-            'main' => 'gratis rytmespil',
-            'sub' => 'rytmen er bare ét klik væk',
+            'main' => 'det aller-allerbedste, gratis rytmespil',
+            'sub' => 'rytme er bare et klik væk',
         ],
     ],
 
@@ -35,8 +37,9 @@ return [
         'advanced_link' => 'Avanceret søgning',
         'button' => 'Søg',
         'empty_result' => 'Intet fundet!',
-        'missing_query' => 'Du skal søge efter nøgleord med mindst :n karakterer!',
-        'title' => 'Søgeresultater',
+        'keyword_required' => 'Et søge-nøgleord behøves',
+        'placeholder' => 'klik for at søge',
+        'title' => 'Søg',
 
         'beatmapset' => [
             'more' => ':count flere beatmap søgeresultater',
@@ -45,21 +48,21 @@ return [
         ],
 
         'forum_post' => [
-            'all' => 'Alle forums',
-            'link' => 'Søg på forummet',
+            'all' => 'Alle forumer',
+            'link' => 'Søg i forumet',
             'more_simple' => 'Se flere forum-søgeresultater',
             'title' => 'Forum',
 
             'label' => [
                 'forum' => 'søg i forummerne',
-                'forum_children' => 'inkludér subforums',
+                'forum_children' => 'inkluder subforummer',
                 'topic_id' => 'emne #',
                 'username' => 'forfatter',
             ],
         ],
 
         'mode' => [
-            'all' => 'all',
+            'all' => 'alt',
             'beatmapset' => 'beatmap',
             'forum_post' => 'forum',
             'user' => 'bruger',
@@ -81,7 +84,7 @@ return [
     ],
 
     'download' => [
-        'tagline' => 'lad os få<br>dig i gang!',
+        'tagline' => "lad os få<br>dig i gang!",
         'action' => 'Download osu!',
         'os' => [
             'windows' => 'til Windows',
@@ -100,10 +103,10 @@ return [
                 'description' => 'klik på knappen ovenfor for at hente installeren, og kør den!',
             ],
             'beatmaps' => [
-                'title' => 'anskaf beatmaps',
+                'title' => 'få beatmaps',
                 'description' => [
-                    '_' => ':browse det gigantiske bibliotek af bruger-oprettede beatmaps, og begynd at spille!',
-                    'browse' => 'gennemse',
+                    '_' => ':browse det gigantiske bibliotek af bruger-skabte beatmaps, og begynd at spille!',
+                    'browse' => 'udforsk',
                 ],
             ],
         ],
@@ -111,24 +114,22 @@ return [
     ],
 
     'user' => [
+        'title' => 'instrumentbræt',
         'news' => [
             'title' => 'Nyheder',
             'error' => 'Fejl ved indlæsning af nyheder, prøv at genindlæse siden?...',
         ],
         'header' => [
-            'welcome' => 'Hejsa, <strong>:username</strong>!',
-            'messages' => 'Du har 1 ny besked|Du har :count nye beskeder',
             'stats' => [
-                'friends' => 'Online venner',
+                'friends' => 'Venner Online',
                 'games' => 'Spil',
-                'online' => 'Online brugere',
+                'online' => 'Online Brugere',
             ],
         ],
         'beatmaps' => [
-            'new' => 'Nye Godkendte Beatmaps',
+            'new' => 'Nye Rangerede Beatmaps',
             'popular' => 'Populære Beatmaps',
-            'by' => 'af',
-            'plays' => ':count afspilninger',
+            'by_user' => 'af :user',
         ],
         'buttons' => [
             'download' => 'Hent osu!',
@@ -142,9 +143,9 @@ return [
         'subtitle' => 'Du ser ud til at have det sjovt! :D',
         'body' => [
             'part-1' => 'Vidste du, at osu! kører helt uden reklamer og er stærkt afhængigt af, at spillerne støtter spillets udvikling og omkostninger?',
-            'part-2' => 'Vidste du også, at du ved at støtte osu! får en stor håndfuld ekstra brugbare funktioner, såsom <strong>in-game downloading</strong> som kan udnyttes i multiplayer- og tilskuertilstand?',
+            'part-2' => 'Vidste du også, at du ved at støtte osu! får en stor håndfuld ekstra funktioner, såsom <strong>in-game downloading</strong> som kan udnyttes i multiplayer- og spectator-tilstand?',
         ],
         'find-out-more' => 'Klik her for at læse mere!',
-        'download-starting' => 'Hov, og bare rolig - din download er allerede startet for dig ;)',
+        'download-starting' => "Oh, og bare rolig - din download er allerede blevet startet for dig ;)",
     ],
 ];

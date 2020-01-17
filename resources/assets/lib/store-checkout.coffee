@@ -1,5 +1,5 @@
 ###
-#    Copyright 2015-2017 ppy Pty. Ltd.
+#    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 #
 #    This file is part of osu!web. osu!web is distributed with the hope of
 #    attracting more community contributions to the core ecosystem of osu!.
@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with osu!web.  If not, see <http://www.gnu.org/licenses/>.
 ###
+
+# TODO: migrate to store.ts.
 
 import { StorePaypal } from 'store-paypal'
 import { StoreXsolla } from 'store-xsolla'
@@ -36,42 +38,48 @@ export class StoreCheckout
         when 'xsolla' then init['xsolla'] = StoreXsolla.promiseInit(orderNumber)
 
     $(@CHECKOUT_SELECTOR).on 'click.checkout', (event) =>
-      provider = event.target.dataset.provider
+      { orderId, provider } = event.target.dataset
       # sanity
       return unless provider?
       LoadingOverlay.show()
       LoadingOverlay.show.flush()
 
-      init[provider]?.then =>
-        $.post laroute.route('store.checkout.store'), provider: provider
-        .done =>
-          @startPayment(event.target.dataset)
-
-      .catch (error) ->
-        LoadingOverlay.hide()
-        # errors from they jquery deferred will propagate here.
-        if error.getResponseHeader # check if 4xx ujs_redirect
-          type = error.getResponseHeader('Content-Type')
-          return if _.startsWith(type, 'application/javascript')
-
-        # TODO: less unknown error, disable button
-        # TODO: handle error.message
-        osu.ajaxError(error?.xhr)
+      init[provider]?.then ->
+        window.osu.promisify $.post(laroute.route('store.checkout.store'), { provider, orderId })
+      .then =>
+        @startPayment(event.target.dataset)
+      .catch @handleError
 
 
   @startPayment: (params) ->
-    switch params.provider
+    { orderId, provider, url } = params
+    switch provider
       when 'centili'
-        window.location = params.url
+        new Promise (resolve) ->
+          window.location.href = url
 
       when 'free'
-        $.post laroute.route('store.checkout.store', completed: '1')
+        window.osu.promisify $.post(laroute.route('store.checkout.store', { orderId, provider }))
 
       when 'paypal'
-        StorePaypal.fetchApprovalLink(params.orderId).then (link) ->
-          window.location = link
+        StorePaypal.fetchApprovalLink(orderId).then (link) ->
+          window.location.href = link
 
       when 'xsolla'
-        # FIXME: flickering when transitioning to widget
-        XPayStationWidget.open()
-        LoadingOverlay.hide()
+        new Promise (resolve) ->
+          # FIXME: flickering when transitioning to widget
+          XPayStationWidget.open()
+          LoadingOverlay.hide()
+          resolve()
+
+
+  @handleError: (error) ->
+    LoadingOverlay.hide()
+    # errors from they jquery deferred will propagate here.
+    if error.getResponseHeader # check if 4xx ujs_redirect
+      type = error.getResponseHeader('Content-Type')
+      return if _.startsWith(type, 'application/javascript')
+
+    # TODO: less unknown error, disable button
+    # TODO: handle error.message
+    osu.ajaxError(error?.xhr)

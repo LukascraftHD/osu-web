@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,15 +20,20 @@
 
 namespace App\Libraries\Elasticsearch;
 
-use Illuminate\Support\Facades\Facade;
+use Elasticsearch\Client;
+use Elasticsearch\ClientBuilder;
 
-/**
- * @see \Elasticsearch\Client
- */
-class Es extends Facade
+class Es
 {
-    protected static function getFacadeAccessor()
+    public static function getClient(string $name = 'default'): Client
     {
-        return 'elasticsearch';
+        static $clients = [];
+
+        if (!array_key_exists($name, $clients)) {
+            $config = $name === 'default' ? 'elasticsearch' : "elasticsearch_{$name}";
+            $clients[$name] = ClientBuilder::fromConfig(config($config));
+        }
+
+        return $clients[$name];
     }
 }

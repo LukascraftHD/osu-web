@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,21 +19,15 @@
  */
 
 return [
-    'title' => '重置密碼',
-
     'button' => [
         'cancel' => '取消',
         'resend' => '重新發送確認郵件',
-        'set' => '設置密碼',
+        'set' => '設定密碼',
         'start' => '開始',
     ],
 
-    'email' => [
-        'subject' => 'osu! 帳戶找回',
-    ],
-
     'error' => [
-        'contact_support' => '請聯繫支持團隊以找回帳戶',
+        'contact_support' => '請聯繫支持團隊以找回帳戶。',
         'is_privileged' => '聯繫 peppy（笑）',
         'missing_key' => '必填',
         'too_many_tries' => '重試次數過多',
@@ -54,6 +48,11 @@ return [
     ],
 
     'starting' => [
-        'username' => '輸入郵箱或用戶名',
+        'username' => '輸入郵件地址或使用者名稱',
+
+        'support' => [
+            '_' => '需要進一步的幫助？通過我們的 :button 聯繫我們。',
+            'button' => '支持系統',
+        ],
     ],
 ];

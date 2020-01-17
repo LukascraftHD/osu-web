@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2018 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,18 +19,12 @@
  */
 
 return [
-    'buttons' => [
-      'add' => 'Añadir amigo',
-      'remove' => 'Eliminar amigo',
-    ],
-
-    'state' => [
-      'friends' => 'amigos',
-      'mutual' => 'mutuo',
-    ],
-
-    'title' => 'Amigos',
     'title_compact' => 'amigos',
-
     'too_many' => 'Límite de amigos alcanzado.',
+
+    'buttons' => [
+      'add' => 'agregar amigo',
+      'disabled' => 'amigos',
+      'remove' => 'eliminar amigo',
+    ],
 ];

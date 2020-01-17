@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -23,36 +23,141 @@ return [
         'page_description' => 'osu! - Le rythme est à un seul *clic* !  Avec Ouendan/EBA, Taiko et les modes originaux de gameplay, avec un éditeur de niveau complet.',
     ],
 
+    'header' => [
+        'admin' => [
+            '_' => '',
+            'beatmapset' => '',
+            'beatmapset_covers' => '',
+            'contest' => '',
+            'contests' => '',
+            'root' => '',
+            'store_orders' => '',
+        ],
+
+        'artists' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'beatmapsets' => [
+            '_' => '',
+            'discussions' => '',
+            'index' => '',
+            'show' => '',
+            'packs' => '',
+        ],
+
+        'changelog' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'community' => [
+            '_' => 'Communauté',
+            'comments' => '',
+            'forum' => 'Forum',
+            'livestream' => '',
+        ],
+
+        'contests' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'error' => [
+            '_' => '',
+        ],
+
+        'help' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'home' => [
+            '_' => '',
+            'password_reset' => '',
+        ],
+
+        'matches' => [
+            '_' => '',
+        ],
+
+        'notice' => [
+            '_' => '',
+        ],
+
+        'rankings' => [
+            '_' => '',
+        ],
+
+        'tournaments' => [
+            '_' => '',
+            'index' => '',
+        ],
+
+        'users' => [
+            '_' => '',
+            'forum_posts' => '',
+            'modding' => '',
+            'show' => '',
+        ],
+    ],
+
+    'gallery' => [
+        'close' => 'Fermer (Échap)',
+        'fullscreen' => 'Plein écran',
+        'zoom' => 'Zoom avant/arrière',
+        'previous' => 'Précédent (flèche gauche)',
+        'next' => 'Suivant (flèche droite)',
+    ],
+
     'menu' => [
         'home' => [
             '_' => 'accueil',
             'account-edit' => 'paramètres',
+            'account-verifyLink' => 'Vérification terminée',
+            'beatmapset-watches-index' => '',
+            'changelog-build' => 'build',
+            'changelog-index' => 'notes de MàJ',
+            'forum-topic-watches-index' => '',
             'friends-index' => 'amis',
-            'getChangelog' => 'notes de MàJ',
             'getDownload' => 'télécharger',
             'getIcons' => 'icônes',
             'groups-show' => 'groupes',
+            'index' => 'tableau de bord',
             'legal-show' => 'information',
+            'messages-index' => 'messages',
             'news-index' => 'actualités',
             'news-show' => 'actualités',
             'password-reset-index' => 'réinitialiser le mot de passe',
             'search' => 'rechercher',
             'supportTheGame' => 'supporter le jeu',
+            'team' => 'équipe',
+            'testflight' => '',
+        ],
+        'profile' => [
+            '_' => 'profil',
+            'friends' => 'amis',
+            'settings' => 'paramètres',
         ],
         'help' => [
             '_' => 'aide',
             'getFaq' => 'faq',
-            'getSupport' => 'support', //obsolete
+            'getRules' => 'règles',
+            'getSupport' => 'non, vraiment, j\'ai besoin d\'aide !',
             'getWiki' => 'wiki',
             'wiki-show' => 'wiki',
         ],
         'beatmaps' => [
             '_' => 'beatmaps',
-            'show' => 'info',
-            'index' => 'liste',
             'artists' => 'artistes plébiscités',
+            'beatmap_discussion_posts-index' => 'posts de la discussion beatmap',
+            'beatmap_discussions-index' => 'discussions sur la beatmap',
+            'beatmapset_discussion_votes-index' => 'votes de la discussion beatmap',
+            'beatmapset_events-index' => 'évènements de la collection',
+            'index' => 'index',
             'packs' => 'collections',
-            // 'getCharts' => 'graphiques',
+            'show' => 'info',
         ],
         'beatmapsets' => [
             '_' => 'beatmaps',
@@ -62,27 +167,29 @@ return [
             '_' => 'rankings',
             'index' => 'performance',
             'performance' => 'performance',
-            'charts' => 'graphiques',
+            'charts' => 'classements',
             'score' => 'score',
             'country' => 'pays',
             'kudosu' => 'kudosu',
         ],
         'community' => [
             '_' => 'communauté',
-            'dev' => 'osu!dev',
-            'getForum' => 'forum', // Base text changed to plural, please check.
-            'getChat' => 'chat',
+            'chat' => 'chat',
+            'chat-index' => 'chat',
+            'dev' => 'développement',
+            'getForum' => 'forums',
             'getLive' => 'direct',
+            'comments-index' => 'commentaires',
+            'comments-show' => 'commentaire',
             'contests' => 'concours',
             'profile' => 'profil',
             'tournaments' => 'tournois',
             'tournaments-index' => 'tournois',
             'tournaments-show' => 'infos des tournois',
-            'forum-topic-watches-index' => 'Abonnements aux sujets',
-            'forum-topics-create' => 'forum', // Base text changed to plural, please check.
-            'forum-topics-show' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-index' => 'forum', // Base text changed to plural, please check.
-            'forum-forums-show' => 'forum', // Base text changed to plural, please check.
+            'forum-topics-create' => 'forums',
+            'forum-topics-show' => 'forums',
+            'forum-forums-index' => 'forums',
+            'forum-forums-show' => 'forums',
         ],
         'multiplayer' => [
             '_' => 'multijoueur',
@@ -94,7 +201,7 @@ return [
             '403' => 'interdit',
             '401' => 'non autorisé',
             '405' => 'manquant',
-            '500' => 'quelquechose est cassé',
+            '500' => 'quelque chose est cassé',
             '503' => 'maintenance',
         ],
         'user' => [
@@ -102,22 +209,32 @@ return [
             'getLogin' => 'se connecter',
             'disabled' => 'désactivé',
 
-            'register' => "s'inscrire",
+            'register' => 's\'inscrire',
             'reset' => 'récupérer',
             'new' => 'nouveau',
 
-            'messages' => 'Messages',
-            'settings' => 'Paramètres',
-            'logout' => 'Se déconnecter', // Base text changed from "Log Out" to "Sign Out", please check.
             'help' => 'Aide',
+            'logout' => 'Se déconnecter',
+            'messages' => 'Messages',
+            'modding-history-discussions' => 'discussion des modifications utilisateur',
+            'modding-history-events' => 'événements de modifications utilisateur',
+            'modding-history-index' => 'activités utilisateur du beatmapset',
+            'modding-history-posts' => 'messages de modifications utilisateur',
+            'modding-history-votesGiven' => 'votes de modifications utilisateur donnés',
+            'modding-history-votesReceived' => 'votes de modifications utilisateur reçus',
+            'oauth_login' => 'se connecter pour oauth',
+            'oauth_request' => 'autorisation oauth',
+            'settings' => 'Paramètres',
         ],
         'store' => [
             '_' => 'magasin',
+            'checkout-show' => 'acheter',
             'getListing' => 'liste',
             'cart-show' => 'panier',
 
             'getCheckout' => 'acheter',
             'getInvoice' => 'facture',
+            'orders-index' => 'historique des commandes',
             'products-show' => 'produit',
 
             'new' => 'nouveau',
@@ -136,11 +253,12 @@ return [
         ],
         'admin' => [
             '_' => 'admin',
+            'beatmapsets-covers' => 'couvertures des beatmapsets',
+            'logs-index' => 'journal',
             'root' => 'index',
-            'logs-index' => 'log',
+
             'beatmapsets' => [
                 '_' => 'sets de beatmaps',
-                'covers' => 'bannières',
                 'show' => 'détail',
             ],
         ],
@@ -150,7 +268,7 @@ return [
         'general' => [
             '_' => 'Général',
             'home' => 'Accueil',
-            'changelog' => 'Notes de MàJ',
+            'changelog-index' => 'Notes de MàJ',
             'beatmaps' => 'Liste des beatmaps',
             'download' => 'Télécharger osu!',
             'wiki' => 'Wiki',
@@ -162,16 +280,12 @@ return [
             'livestreams' => 'Streams en direct',
             'report' => 'Signaler une erreur',
         ],
-        'support' => [
-            '_' => 'Supporter osu!',
-            'tags' => 'Tags de Supporter',
-            'merchandise' => 'Marchandise',
-        ],
         'legal' => [
             '_' => 'Statut & Légal',
             'copyright' => 'Copyright (DMCA)',
-            'osu_status' => '@osustatus',
+            'privacy' => 'Confidentialité',
             'server_status' => 'Statut du serveur',
+            'source_code' => 'Code Source',
             'terms' => 'Conditions du service',
         ],
     ],
@@ -180,32 +294,26 @@ return [
         '404' => [
             'error' => 'Page manquante',
             'description' => "Désolé, mais la page demandée n'est pas ici !",
-            'link' => false,
         ],
         '403' => [
-            'error' => 'Vous ne devriez pas être ici',
+            'error' => "Vous ne devriez pas être ici",
             'description' => 'Vous pouvez essayer de revenir en arrière.',
-            'link' => false,
         ],
         '401' => [
-            'error' => 'Vous ne devriez pas être ici',
+            'error' => "Vous ne devriez pas être ici",
             'description' => 'Vous pouvez essayer de revenir en arrière. Ou peut-être vous connecter.',
-            'link' => false,
         ],
         '405' => [
             'error' => 'Page manquante',
             'description' => "Désolé, mais la page demandée n'est pas ici !",
-            'link' => false,
         ],
         '500' => [
-            'error' => "Oh non ! Quelque chose s'est cassé ! ;_;",
-            'description' => 'Nous avons été notifié automatiquement de cette erreur.',
-            'link' => false,
+            'error' => 'Oh non ! Quelque chose s\'est cassé ! ;_;',
+            'description' => "Nous avons été notifié automatiquement de cette erreur.",
         ],
         'fatal' => [
-            'error' => "Oh non ! Quelque chose s'est cassé ! (gravement) ;_;",
-            'description' => 'Nous avons été notifié automatiquement de cette erreur.',
-            'link' => false,
+            'error' => 'Oh non ! Quelque chose s\'est cassé ! (gravement) ;_;',
+            'description' => "Nous avons été notifié automatiquement de cette erreur.",
         ],
         '503' => [
             'error' => 'Maitenance en cours!',
@@ -216,15 +324,15 @@ return [
             ],
         ],
         // used by sentry if it returns an error
-        'reference' => 'Juste au cas où, voici un code que vous pourrez retourner au support !',
+        'reference' => "Juste au cas où, voici un code que vous pourrez retourner au support !",
     ],
 
     'popup_login' => [
         'login' => [
-            'email' => 'adresse e-mail',
             'forgot' => "J'ai oublié mes identifiants",
             'password' => 'mot de passe',
             'title' => 'Se connecter pour continuer',
+            'username' => 'nom d\'utilisateur',
 
             'error' => [
                 'email' => "Le nom d'utilisateur ou l'e-mail ne correspond pas",
@@ -233,7 +341,8 @@ return [
         ],
 
         'register' => [
-            'info' => "Vous avez besoin d'un compte, mon cher. Pourquoi n'en avez vous pas ?",
+            'download' => 'Télécharger',
+            'info' => 'Vous avez besoin d\'un compte, mon cher. Pourquoi n\'en avez vous pas ?',
             'title' => "Vous n'avez pas de compte ?",
         ],
     ],
@@ -242,7 +351,7 @@ return [
         'links' => [
             'account-edit' => 'Paramètres',
             'friends' => 'Amis',
-            'logout' => 'Se déconnecter', // Base text changed from "Log Out" to "Sign Out", please check.
+            'logout' => 'Se déconnecter',
             'profile' => 'Mon profil',
         ],
     ],

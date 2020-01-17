@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,37 +20,40 @@
 
 return [
     'edit' => [
-        'title' => '帳戶設置',
-        'title_compact' => '設置',
+        'title_compact' => '設定',
+        'username' => '使用者名稱',
 
         'avatar' => [
             'title' => '編輯頭像',
+            'rules' => '請確保您的頭像堅持 :link.<br/>這意味著必須 <strong>適合所有年齡</strong>. i.e. 沒有裸露，褻瀆或暗示性的內容。',
+            'rules_link' => '社群規則',
         ],
 
         'email' => [
-            'current' => '當前郵箱地址',
-            'new' => '新郵箱地址',
-            'new_confirmation' => '確認新郵箱地址',
-            'title' => '郵箱',
+            'current' => '目前電子郵件地址',
+            'new' => '新電子郵件地址',
+            'new_confirmation' => '再次輸入電子郵件地址',
+            'title' => '電子郵件',
         ],
 
         'password' => [
-            'current' => '當前密碼',
+            'current' => '目前密碼',
             'new' => '新密碼',
-            'new_confirmation' => '確認新密碼',
+            'new_confirmation' => '再次輸入新密碼',
             'title' => '密碼',
         ],
 
         'profile' => [
-            'title' => '編輯個人資料',
+            'title' => '編輯個人簡介',
 
             'user' => [
-                'user_from' => '當前位置',
-                'user_interests' => '興趣愛好',
+                'user_discord' => 'Discord',
+                'user_from' => '目前所在地',
+                'user_interests' => '喜好',
                 'user_msnm' => 'skype',
                 'user_occ' => '職業',
-                'user_twitter' => '推特',
-                'user_website' => '個人主頁',
+                'user_twitter' => 'twitter',
+                'user_website' => '個人網站',
             ],
         ],
 
@@ -60,21 +63,61 @@ return [
         ],
     ],
 
+    'notifications' => [
+        'title' => '通知',
+        'topic_auto_subscribe' => '自動啟用自己創建的主題的通知',
+        'beatmapset_discussion_qualified_problem' => '在以下模式的 qualified 圖譜上接收新問題通知',
+
+        'mail' => [
+            '_' => '',
+            'beatmapset:modding' => '圖譜製作',
+            'forum_topic_reply' => '主題回復',
+        ],
+    ],
+
+    'oauth' => [
+        'authorized_clients' => '已授權客戶端',
+        'own_clients' => '擁有的客戶端',
+        'title' => 'OAuth',
+    ],
+
+    'playstyles' => [
+        'keyboard' => '鍵盤',
+        'mouse' => '滑鼠',
+        'tablet' => '繪圖板',
+        'title' => '遊戲方式',
+        'touch' => '觸控螢幕',
+    ],
+
+    'privacy' => [
+        'friends_only' => '過濾來自好友以外的訊息',
+        'hide_online' => '隱藏在線狀態',
+        'title' => '隱私政策',
+    ],
+
+    'security' => [
+        'current_session' => '目前',
+        'end_session' => '終止會話',
+        'end_session_confirmation' => '你確定要立刻結束該設備上的會話嗎？',
+        'last_active' => '上次使用：',
+        'title' => '安全',
+        'web_sessions' => '瀏覽器會話',
+    ],
+
     'update_email' => [
-        'email_subject' => 'osu! 帳戶郵箱更改',
         'update' => '更新',
     ],
 
     'update_password' => [
-        'email_subject' => 'osu! 帳戶密碼更改',
         'update' => '更新',
     ],
 
-    'playstyles' => [
-        'title' => '遊戲方式',
-        'mouse' => '滑鼠',
-        'keyboard' => '鍵盤',
-        'tablet' => '繪圖板',
-        'touch' => '觸控螢幕',
+    'verification_completed' => [
+        'text' => '您可以關閉此選項/視窗',
+        'title' => '驗證已經完成',
+    ],
+
+    'verification_invalid' => [
+        'title' => '無效或過期的驗證連結',
     ],
 ];

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -21,10 +21,12 @@
 return [
     'show' => [
         'fallback_translation' => 'Den anmodede side er endnu ikke blevet oversat til (:language). Viser den engelske version.',
-        'languages' => 'Sprog',
-        'missing' => 'Den anmodede side kunne ikke blive fundet.',
+        'incomplete_or_outdated' => 'Indholdet på denne side er ufuldstændigt eller forældet. Hvis du har mulighed for at hjælpe til, overvej venligst at opdatere artiklen!',
+        'missing' => 'Den anmodede side ":keyword" kunne ikke blive fundet.',
         'missing_title' => 'Ikke fundet',
         'missing_translation' => 'Den anmodede side kunne ikke blive fundet på det valgte sprog.',
+        'needs_cleanup_or_rewrite' => 'Denne side lever ikke op til standarderne for osu! wiki og har brug for oprydning og omskrivning. Hvis du har mulighed for at hjælpe til, overvej venligst at opdatere artiklen!',
+        'search' => 'Søg eksisterende sider for :link.',
         'toc' => 'Indhold',
 
         'edit' => [
@@ -32,9 +34,15 @@ return [
             'refresh' => 'Genindlæs',
         ],
 
-        'outdated' => [
-            '_' => 'Denne side indeholder en gammel oversættelse af det originale indhold. Se venligst :default for at få den mest nøjagtige information (og overvej at hjælpe med en ny oversættelse, hvis du kan hjælpe til)!',
-            'default' => 'den engelsk version',
+        'translation' => [
+            'legal' => 'Denne oversættelse er tilgængelig for nemheds skyld. Den oprindelige version :default er den eneste juridisk bindende version af denne tekst.',
+            'outdated' => 'Denne side indeholder en forældet oversættelse af det oprindelige indhold. Se venligst :default for de mest nøjagtige oplysninger (og overvej at hjælpe til med at oversætte, hvis du har mulighed for det)!',
+
+            'default' => 'Engelsk version',
         ],
+    ],
+    'main' => [
+        'title' => 'Vidensbase',
+        'subtitle' => 'da osu!pedia lyder lamt',
     ],
 ];

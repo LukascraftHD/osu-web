@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,9 +20,9 @@
 
 return [
     'availability' => [
-        'disabled' => "Cette beatmap n'est actuellement pas disponible au téléchargement.",
-        'parts-removed' => "Des parties de cette beatmap ont été supprimées suite à la requête du créateur ou d'un titulaire de droits tiers",
-        'more-info' => "Voir ici pour plus d'informations.",
+        'disabled' => 'Cette beatmap n\'est actuellement pas disponible au téléchargement.',
+        'parts-removed' => 'Des parties de cette beatmap ont été supprimées suite à la requête du créateur ou d\'un titulaire de droits tiers',
+        'more-info' => 'Voir ici pour plus d\'informations.',
     ],
 
     'index' => [
@@ -34,45 +34,73 @@ return [
         'discussion' => 'Discussion',
 
         'details' => [
-            'made-by' => 'créée par ',
-            'submitted' => 'envoyée le ',
-            'updated' => 'dernière mise à jour le ',
-            'ranked' => 'classifiée le ',
             'approved' => 'approuvée le ',
-            'qualified' => 'qualifiée le ',
+            'favourite' => 'Ajouter ce beatmapset aux favoris',
+            'logged-out' => 'Vous devez vous connecter pour pouvoir télécharger des beatmaps !',
             'loved' => 'loved le ',
-            'logged-out' => 'Vous devez vous connecter avant de télécharger des beatmaps !',
+            'mapped_by' => 'mappée par :mapper',
+            'qualified' => 'qualifiée le ',
+            'ranked' => 'classée le ',
+            'submitted' => 'envoyée le ',
+            'unfavourite' => 'Retirer ce beatmapset des favoris',
+            'updated' => 'dernière mise à jour le ',
+            'updated_timeago' => 'dernière mise à jour :timeago',
+
             'download' => [
                 '_' => 'télécharger',
-                'video' => 'avec Vidéo',
-                'no-video' => 'sans Vidéo',
                 'direct' => 'osu!direct',
+                'no-video' => 'sans Vidéo',
+                'video' => 'avec Vidéo',
             ],
-            'favourite' => 'Ajouter ce beatmapset aux favoris',
-            'unfavourite' => 'Retirer ce beatmapset des favoris',
+
+            'login_required' => [
+                'bottom' => 'pour accéder à plus de fonctionnalités',
+                'top' => 'Se connecter',
+            ],
         ],
-        'stats' => [
-            'cs' => 'Taille des Cercles',
-            'cs-mania' => 'Nombre de touches',
-            'drain' => 'Drainage PV',
-            'accuracy' => 'Précision',
-            'ar' => "Niveau d'approche",
-            'stars' => 'Difficulté en étoiles',
-            'total_length' => 'Longeur',
-            'bpm' => 'BPM',
-            'count_circles' => 'Nombre de Cercles',
-            'count_sliders' => 'Nombre de Sliders',
-            'user-rating' => 'Évaluation des joueurs',
-            'rating-spread' => 'Propagation note',
+
+        'favourites' => [
+            'limit_reached' => 'Vous avez trop de beatmaps favorites ! Veuillez en supprimer quelques-unes avant d\'essayer à nouveau.',
         ],
+
+        'hype' => [
+            'action' => 'Hype cette map si vous avez aimé la jouer afin qu’elle progresse au statut de <strong>Classée</strong>.',
+
+            'current' => [
+                '_' => 'Cette map est actuellement :status.',
+
+                'status' => [
+                    'pending' => 'en attente',
+                    'qualified' => 'qualifiée',
+                    'wip' => 'travail en cours',
+                ],
+            ],
+
+            'disqualify' => [
+                '_' => 'Si vous avez un problème avec cette beatmap, veuillez la disqualifier :link.',
+                'button_title' => 'Disqualifier une beatmap qualifiée.',
+            ],
+
+            'report' => [
+                '_' => 'Si vous trouvez un problème avec cette beatmap, merci de le signaler :link pour alerter l\'équipe.',
+                'button' => 'Signaler un problème',
+                'button_title' => 'Signaler un problème sur une beatmap qualifiée.',
+                'link' => 'ici',
+            ],
+        ],
+
         'info' => [
-            'points-of-failure' => 'Points de ratés',
-            'success-rate' => 'Taux de réussite',
             'description' => 'Description',
+            'genre' => 'Genre',
+            'language' => 'Langue',
+            'no_scores' => 'Les données sont encore en cours de calcul...',
+            'points-of-failure' => 'Répartition des échecs',
             'source' => 'Source',
+            'success-rate' => 'Taux de réussite',
             'tags' => 'Tags',
-            'unranked' => 'Beatmap non classifiée',
+            'unranked' => 'Beatmap non classée',
         ],
+
         'scoreboard' => [
             'achieved' => 'atteint :when',
             'country' => 'Classement national',
@@ -82,15 +110,21 @@ return [
             'supporter-only' => 'Vous devez être osu!supporter pour accéder à cette fonctionnalité !',
             'title' => 'Tableaux des scores',
 
-            'list' => [
+            'headers' => [
                 'accuracy' => 'Précision',
-                'player-header' => 'Joueur',
-                'rank-header' => 'Rang',
+                'combo' => 'Combo max',
+                'miss' => 'Raté',
+                'mods' => 'Mods',
+                'player' => 'Joueur',
+                'pp' => 'pp',
+                'rank' => 'Rang',
+                'score_total' => 'Score total',
                 'score' => 'Score',
             ],
+
             'no_scores' => [
-                'country' => "Personne de votre pays n'a encore fait un score !",
-                'friend' => "Personnne de vos amis n'a encore fait un score !",
+                'country' => 'Personne de votre pays n\'a encore fait un score !',
+                'friend' => 'Aucun de vos amis n\'a de score sur cette map !',
                 'global' => 'Pas de scores. Peut-être vous dans le classement ?',
                 'loading' => 'Chargement des scores...',
                 'unranked' => 'Beatmap non classifié.',
@@ -99,6 +133,33 @@ return [
                 'first' => 'En Tête',
                 'own' => 'Votre meilleur',
             ],
+        ],
+
+        'stats' => [
+            'cs' => 'Taille des Cercles',
+            'cs-mania' => 'Nombre de touches',
+            'drain' => 'Drainage PV',
+            'accuracy' => 'Précision',
+            'ar' => 'Niveau d\'approche',
+            'stars' => 'Difficulté en étoiles',
+            'total_length' => 'Longueur',
+            'bpm' => 'BPM',
+            'count_circles' => 'Nombre de Cercles',
+            'count_sliders' => 'Nombre de Sliders',
+            'user-rating' => 'Évaluation des joueurs',
+            'rating-spread' => 'Propagation note',
+            'nominations' => 'Nominations',
+            'playcount' => 'Nombre de joueurs',
+        ],
+
+        'status' => [
+            'ranked' => 'Classée',
+            'approved' => 'Approuvée',
+            'loved' => 'Aimée',
+            'qualified' => 'Qualifiée',
+            'wip' => 'En construction',
+            'pending' => 'En attente',
+            'graveyard' => 'Cimetière',
         ],
     ],
 ];

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -28,7 +28,6 @@ use Auth;
 use DB;
 use Exception;
 use Request;
-use View;
 
 class CheckoutController extends Controller
 {
@@ -39,35 +38,19 @@ class CheckoutController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth', ['only' => [
-            'destroy',
-            'store',
-        ]]);
-
-        $this->middleware('check-user-restricted', ['only' => [
-            'destroy',
-            'store',
-        ]]);
-
+        $this->middleware('auth');
+        if (!$this->isAllowRestrictedUsers()) {
+            $this->middleware('check-user-restricted');
+        }
         $this->middleware('verify-user');
 
         return parent::__construct();
     }
 
-    public function destroy()
+    public function show($id)
     {
-        // ignore dummy parameter for now, just release the current cart.
-        $order = $this->userCart();
-        $checkout = new OrderCheckout($order);
-        $checkout->failCheckout();
-
-        return ujs_redirect(route('store.products.index'));
-    }
-
-    public function show()
-    {
-        $order = $this->userCart();
-        if (!$order || $order->isEmpty()) {
+        $order = $this->orderForCheckout($id);
+        if ($order === null || $order->isEmpty() || $order->isShouldShopify()) {
             return ujs_redirect(route('store.cart.show'));
         }
 
@@ -78,35 +61,37 @@ class CheckoutController extends Controller
 
         // using $errors will conflict with laravel's default magic MessageBag/ViewErrorBag that doesn't act like
         // an array and will cause issues in shared views.
-        $flash = session('checkout.error.errors') ?? [];
-        View::share('validationErrors', $flash);
+        $validationErrors = session('checkout.error.errors') ?? $checkout->validate();
 
-        return view('store.checkout', compact('order', 'addresses', 'checkout'));
+        return view('store.checkout.show', compact('order', 'addresses', 'checkout', 'validationErrors'));
     }
 
     public function store()
     {
-        $order = $this->userCart();
+        $orderId = get_int(request('orderId'));
+        $provider = request('provider');
+        $shopifyCheckoutId = presence(request('shopifyCheckoutId'));
 
-        if ($order->isEmpty()) {
+        $order = $this->orderForCheckout($orderId);
+
+        if ($order === null || $order->isEmpty()) {
             return ujs_redirect(route('store.cart.show'));
         }
 
-        $provider = Request::input('provider');
-
-        $checkout = new OrderCheckout($order, $provider);
-        $checkout->beginCheckout();
+        $checkout = new OrderCheckout($order, $provider, $shopifyCheckoutId);
 
         $validationErrors = $checkout->validate();
         if (!empty($validationErrors)) {
             return $this->setAndRedirectCheckoutError(
+                $order,
                 trans('store.checkout.cart_problems'),
                 $validationErrors
             );
         }
 
-        // checkout
-        if ((float) $order->getTotal() === 0.0 && Request::input('completed')) {
+        $checkout->beginCheckout();
+
+        if ((float) $order->getTotal() === 0.0) {
             return $this->freeCheckout($checkout);
         }
 
@@ -131,5 +116,14 @@ class CheckoutController extends Controller
         });
 
         return ujs_redirect(route('store.invoice.show', ['invoice' => $order->order_id, 'thanks' => 1]));
+    }
+
+    private function orderForCheckout($id)
+    {
+        return Auth::user()
+            ->orders()
+            ->whereIn('status', ['incart', 'processing'])
+            ->with('items.product')
+            ->find($id);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,6 +20,7 @@
 
 return [
     'confirmation' => 'Er du sikker?',
+    'confirmation_unsaved' => 'Ikke-gemte ændringer vil gå tabt. Er du sikker?',
     'saved' => 'Gemt',
 
     'array_and' => [
@@ -28,31 +29,81 @@ return [
         'last_word_connector' => ', og ',
     ],
 
+    'badges' => [
+        'new' => 'NYT',
+    ],
+
     'buttons' => [
+        'admin' => 'Admin',
+        'back_to_previous' => 'Vend tilbage til tidligere position',
+        'back_to_top' => 'Tilbage til toppen',
         'cancel' => 'Annullér',
+        'change' => 'ændr',
+        'click_to_copy' => 'klik for at kopiere til udklipsholderen',
+        'click_to_copy_copied' => 'kopieret til udklipsholderen!',
+        'close' => 'Luk',
+        'collapse' => 'kollaps',
         'delete' => 'Slet',
+        'edit' => 'Rediger',
+        'expand' => 'udvid',
+        'hide' => 'skjul',
         'permalink' => 'permalink',
+        'permalink_copied' => 'link kopieret',
         'post' => 'Slå op',
         'reply' => 'Svar',
         'reply_reopen' => 'Svar og Genåben',
-        'reply_resolve' => 'Svar og markér som løst',
+        'reply_resolve' => 'Svar og Markér som Løst',
         'reset' => 'Nulstil',
+        'restore' => 'Gendan',
         'save' => 'Gem',
         'saving' => 'Gemmer...',
+        'search' => 'Søg',
+        'see_more' => 'se mere',
+        'show' => 'vis',
+        'show_deleted' => 'Vis slettede',
         'show_more' => 'vis mere',
+        'show_more_options' => 'vis flere muligheder',
+        'update' => 'Opdater',
         'upload_image' => 'upload billede',
+
+        'watch' => [
+            'to_0' => 'Følg ikke længere',
+            'to_1' => 'Følg',
+        ],
     ],
 
     'count' => [
+        'badges' => ':count mærke|:count mærker',
+        'days' => ':count dag|:count dage',
+        'hour_short_unit' => 'time|timer',
+        'hours' => ':count time|:count timer',
         'item' => ':count unit|:count units',
+        'minute_short_unit' => 'min|minutter',
+        'minutes' => ':count minut|:count minutter',
         'months' => ':count måned|:count måneder',
+        'plus_others' => '+ :count_delimited andre!|+ :count_delimited andre!',
+        'post' => ':count_delimited opslag|:count_delimited opslag',
+        'second_short_unit' => 'sek',
+        'star_priority' => ':count_delimited stjerne prioritet|:count_delimited stjerne prioriteter',
+        'update' => ':count_delimited opdatering|:count_delimited opdateringer',
+        'view' => ':count_delimited visning|:count_delimited visninger',
         'years' => ':count år|:count år',
+    ],
+
+    'countdown' => [
+        'days' => 'dage',
+        'hours' => 'timer',
+        'minutes' => 'minutter',
+        'seconds' => 'sekunder',
     ],
 
     'datetime' => [
         'year_month' => [
             'moment' => 'MMMM YYYY',
             'php' => 'MMMM y',
+        ],
+        'year_month_short' => [
+            'moment' => 'MMM YYYY',
         ],
     ],
 
@@ -65,6 +116,10 @@ return [
 
     'dropzone' => [
         'target' => 'slip her for at uploade',
+    ],
+
+    'input' => [
+        'search' => 'søg...',
     ],
 
     'pagination' => [
@@ -85,7 +140,7 @@ return [
         'days_ago' => ':count dag siden|:count dage siden',
         'hours_ago' => ':count time siden|:count timer siden',
         'now' => 'nu',
-        'remaining' => 'Tid Tilbage',
+        'remaining' => 'Resterende Tid',
     ],
 
     'title' => [

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,31 +20,41 @@
 
 return [
     'pinned_topics' => '置頂主題',
-    'slogan' => '獨樂樂不如眾樂樂~',
-    'subforums' => '子版塊',
-    'title' => 'osu! 社區',
+    'slogan' => "獨樂樂不如眾樂樂~",
+    'subforums' => '其他相關討論',
+    'title' => 'osu! 論壇',
 
     'covers' => [
+        'edit' => '編輯封面',
+
         'create' => [
-            '_' => '設置封面',
+            '_' => '新增封面',
             'button' => '上傳圖片',
-            'info' => '圖片尺寸應為 :dimensions. 也可以將圖片拖動到這裡上傳.',
+            'info' => '圖片尺寸應為 :dimensions. 也可以將圖片拉到此處上傳.',
         ],
 
         'destroy' => [
             '_' => '移除封面',
-            'confirm' => '移除這個封面？',
+            'confirm' => '您確定要刪除封面嗎？',
         ],
-    ],
-
-    'email' => [
-        'new_reply' => '[osu!] 主題 ":title" 有新回覆',
     ],
 
     'forums' => [
+        'latest_post' => '最新貼文',
+
+        'index' => [
+            'title' => '論壇主頁',
+        ],
+
         'topics' => [
             'empty' => '沒有主題！',
         ],
+    ],
+
+    'mark_as_read' => [
+        'forum' => '將論壇標為已讀',
+        'forums' => '將論壇標為已讀',
+        'busy' => '標記已讀…',
     ],
 
     'post' => [
@@ -58,6 +68,17 @@ return [
             'restore' => '恢復回覆',
             'edit' => '編輯回覆',
         ],
+
+        'create' => [
+            'title' => [
+                'reply' => '新回覆',
+            ],
+        ],
+
+        'info' => [
+            'post_count' => ':count_delimited 主題',
+            'topic_starter' => '主題開啟者',
+        ],
     ],
 
     'search' => [
@@ -68,44 +89,57 @@ return [
 
     'topic' => [
         'deleted' => '已刪除的主題',
-        'go_to_latest' => '查看最後的帖子',
+        'go_to_latest' => '查看最後的貼文',
         'latest_post' => ':when :user',
         'latest_reply_by' => '最後回覆: :user',
         'new_topic' => '發表新主題',
+        'new_topic_login' => '登錄以發表新主題',
         'post_reply' => '發表',
         'reply_box_placeholder' => '輸入回覆',
-        'started_by' => '發帖人： :user',
+        'reply_title_prefix' => 'Re',
+        'started_by' => '發表人： :user',
+        'started_by_verbose' => '由 :user 發起',
 
         'create' => [
+            'close' => '關閉',
             'preview' => '預覽',
+            // TL note: this is used in the topic reply preview, when
+            // the user goes back from previewing to editing the reply
             'preview_hide' => '編輯',
             'submit' => '發表',
 
+            'necropost' => [
+                'default' => '此主題不被討論一段時間了。如非有特殊理由，請勿在此回覆。',
+
+                'new_topic' => [
+                    '_' => "此主題不被討論一段時間了。如果你沒有在這裡發文的具體理由, 請用 :create 代替。",
+                    'create' => '建立一個新的主題',
+                ],
+            ],
+
             'placeholder' => [
-                'body' => '在這裡輸入正文',
-                'title' => '點擊這裡設置標題',
+                'body' => '在這裡輸入內文',
+                'title' => '點擊這裡編輯標題',
             ],
         ],
 
         'jump' => [
-            'enter' => '點擊這裡跳轉到指定回覆',
-            'first' => '跳轉到第一條回覆',
-            'last' => '跳轉到最後一條回覆',
-            'next' => '向後 10 條',
-            'previous' => '向前 10 條',
+            'enter' => '點擊這裡跳轉到指定的回覆',
+            'first' => '返回頂部',
+            'last' => '跳至最後',
+            'next' => '往後 10 篇',
+            'previous' => '往前 10 篇',
         ],
 
         'post_edit' => [
             'cancel' => '取消',
-            'post' => '保存',
+            'post' => '儲存',
         ],
     ],
 
     'topic_watches' => [
         'index' => [
-            'title' => '訂閱的主題',
             'title_compact' => '訂閱',
-            'title_main' => '<strong>訂閱</strong>主題',
 
             'box' => [
                 'total' => '訂閱的主題',
@@ -130,31 +164,35 @@ return [
         '_' => '主題',
 
         'actions' => [
+            'login_reply' => '登入以回覆',
             'reply' => '回覆',
-            'reply_with_quote' => '引用以回覆',
-            'search' => '搜索',
+            'reply_with_quote' => '引用此回覆',
+            'search' => '搜尋',
         ],
 
         'create' => [
-            'create_poll' => '創建投票',
+            'create_poll' => '建立投票',
+
+            'preview' => '主題預覽',
 
             'create_poll_button' => [
-                'add' => '創建投票',
-                'remove' => '取消創建投票',
+                'add' => '建立投票',
+                'remove' => '取消建立投票',
             ],
 
             'poll' => [
+                'hide_results' => '隱藏投票結果。',
+                'hide_results_info' => '這些內容只在投票結束後顯示。',
                 'length' => '投票持續',
-                'length_days_prefix' => '',
                 'length_days_suffix' => '天',
                 'length_info' => '如果無期限則留空',
-                'max_options' => '最大可選數',
-                'max_options_info' => '填寫每個人最多可以選的選項數。',
+                'max_options' => '最多可選數',
+                'max_options_info' => '每個人最多可選的數量。',
                 'options' => '選項',
                 'options_info' => '一個選項佔一行，最多10個選項。',
                 'title' => '問題',
                 'vote_change' => '允許修改',
-                'vote_change_info' => '如果選中，則用戶可以更改他們的投票。',
+                'vote_change_info' => '允許投票者修改他們的投票。',
             ],
         ],
 
@@ -163,71 +201,77 @@ return [
         ],
 
         'index' => [
-            'views' => '查看數',
+            'feature_votes' => '星級優先',
             'replies' => '回覆數',
+            'views' => '瀏覽數',
         ],
 
-        'issue_tag_added' => [ //TODO 所有的issue_tag_xxx都需要上下文
-            'action-0' => '移除 "added" 標籤',
-            'action-1' => '添加 "added" 標籤',
-            'state-0' => '已移除 "added" 標籤',
-            'state-1' => '已添加 "added" 標籤',
+        'issue_tag_added' => [
+            'to_0' => '移除 "added" 標籤',
+            'to_0_done' => '已移除 "added" 標籤',
+            'to_1' => '新增 "added" 標籤',
+            'to_1_done' => '已新增 "added" 標籤',
         ],
 
         'issue_tag_assigned' => [
-            'action-0' => '移除 "assigned" 標籤',
-            'action-1' => '添加 "assigned" 標籤',
-            'state-0' => '已移除 "assigned" 標籤',
-            'state-1' => '已添加 "assigned" 標籤',
+            'to_0' => '移除 "assigned" 標籤',
+            'to_0_done' => '已移除 "assigned" 标签',
+            'to_1' => '新增 "assigned" 標籤',
+            'to_1_done' => '已新增 "assigned" 標籤',
         ],
 
         'issue_tag_confirmed' => [
-            'action-0' => '移除 "confirmed" 標籤',
-            'action-1' => '添加 "confirmed" 標籤',
-            'state-0' => '已移除 "confirmed" 標籤',
-            'state-1' => '已添加 "confirmed" 標籤',
+            'to_0' => '移除 "confirmed" 標籤',
+            'to_0_done' => '已移除 "confirmed" 標籤',
+            'to_1' => '新增 "confirmed" 標籤',
+            'to_1_done' => '已新增 "confirmed" 標籤',
         ],
 
         'issue_tag_duplicate' => [
-            'action-0' => '移除 "duplicate" 標籤',
-            'action-1' => '添加 "duplicate" 標籤',
-            'state-0' => '已移除 "duplicate" 標籤',
-            'state-1' => '已添加 "duplicate" 標籤',
+            'to_0' => '移除 "duplicate" 標籤',
+            'to_0_done' => '已移除 "duplicate" 標籤',
+            'to_1' => '新增 "duplicate" 標籤',
+            'to_1_done' => '已新增 "duplicate" 標籤',
         ],
 
         'issue_tag_invalid' => [
-            'action-0' => '移除 "invalid" 標籤',
-            'action-1' => '添加 "invalid" 標籤',
-            'state-0' => '已移除 "invalid" 標籤',
-            'state-1' => '已添加 "invalid" 標籤',
+            'to_0' => '移除 "invalid" 標籤',
+            'to_0_done' => '已移除 "invalid" 標籤',
+            'to_1' => '新增 "invalid" 標籤',
+            'to_1_done' => '已新增 "invalid" 標籤',
         ],
 
         'issue_tag_resolved' => [
-            'action-0' => '移除 "resolved" 標籤',
-            'action-1' => '添加 "resolved" 標籤',
-            'state-0' => '已移除 "resolved" 標籤',
-            'state-1' => '已添加 "resolved" 標籤',
+            'to_0' => '移除 "resolved" 標籤',
+            'to_0_done' => '已移除 "resolved" 標籤',
+            'to_1' => '新增 "resolved" 標籤',
+            'to_1_done' => '已新增 "resolved" 標籤',
         ],
 
         'lock' => [
             'is_locked' => '主題已被鎖定，不能回覆',
-            'lock-0' => '解鎖主題',
-            'lock-1' => '鎖定主題',
-            'state-0' => '主題已經解鎖',
-            'state-1' => '主題已被鎖定',
+            'to_0' => '解鎖主题',
+            'to_0_done' => '主题已經解鎖',
+            'to_1' => '鎖定主题',
+            'to_1_done' => '主题已被鎖定',
         ],
 
         'moderate_move' => [
-            'title' => '將主題移動到其他板塊',
+            'title' => '將主題移動至其他討論',
         ],
 
         'moderate_pin' => [
-            'pin-0' => '取消置頂',
-            'pin-1' => '置頂',
-            'pin-2' => '置頂並標記為公告',
-            'state-0' => '該主題已取消置頂',
-            'state-1' => '該主題已置頂',
-            'state-2' => '該主題已置頂並標記為公告',
+            'to_0' => '取消置頂',
+            'to_0_done' => '該主题已取消置頂',
+            'to_1' => '置頂',
+            'to_1_done' => '該主题已置頂',
+            'to_2' => '至頂並標記為公告',
+            'to_2_done' => '該主题已置頂並標記為公告',
+        ],
+
+        'moderate_toggle_deleted' => [
+            'show' => '顯示已刪除帖子',
+            'hide' => '隱藏已刪除帖子',
         ],
 
         'show' => [
@@ -235,32 +279,49 @@ return [
             'total_posts' => '總主題數量',
 
             'feature_vote' => [
-                'current' => '當前優先級: +:count',
+                'current' => '當前優先順序: +:count',
                 'do' => '提升這個請求',
+
+                'info' => [
+                    '_' => '這是一個:feature_request。:supporters 可為新功能建議投票。',
+                    'feature_request' => '新功能建議',
+                    'supporters' => '贊助者',
+                ],
 
                 'user' => [
                     'count' => '{0} 沒有票|[1,*] :count 票',
-                    'current' => '還有 :votes 票.',
-                    'not_enough' => '沒有票了',
+                    'current' => '剩下 :votes 票.',
+                    'not_enough' => "沒有票了",
                 ],
             ],
 
             'poll' => [
+                'edit' => '編輯投票',
+                'edit_warning' => '編輯投票將會清除目前結果！',
                 'vote' => '投票',
+
+                'button' => [
+                    'change_vote' => '更改投票',
+                    'edit' => '編輯投票',
+                    'view_results' => '直接跳到結果',
+                    'vote' => '投票',
+                ],
 
                 'detail' => [
                     'end_time' => '將於 :time 結束',
                     'ended' => '結束於 :time',
+                    'results_hidden' => '結果將於投票結束後顯示。',
                     'total' => '總票數: :count',
                 ],
             ],
         ],
 
         'watch' => [
-            'state-0' => '已取消訂閱！',
-            'state-1' => '訂閱成功！',
-            'watch-0' => '取消訂閱',
-            'watch-1' => '訂閱',
+            'to_not_watching' => '未訂閱',
+            'to_watching' => '訂閱',
+            'to_watching_mail' => '訂閱並開啟電子郵件通知',
+            'tooltip_mail_disable' => '通知已啟用。點擊以禁用。',
+            'tooltip_mail_enable' => '通知已禁用。點擊以啟用。',
         ],
     ],
 ];

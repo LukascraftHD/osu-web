@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -19,20 +19,31 @@
  */
 
 return [
-    'header' => ':type Rangering',
+    'country' => [
+        'filter' => '',
+    ],
+
     'type' => [
         'performance' => 'Præstation',
-        'charts' => 'Diagrammer',
+        'charts' => 'Baner',
         'score' => 'Score',
         'country' => 'Land',
     ],
+
+    'spotlight' => [
+        'end_date' => 'Slutdato',
+        'map_count' => 'Map Antal',
+        'participants' => 'Deltagere',
+        'start_date' => 'Start Dato',
+    ],
+
     'stat' => [
         'accuracy' => 'Præcision',
         'active_users' => 'Aktive Brugere',
         'country' => 'Land',
         'play_count' => 'Antal Gange Spillet',
         'performance' => 'Præstation',
-        'total_score' => 'samlet Score',
+        'total_score' => 'Total Score',
         'ranked_score' => 'Rangeret Score',
         'average_score' => 'Gns. Score',
         'average_performance' => 'Gns. Præs.',

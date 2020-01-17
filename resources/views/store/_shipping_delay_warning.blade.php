@@ -1,5 +1,5 @@
 {{--
-    Copyright 2015-2017 ppy Pty. Ltd.
+    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
 
     This file is part of osu!web. osu!web is distributed with the hope of
     attracting more community contributions to the core ecosystem of osu!.
@@ -17,10 +17,10 @@
 --}}
 
 <div class="alert alert-warning">
-    <p><strong>IMPORTANT: SHIPPING DELAYS</strong></p>
+    <p><em class="store-text store-text--emphasis">IMPORTANT: SHIPPING DELAYS</em></p>
 
     <p>
-        {!! Markdown::convertToHtml(config('store.delayed_shipping_order_message') ?: trans('store.checkout.delayed_shipping')) !!}
+        {!! markdown(config('store.delayed_shipping_order_message') ?: trans('store.checkout.delayed_shipping')) !!}
     </p>
 
     <p>

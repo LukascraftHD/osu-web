@@ -1,7 +1,7 @@
 <?php
 
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -20,23 +20,48 @@
 
 return [
     'index' => [
-        'header' => [
-            'subtitle' => 'Uma lista de torneios ativos e oficialmente reconhecidos',
-            'title' => 'Torneios da comunidade',
-        ],
         'none_running' => 'Não há nenhum torneio acontecendo no momento, volte mais tarde!',
         'registration_period' => 'Período de inscrições: :start até :end',
-    ],
-    'show' => [
-        'button' => [
-            'register' => 'Inscreva-me!',
-            'cancel' => 'Cancelar inscrição',
+
+        'header' => [
+            'title' => 'Torneios da Comunidade',
         ],
-        'entered' => 'Você se registrou nesse torneio.<br><br>Note que isso não significa que você foi adicionado em um time.<br><br>Intruções adicionais serão enviadas via email quando estiver próximo da data do torneio, então, por favor, certifique-se de que seu entereço de email/conta do osu! são válidos!',
+
+        'item' => [
+            'registered' => 'Jogadores registrados',
+        ],
+
+        'state' => [
+            'current' => 'Torneios Ativos',
+            'previous' => 'Torneios Passados',
+        ],
+    ],
+
+    'show' => [
+        'banner' => 'Apoie Seu Time',
+        'entered' => 'Você se registrou para esse torneio.<br><br>Note que isso não significa que você foi adicionado à um time.<br><br>Intruções adicionais serão enviadas via email próximo à data do torneio, então por favor, certifique-se de que o endereço de email de sua conta osu! é valido!',
+        'info_page' => 'Página de informações',
         'login_to_register' => 'Por favor :login para visualizar os detalhes de inscrição!',
         'not_yet_entered' => 'Você não está registrado nesse torneio.',
-        'rank_too_low' => 'Desculpa, você não tem os requisitos mínimos necessários para esse torneio!',
-        'registration_ends' => 'Período de inscrição será finalizado em :date',
+        'rank_too_low' => 'Desculpa, você não possui os requisitos de ranking necessários para esse torneio!',
+        'registration_ends' => 'O período de inscrições será encerrado em :date',
+
+        'button' => [
+            'cancel' => 'Cancelar Inscrição',
+            'register' => 'Inscreva-me!',
+        ],
+
+        'period' => [
+            'end' => '',
+            'start' => '',
+        ],
+
+        'state' => [
+            'before_registration' => 'As Inscrições para este torneio ainda não foram abertas.',
+            'ended' => 'Este torneio foi concluído. Para ver o resultado, verifique a página de informações.',
+            'registration_closed' => 'As inscrições para esse torneio foram encerradas. Verifique a página de informações para atualizações mais recentes.',
+            'running' => 'Esse torneio está atualmente em progresso. Verifique a página de informações para mais detalhes.',
+        ],
     ],
     'tournament_period' => ':start até :end',
 ];

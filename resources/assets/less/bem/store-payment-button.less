@@ -1,5 +1,5 @@
 /**
- *    Copyright 2015-2017 ppy Pty. Ltd.
+ *    Copyright (c) ppy Pty Ltd <contact@ppy.sh>.
  *
  *    This file is part of osu!web. osu!web is distributed with the hope of
  *    attracting more community contributions to the core ecosystem of osu!.
@@ -28,13 +28,15 @@
   text-align: center;
   height: @button-height;
   width: 100%;
+  background-color: @osu-colour-c1;
   background-position: center center;
   background-size: @logo-width;
   background-repeat: no-repeat;
   cursor: pointer;
 
   &:hover {
-    border: 3px solid @blue-darker;
+    .default-box-shadow();
+    box-shadow: 0 0 0 3px @osu-colour-l4;
   }
 
   &--centili {
